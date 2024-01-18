@@ -9,11 +9,6 @@ import { IInformationsForCalculeDTO } from '../../DTO/InformationsForCalcule';
 import { getDocumentoUseCase } from '../GetDocumento';
 import { updateEtiquetaUseCase } from '../UpdateEtiqueta';
 import { getXPathText } from "../../helps/GetTextoPorXPATH";
-import { coletarCitacao } from "./helps/coletarCitacao";
-import { VerificaçaoDaQuantidadeDeDiasParaInspirarODossie } from "../../helps/VerificaçaoDaQuantidadeDeDiasParaInspirarODossie";
-import { getInformaçoesIniciasDosBeneficios } from './helps/getInformaçoesIniciasDosBeneficios';
-import { getInformaçoesSecudariaDosBeneficios } from './helps/getInformaçoesSecudariaDosBeneficios';
-import { fazerInformationsForCalculeDTO } from './helps/contruirInformationsForCalcule';
 import { ResponseArvoreDeDocumento } from '../../sapiensOperations/response/ResponseArvoreDeDocumento';
 import { isValidInformationsForCalculeDTO } from './helps/validadorDeInformationsForCalculeDTO';
 import { getCapaDoPassivaUseCase } from '../GetCapaDoPassiva';
@@ -70,30 +65,34 @@ export class GetInformationFromSapienForSamirUseCase {
                 
                 const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
 
-                
+
 
 
                 if(tinfoClasseExist){
 
-                    objectDosPrev = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
-
-                    var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
-                        const movimento = (Documento.movimento).split(".");
-                        return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
-                    });
-                    
-                    if(objectDosPrev == undefined && objectDosPrev2 == undefined){
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
-                        continue
-                    }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
-                        objectDosPrev = objectDosPrev2;
-                        superDosprevExist = true;
-                    }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
-                        if(objectDosPrev.numeracaoSequencial < objectDosPrev2.numeracaoSequencial){
-                            objectDosPrev = objectDosPrev2;
-                            superDosprevExist = true;
+                        objectDosPrev = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
+                        if(objectDosPrev){
+                            var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
+                                const movimento = (Documento.movimento).split(".");
+                                return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
+                            });
+                            
+                            if(objectDosPrev == undefined && objectDosPrev2 == undefined){
+                                (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
+                                continue
+                            }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
+                                objectDosPrev = objectDosPrev2;
+                                superDosprevExist = true;
+                            }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
+                                if(objectDosPrev.numeracaoSequencial < objectDosPrev2.numeracaoSequencial){
+                                    objectDosPrev = objectDosPrev2;
+                                    superDosprevExist = true;
+                                }
+                            }
+                        }else{
+                            response = response + " "
                         }
-                    }
+                        
 
 
                 } else{
