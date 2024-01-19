@@ -18,6 +18,7 @@ import { superDossie } from './DossieSuperSapiens';
 import { MinhaErroPersonalizado } from './helps/ErrorMensage';
 import { json } from 'express';
 import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPicaPau';
+import { getDocumentSislabraFromSapiens } from './GetDocumentSislabraFromSapiens';
 
 
 export class GetInformationFromSapienForSamirUseCase {
@@ -31,6 +32,7 @@ export class GetInformationFromSapienForSamirUseCase {
         let novaCapa: any = false;
         var objectDosPrev
         let response: string = '';
+        let dosprevThisTrue = true;
         try {
             const tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             /* const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.nup }); */
@@ -90,7 +92,8 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }
                             }
                         }else{
-                            response = response + " "
+                            dosprevThisTrue = false;
+                            response = response + " DOSPREV NÃO EXISTE"
                         }
                         
 
@@ -107,25 +110,33 @@ export class GetInformationFromSapienForSamirUseCase {
                         novoObjectGetArvoreDocumento.nup = novaNupTratada
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(novoObjectGetArvoreDocumento)).reverse();
                         objectDosPrev = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
+[]
+                        if(objectDosPrev){
+                            var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
+                                const movimento = (Documento.movimento).split(".");
+                                return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
+                            });
 
-                        var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
-                            const movimento = (Documento.movimento).split(".");
-                            return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
-                        });
 
-
-                        if(objectDosPrev == undefined && objectDosPrev2 == undefined){
-                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
-                            continue
-                        }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
-                            objectDosPrev = objectDosPrev2;
-                            superDosprevExist = true;
-                        }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
-                            if(objectDosPrev.numeracaoSequencial < objectDosPrev2.numeracaoSequencial){
+                            if(objectDosPrev == undefined && objectDosPrev2 == undefined){
+                                (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
+                                continue
+                            }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
                                 objectDosPrev = objectDosPrev2;
                                 superDosprevExist = true;
+                            }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
+                                if(objectDosPrev.numeracaoSequencial < objectDosPrev2.numeracaoSequencial){
+                                    objectDosPrev = objectDosPrev2;
+                                    superDosprevExist = true;
+                                }
                             }
+                            dosprevThisTrue = false;
+                            response = response + ' ERRO AO LÊ NOVO DOSPREV - '
+                        }else{
+                            dosprevThisTrue = false;
+                            response = response + " DOSPREV NÃO EXISTE"
                         }
+                            
 
 
                     } catch (error) {
@@ -172,15 +183,28 @@ export class GetInformationFromSapienForSamirUseCase {
                 
                
 
+                let parginaDosPrev;
+                let parginaDosPrevFormatada;
+                if(dosprevThisTrue){
+                    const dosPrevSemIdParaPesquisa = (objectDosPrev.documentoJuntado.componentesDigitais.length) <= 0;
+                    if (dosPrevSemIdParaPesquisa) {
+                        console.log("DOSPREV COM FALHA NA PESQUISA");
+                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA - ${etiquetaParaConcatenar}`, tarefaId }))
+                        continue;
+                    }
 
 
+                    const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
+                    parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
 
-                const dosPrevSemIdParaPesquisa = (objectDosPrev.documentoJuntado.componentesDigitais.length) <= 0;
-                if (dosPrevSemIdParaPesquisa) {
-                    console.log("DOSPREV COM FALHA NA PESQUISA");
-                    (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA - ${etiquetaParaConcatenar}`, tarefaId }))
-                    continue;
-                }
+                    parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
+
+
+                    impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
+                    response = response + impedDossie
+
+                }    
+                    
 
 
                 
@@ -191,28 +215,24 @@ export class GetInformationFromSapienForSamirUseCase {
                         return Documento
                     }
                   });
+                  if(paginaSislabraPoloAtivo){
+                    const idSislabraParaPesquisa = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                    const parginaSislabra = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisa });
+
+                    const paginaSislabraFormatada = new JSDOM(parginaSislabra);
+
+                    const sis = getDocumentSislabraFromSapiens.execute(paginaSislabraFormatada)
+                  }else{
+                    response = response + " SISLABRA (AUTOR) NÃO EXISTE"
+                  }
+                  
+                  
+                  
                   
 
-                  
+                    
 
 
-                const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
-                const parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-
-                const parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
-
-
-                
-
-                
-
-                if(superDosprevExist){
-                    response = response + ' ERRO AO LÊ NOVO DOSPREV - '
-                }
-
-                    impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
-                    response = response + impedDossie
-                
                 
                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
                 continue        

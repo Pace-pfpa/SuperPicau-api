@@ -7,7 +7,13 @@ export class LoginController {
         const { cpf, senha } = request.body;
         try {
             const cookie = await this.loginUseCase.execute({ cpf, senha });
-            response.status(200).json(cookie);
+            console.log(cookie)
+            const incorrectUser = cookie == "Acesso negado, verifique se o CPF e a senha est�o corretos!"
+            if(incorrectUser){
+                response.status(401).json(cookie);
+            }else{
+                response.status(200).json(cookie);
+            }
         } catch (error) {
             return response.status(400).json({
                 message: error.message || "Unexpected error"
