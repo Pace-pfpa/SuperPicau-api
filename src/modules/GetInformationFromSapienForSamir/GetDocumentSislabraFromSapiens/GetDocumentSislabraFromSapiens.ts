@@ -1,3 +1,4 @@
+import { getEmpregoSislabra } from "./SislabraBusiness/GetEmpregoSislabra";
 import { getImoveis } from "./SislabraBusiness/GetImoveisSp";
 import { getVeiculos } from "./SislabraBusiness/GetVeiculosSislabra";
 
@@ -15,5 +16,6 @@ export class GetDocumentSislabraFromSapiens{
         response = response + "Veiculos encontrado"
        }
        
+       console.log(await getEmpregoSislabra(paginaformatada))
     }
 }
