@@ -61,7 +61,7 @@ export class GetInformationDossieForPicaPau {
     );
 
     if (segurado !== -1 || requerimentoAtivo == true) {
-      ArrayImpedimentos.push("CONCESSÃO ANTERIOR");
+      ArrayImpedimentos.push("CONCESSÃO ANTERIOR -");
     }
 
     return ArrayImpedimentos;

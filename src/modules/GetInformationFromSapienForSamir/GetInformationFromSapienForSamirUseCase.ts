@@ -215,15 +215,59 @@ export class GetInformationFromSapienForSamirUseCase {
                         return Documento
                     }
                   });
-                  if(paginaSislabraPoloAtivo){
-                    const idSislabraParaPesquisa = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-                    const parginaSislabra = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisa });
+                  
+                  
+                  const paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
+                    const nomeMovimentacao = Documento.movimento;       
+                    const name = nomeMovimentacao.indexOf("POSSÍVEL CÔNJUGE");
+                    if(name != -1){
+                        const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
+                        if(typeDpcumento == "html"){
+                            return Documento
+                        }
+                    }
+                  });
+                  
+                  if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
+                    const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                    const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
 
-                    const paginaSislabraFormatada = new JSDOM(parginaSislabra);
+                    const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
 
-                    const sis = getDocumentSislabraFromSapiens.execute(paginaSislabraFormatada)
+                    const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
+                    response = response + sislabraAutor
+
+
+                    const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
+                    const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
+
+                    const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
+
+                    const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
+
+                    response = response + sislabraConjuge
+
+                  }else if(paginaSislabraPoloAtivo && !paginaSislabraConjuge){
+
+                    const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                    const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
+
+                    const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
+
+                    const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
+                    response = response + sislabraAutor
+
+                  }else if(!paginaSislabraPoloAtivo && paginaSislabraConjuge){
+                    const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
+                    const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
+
+                    const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
+
+                    const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
+
+                    response = response + sislabraConjuge
                   }else{
-                    response = response + " SISLABRA (AUTOR) NÃO EXISTE"
+                    response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
                   }
                   
                   
@@ -232,10 +276,15 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
 
-
+                if(response.length == 0){
+                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `SEM IMPEDITIVOS`, tarefaId })
+                    continue 
+                }else{
+                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
+                    continue  
+                }
                 
-                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
-                continue        
+                      
 
             }
             return await response
