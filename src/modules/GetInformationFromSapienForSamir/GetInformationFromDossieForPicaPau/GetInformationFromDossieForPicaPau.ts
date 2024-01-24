@@ -35,9 +35,8 @@ export class GetInformationDossieForPicaPau {
     } catch {
       ArrayImpedimentos.push("VÍNCULO ABERTO");
     }
-    console.log(AgeDossie)
-    console.log(typeof(AgeDossie))
-    if (AgeDossie) {
+    
+    if (!AgeDossie) {
       const verificarIdade: Array<boolean> = await calcularIdade.calcIdade(
         paginaDosprevFormatada
       );

@@ -186,22 +186,37 @@ export class GetInformationFromSapienForSamirUseCase {
                 let parginaDosPrev;
                 let parginaDosPrevFormatada;
                 if(dosprevThisTrue){
+
                     const dosPrevSemIdParaPesquisa = (objectDosPrev.documentoJuntado.componentesDigitais.length) <= 0;
                     if (dosPrevSemIdParaPesquisa) {
                         console.log("DOSPREV COM FALHA NA PESQUISA");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA - ${etiquetaParaConcatenar}`, tarefaId }))
                         continue;
                     }
+                     
+                    if(!superDosprevExist){
+                        const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
+                        parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+
+                        parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
+
+                        impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
+                        response = response + impedDossie
+                    }else{
+                        const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
+                        parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+                        
+                        parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
+                        
+                        impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
+                        response = response + impedDossie
+                    }
+                    
 
 
-                    const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
-                    parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+    
 
-                    parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
-
-
-                    impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
-                    response = response + impedDossie
+                    
 
                 }    
                     
