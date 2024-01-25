@@ -12,15 +12,16 @@ export class GetInformationDossieForPicaPau {
     paginaDosprevFormatada: any,
     parginaDosPrev: any,
     AgeDossie: boolean
-  ): Promise<Array<string>> {
-    const ArrayImpedimentos: Array<string> = [];
+  ): Promise<string> {
+    let ArrayImpedimentos: string = '';
 
     try {
       const DatasAtualEMenosDezesseis: Array<Date> =
         await requerimentos.dataRequerimento(paginaDosprevFormatada);
+        console.log("PATRICK1")
       //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
       if (DatasAtualEMenosDezesseis[0] == null) {
-        ArrayImpedimentos.push("AUSÊNCIA DE REQUERIMENTO AUTOR");
+        ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
         const verificarDataFinal: boolean =
           await dataPrevidencias.Previdenciarias(
@@ -29,11 +30,11 @@ export class GetInformationDossieForPicaPau {
             paginaDosprevFormatada
           );
         if (verificarDataFinal) {
-          ArrayImpedimentos.push("EMPREGO");
+          ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }
     } catch {
-      ArrayImpedimentos.push("VÍNCULO ABERTO");
+      ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
     }
     
     if (!AgeDossie) {
@@ -41,9 +42,9 @@ export class GetInformationDossieForPicaPau {
         paginaDosprevFormatada
       );
       if (verificarIdade.length == 0) {
-        ArrayImpedimentos.push("IDADE INDEFINIDA");
+        ArrayImpedimentos = ArrayImpedimentos + " IDADE INDEFINIDA -";
       } else if (!verificarIdade[0] && verificarIdade.length != 0) {
-        ArrayImpedimentos.push("IDADE");
+        ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
       }
     }
 
@@ -51,7 +52,7 @@ export class GetInformationDossieForPicaPau {
       paginaDosprevFormatada
     );
     if (!verificarLitispedencia) {
-      ArrayImpedimentos.push("LITISPENDÊNCIA");
+      ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -";
     }
 
     const segurado = await seguradoEspecial.handle(parginaDosPrev);
@@ -60,7 +61,7 @@ export class GetInformationDossieForPicaPau {
     );
 
     if (segurado !== -1 || requerimentoAtivo == true) {
-      ArrayImpedimentos.push("CONCESSÃO ANTERIOR -");
+      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
     }
 
     return ArrayImpedimentos;

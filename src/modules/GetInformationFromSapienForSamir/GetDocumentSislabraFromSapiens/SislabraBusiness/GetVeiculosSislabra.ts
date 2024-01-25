@@ -22,17 +22,23 @@ export async function getVeiculos(paginaSislabra: string): Promise<Array<any>> {
         }
 
         if(!VeiculoMarca && tipoVeiculo){
-            veiculosEncontrados.push({
-                "Marca": "MARCA NÃO ENCONTRADO",
-                "Tipo": `${tipoVeiculo}`
-            })
+            if(tipoVeiculo.trim() != "MOTOCICLETA"){
+                veiculosEncontrados.push({
+                    "Marca": "MARCA NÃO ENCONTRADO",
+                    "Tipo": `${tipoVeiculo}`
+                })
+            }
+            
         }
 
         if(VeiculoMarca && tipoVeiculo){
-            veiculosEncontrados.push({
-                "Marca": `${VeiculoMarca}`,
-                "Tipo": `${tipoVeiculo}`
-            })
+            if(tipoVeiculo.trim() != "MOTOCICLETA"){
+                veiculosEncontrados.push({
+                    "Marca": `${VeiculoMarca}`,
+                    "Tipo": `${tipoVeiculo}`
+                })
+            }
+            
         }
 
         contadorPaxh = contadorPaxh + 1

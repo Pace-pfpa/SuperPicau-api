@@ -26,7 +26,7 @@ export class GetInformationFromSapienForSamirUseCase {
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
         const cookie = await loginUseCase.execute(data.login);
         const usuario = (await getUsuarioUseCase.execute(cookie));
-        let impedDossie: Array<string>  = [];
+        let impedDossie: string  = '';
         
         const usuario_id = `${usuario[0].id}`;
         let novaCapa: any = false;
@@ -293,9 +293,11 @@ export class GetInformationFromSapienForSamirUseCase {
 
                 if(response.length == 0){
                     await updateEtiquetaUseCase.execute({ cookie, etiqueta: `SEM IMPEDITIVOS`, tarefaId })
+                    response = '';
                     continue 
                 }else{
                     await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
+                    response = '';
                     continue  
                 }
                 

@@ -7,7 +7,6 @@ export class LitispedenciaNewDossie{
         const xpathRelacaoProcessoFormatada: string = (getXPathText(parginaDosPrevFormatada, xpathRelacaoProcesso).trim());
         const StringParaVerificar: string = "Não há relação dos processos movidos pelo autor contra o INSS.";
         const xpathRelacaoProcessoMovidosFormatada:boolean = xpathRelacaoProcessoFormatada===StringParaVerificar;
-        console.log('ISTRUE = ' + xpathRelacaoProcessoMovidosFormatada)
         return xpathRelacaoProcessoMovidosFormatada;
         
     }

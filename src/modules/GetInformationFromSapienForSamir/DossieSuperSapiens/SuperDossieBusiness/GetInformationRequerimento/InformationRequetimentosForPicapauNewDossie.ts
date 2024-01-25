@@ -23,7 +23,7 @@ export class DatasRequerimentoNewDossie{
             return [];
             
         } */
-            for(let t=2; t<tamanhoColunasRequerimentos; t++){
+            for(let t=1; t<tamanhoColunasRequerimentos; t++){
                 if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[6]/table/tbody/tr[${t}]`)) === 'string'){
                     const xpathColunaRequerimentos = `/html/body/div/div[6]/table/tbody/tr[${t}]`;
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
@@ -32,6 +32,7 @@ export class DatasRequerimentoNewDossie{
                         arrayDatas.push(...date);
                     }
                 }
+                console.log("noif")
             }
             const dataAtual = encontrarDataMaisAtual(arrayDatas);
             const dataMenosdezesseis = SubtrairAnoMaisAtual(dataAtual, -16);

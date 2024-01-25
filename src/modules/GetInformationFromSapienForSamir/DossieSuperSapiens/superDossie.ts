@@ -14,15 +14,14 @@ export class SuperDossie {
         paginaDosprevFormatada: any,
         parginaDosPrev: any,
         AgeDossie: boolean
-      ): Promise<Array<string>> {
-        const ArrayImpedimentos: Array<string> = [];
+      ): Promise<string> {
+        let ArrayImpedimentos: string = '';
     
         try {
           const DatasAtualEMenosDezesseis: Array<Date> =
             await datasRequerimentoNewDossie.dataRequerimento(paginaDosprevFormatada)
-          //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
           if (DatasAtualEMenosDezesseis[0] == null) {
-            ArrayImpedimentos.push("AUSÊNCIA DE REQUERIMENTO AUTOR");
+            ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
           } else {
             const verificarDataFinal: boolean =
               await dataPrevidenciariasNewDossie.Previdenciarias(
@@ -31,11 +30,11 @@ export class SuperDossie {
                 paginaDosprevFormatada
               );
             if (verificarDataFinal) {
-              ArrayImpedimentos.push("EMPREGO");
+              ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }
         } catch {
-          ArrayImpedimentos.push("VÍNCULO ABERTO");
+          ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
         }
         
         if (!AgeDossie) {
@@ -43,9 +42,9 @@ export class SuperDossie {
             paginaDosprevFormatada
           );
           if (verificarIdade.length == 0) {
-            ArrayImpedimentos.push("IDADE INDEFINIDA");
+            ArrayImpedimentos = ArrayImpedimentos + " IDADE INDEFINIDA -";
           } else if (!verificarIdade[0] && verificarIdade.length != 0) {
-            ArrayImpedimentos.push("IDADE");
+            ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
           }
         }
     
@@ -53,7 +52,7 @@ export class SuperDossie {
           paginaDosprevFormatada
         );
         if (!verificarLitispedencia) {
-          ArrayImpedimentos.push("LITISPENDÊNCIA");
+          ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -";
         }
     
         const segurado = await seguradoEspecial.handle(parginaDosPrev);
@@ -62,7 +61,7 @@ export class SuperDossie {
         );
     
         if (segurado !== -1 || requerimentoAtivo == true) {
-          ArrayImpedimentos.push("CONCESSÃO ANTERIOR -");
+          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
         }
     
         return ArrayImpedimentos;

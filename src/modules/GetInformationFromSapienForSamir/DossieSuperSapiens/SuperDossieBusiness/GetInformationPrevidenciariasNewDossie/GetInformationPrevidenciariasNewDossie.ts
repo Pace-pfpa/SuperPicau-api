@@ -19,7 +19,7 @@ export class DataPrevidenciariasNewDossie{
         tamanhoColunaPrevidenciarias++;
     }
                             
-    for(let p=2; p<tamanhoColunaPrevidenciarias; p++){
+    for(let p=1; p<tamanhoColunaPrevidenciarias; p++){
         if(typeof (getXPathText(parginaDosPrevFormatada,`html/body/div/div[7]/table/tbody/tr[${p}]`)) === 'string'){
         const xpathColunaPrevidenciarias = `html/body/div/div[7]/table/tbody/tr[${p}]`;
         const xpathCoulaFormatadoPrevidenciarias: string = getXPathText(parginaDosPrevFormatada, xpathColunaPrevidenciarias);
