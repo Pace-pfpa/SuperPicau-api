@@ -297,7 +297,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     
 
                 if(response.length == 0){
-                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `SEM IMPEDITIVOS`, tarefaId })
+                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                     response = '';
                     continue 
                 }else{
