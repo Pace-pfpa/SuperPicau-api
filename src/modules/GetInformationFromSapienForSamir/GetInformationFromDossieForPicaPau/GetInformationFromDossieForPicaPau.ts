@@ -30,6 +30,7 @@ export class GetInformationDossieForPicaPau {
             paginaDosprevFormatada
           );
         if (verificarDataFinal) {
+          console.log('emprego?')
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }

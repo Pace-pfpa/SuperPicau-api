@@ -34,9 +34,14 @@ export class GetInformationFromSapienForSamirUseCase {
         let response: string = '';
         let dosprevThisTrue = true;
         try {
-            const tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
+            let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             /* const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.nup }); */
-             
+            let VerificarSeAindExisteProcesso: boolean = true;
+            while(VerificarSeAindExisteProcesso){
+                
+            
+
+
             for (var i = 0; i <= tarefas.length - 1; i++) {
                 console.log("Qantidade faltando triar", (tarefas.length - i));
                 let superDosprevExist = false;
@@ -304,6 +309,12 @@ export class GetInformationFromSapienForSamirUseCase {
                       
 
             }
+            tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
+                if(tarefas.length==0){
+                    VerificarSeAindExisteProcesso = false;
+                }      
+
+            }    
             return await response
         } catch (error) {
             console.log(error);
