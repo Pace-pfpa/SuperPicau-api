@@ -19,6 +19,7 @@ import { MinhaErroPersonalizado } from './helps/ErrorMensage';
 import { json } from 'express';
 import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPicaPau';
 import { getDocumentSislabraFromSapiens } from './GetDocumentSislabraFromSapiens';
+import { getInformationCapa } from './GetInformationCapa';
 
 
 export class GetInformationFromSapienForSamirUseCase {
@@ -163,16 +164,17 @@ export class GetInformationFromSapienForSamirUseCase {
                 const capaFormatada = new JSDOM(capaParaVerificar)
                 //const xPathClasse = "/html/body/div/div[4]/table/tbody/tr[2]/td[1]"
                 const infoClasseExist = await verificarCapaTrue(capaFormatada) 
+                let capa = ""
                 if(!infoClasseExist){
              
                     const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b"
                     const novaNup = getXPathText(capaFormatada, xpathNovaNup)
                     const nupFormatada:string = (novaNup.split('(')[0]).replace(/[./-]/g, "").trim();
-                    const capa = (await getCapaDoPassivaUseCase.execute(nupFormatada, cookie));
+                    capa = (await getCapaDoPassivaUseCase.execute(nupFormatada, cookie));
                     novaCapa = new JSDOM(capa)
                 }else{
                     
-                    const capa = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
+                    capa = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
                     novaCapa = new JSDOM(capa)
                 }
                 
@@ -185,7 +187,10 @@ export class GetInformationFromSapienForSamirUseCase {
                     continue;
                 }
 
-                
+                const informationcapa = await getInformationCapa.ImpedimentosCapa(capa);
+                if(!informationcapa){
+                    response= response + " ADVOGADO FRAUDE -"
+                }
                
 
                 let parginaDosPrev;
@@ -195,7 +200,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     const dosPrevSemIdParaPesquisa = (objectDosPrev.documentoJuntado.componentesDigitais.length) <= 0;
                     if (dosPrevSemIdParaPesquisa) {
                         console.log("DOSPREV COM FALHA NA PESQUISA");
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA - ${etiquetaParaConcatenar}`, tarefaId }))
+                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
                         continue;
                     }
                      
@@ -310,6 +315,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
             }
             tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
+            console.log("tarefassssssssss = " + tarefas.length)
                 if(tarefas.length==0){
                     VerificarSeAindExisteProcesso = false;
                 }      
