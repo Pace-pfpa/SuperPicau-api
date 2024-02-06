@@ -1,4 +1,4 @@
-export  function converterDatasParaDate(texto: string): Date[] {
+export  function converterDatasParaDate(texto: any ): Date[] {
     const regex = /\d{1,2}\/\d{1,2}\/\d{4}/g;
   const matches = texto.match(regex);
 

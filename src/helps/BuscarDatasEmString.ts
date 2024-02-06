@@ -1,4 +1,6 @@
-export function ordenarDatas(str: string): string {
+export function ordenarDatas(str: string): string | boolean {
+  try{
+
     const regex = /(\d{2}\/\d{2}\/\d{4})|(\d{2}\/\d{4})/g; // regex para buscar datas no formato DD/MM/YYYY ou MM/YYYY
     const dates: string[] = [];
   
@@ -19,4 +21,10 @@ export function ordenarDatas(str: string): string {
   
     const d = dates.join(',')
     return d
+
+  }catch(e){
+    console.log('previdenciarias sem data fim')
+    return false
+  }
+    
   }

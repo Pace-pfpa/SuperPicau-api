@@ -63,18 +63,12 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
 
-
-
-
+                
 
                 const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
                 const tcapaFormatada = new JSDOM(tcapaParaVerificar)
-   
-                
+                   
                 const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
-
-
-
 
                 if(tinfoClasseExist){
 
@@ -213,10 +207,17 @@ export class GetInformationFromSapienForSamirUseCase {
                         impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
                         response = response + impedDossie
                     }else{
+                        
                         const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
                         parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-                        
                         parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
+                        const NewDossiewithErro = getXPathText(parginaDosPrevFormatada, '/html/body/div').trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
+                        if(NewDossiewithErro) {
+                            await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })
+                            response = '';
+                            continue 
+                        }
+                        
                         
                         impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
                         response = response + impedDossie
