@@ -13,7 +13,7 @@ export class LitispedenciaNewDossie{
         //console.log("CNJ: ", xpathCNJFormatado)
         //console.log("Processo Judicial: ", xpathProcessoJudicialFormatado)
         //console.log("Litispendência boolean: ",xpathRelacaoProcessoMovidosFormatada);
-        console.log("Litisp. S2: ", xpathRelacaoProcessoMovidosFormatada)
+        //console.log("Litisp. S2: ", xpathRelacaoProcessoMovidosFormatada)
         return xpathRelacaoProcessoMovidosFormatada;
     }
     /*async funcLitis(parginaDosPrevFormatada: any){

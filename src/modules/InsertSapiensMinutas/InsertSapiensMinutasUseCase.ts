@@ -57,7 +57,7 @@ export class InsertSapiensMinutasUseCase {
 
                 if(!processoAfazer){
                     if(processoAFazerPelaNup && processo != undefined){
-                        console.log(tarefas[i].pasta.NUP)
+                        //console.log(tarefas[i].pasta.NUP)
                         for await (let info of minutas){
                             if(info.nup == tarefas[i].pasta.NUP){
                                 processoAfazer = info
@@ -76,7 +76,7 @@ export class InsertSapiensMinutasUseCase {
                     const upload = await uploadDocumentUseCase.execute(cookie, `${nome[0]}${documento_id}MemoriaCalculo.html`, processoAfazer.conteudo, documento_id, tipo_documento);
                     await response.push({ createDocument: createDocument[0], upload });
                     (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `MEMORIA ANEXADA - ${tarefas[i].postIt}`, tarefaId: parseInt(tarefa_id) }));
-                    console.log(tarefas[i])
+                    //console.log(tarefas[i])
                     tidNumber++;
                 }
 

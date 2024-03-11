@@ -5,7 +5,7 @@ import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
 export class InsertSapiensMinutasController {
     constructor(private requestInformationForSamir: InsertSapiensMinutasUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
-        console.log("re chegou")
+        //console.log("re chegou")
         const data: IInserirMemoriaCalculoDTO = request.body;
         try {
             const result = await this.requestInformationForSamir.execute(data);

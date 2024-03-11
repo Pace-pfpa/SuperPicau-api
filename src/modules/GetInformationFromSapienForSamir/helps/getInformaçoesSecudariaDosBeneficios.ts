@@ -24,7 +24,7 @@ export async function getInformaçoesSecudariaDosBeneficios(beneficios: IBenefic
                 if (nb_EstaDiferenteDoBeneficio) {
                     continue
                 }
-                console.log("dasdasdasdjlihuisadijygdjhdgd " + xpathNbDaTabela)
+                //console.log("dasdasdasdjlihuisadijygdjhdgd " + xpathNbDaTabela)
                 const xphatRMI = "/html/body/div/div[" + idexDaDivParaPesquisarAtabela + "]/div[" + indexDaTabela + "]/table[2]/tbody/tr[2]/td[1]"
 
                 const rmi = correçaoDoErroDeFormatoDoSapiens(getXPathText(paginaHTML_DOSPREV_Formatada, xphatRMI))

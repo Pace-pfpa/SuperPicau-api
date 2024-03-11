@@ -1,6 +1,6 @@
 export class RequestGetTarefaNup {
     async executeMerda(idUsuario: string, nup: string ,processoJudicial?: string, qunatidadeDeProcesso?: number): Promise<string> {
-        console.log("ENTROU NESSE")
+        //console.log("ENTROU NESSE")
         let filter = "";
         if(qunatidadeDeProcesso == 0 || qunatidadeDeProcesso == null){
             qunatidadeDeProcesso = 50;

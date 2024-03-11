@@ -19,7 +19,7 @@ export class DatasRequerimentoAtivo{
                     const xpathColunaRequerimentos = `/html/body/div/div[3]/table/tbody/tr[${t}]`;
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
                     if(xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1){
-                        console.log("ENTROU")
+                        //console.log("ENTROU")
                         return true;
                     }
                 }

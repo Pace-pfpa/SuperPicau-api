@@ -22,7 +22,7 @@ export class RequestGetTarefa {
         if((!(etiqueta == null || etiqueta == "")) || !(processoJudicial == null || processoJudicial == "")){
             filter =`"gridfilter":[${processoJudicial}${(etiqueta != "" && processoJudicial != "")? "," : ""} ${etiqueta}],`
         }
-        console.log(filter)
+        //console.log("RequestGetTarefas",filter)
         const getTarefa = `{
             "action": "SapiensAdministrativo_Tarefa",
             "method": "getTarefa",

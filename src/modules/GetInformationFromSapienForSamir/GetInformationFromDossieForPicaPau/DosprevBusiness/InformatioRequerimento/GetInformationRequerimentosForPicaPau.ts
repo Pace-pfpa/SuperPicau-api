@@ -19,7 +19,7 @@ export class DatasRequerimento{
         }
         //console.log("Tamanho Coluna: " + tamanhoColunasRequerimentos);
         /* if(parginaDosPrev.indexOf("Não foram encontrados requerimentos em nome do autor.") != -1){
-            console.log("ENTROU AQUI")
+           
             return [];
             
         } */

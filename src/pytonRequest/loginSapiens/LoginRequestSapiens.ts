@@ -46,7 +46,7 @@ export class RequestLoginSapiens {
             "_password": `${this.login.senha}`,
             "_submit": 'Login',
         };
-        console.log(querystring.stringify(dictPost))
+        //console.log(querystring.stringify(dictPost))
         const request = await this.sessao.post(`${this.extesionUrlSapiens_loginCheck}`, (dictPost), { headers: this.headers });
         const cookiesLogado = request.headers["set-cookie"];
         // console.log("request: " + request.data);

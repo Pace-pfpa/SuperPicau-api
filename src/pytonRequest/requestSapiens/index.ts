@@ -7,6 +7,7 @@ import { requestSapiens } from './requestSapiens';
 
 export async function RequestSapiens(coockie: string, operation:string): Promise<any> {
     const response = await requestSapiens(coockie,operation); 
+    //console.log("RequestSapiens: ", response[0].result.records )
     return response[0].result.records;
 }
 // async function requestSapiens(cookie: string, payload: string ): Promise<any>{

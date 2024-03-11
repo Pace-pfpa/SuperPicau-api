@@ -15,9 +15,13 @@ export async function LoginSapiens(login: ILoginDTO): Promise<string> {
     // const childPython = spawn("python", ["--version"])
     const childPython = spawn(CMD_Python, ["./python/loginPython.py", login.cpf, login.senha])
     let dataPython;
+       
     return new Promise(function (resolve, reject) {
+        
         childPython.stdout.on("data", (data) => {
-            dataPython = (`${data}`).replace("\r\n", "");
+            dataPython = (`${data}`).replace("\r\n", "")
+           
+            //dataPython = extraitoken (data);
         })
         childPython.stderr.on("data", (data) => {
             console.log(`${data} login`);
@@ -31,3 +35,8 @@ export async function LoginSapiens(login: ILoginDTO): Promise<string> {
 
 }
 
+/*export async function extraitoken (data) {
+    let elements;
+    elements = (`${data}`).replace("\r\n", "").slice(1, -1).split(',');
+    return elements.map(element => element.trim().replace(/'/g, ''));
+}*/

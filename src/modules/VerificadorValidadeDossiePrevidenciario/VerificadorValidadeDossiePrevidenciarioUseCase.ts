@@ -27,10 +27,10 @@ export class VerificadorValidadeDossiePrevidenciarioUseCase {
             const etiquetaInvalida = data.etiqueta.includes("PROCESSO") || data.etiqueta.includes("DOSPREV")
 
             if (etiquetaInvalida) {
-                console.log(etiquetaInvalida)
+                //console.log(etiquetaInvalida)
                 reject(new Error("etiqueta não pode ter as palavras PROCESSO e/ou DOSPREV"))
             }
-            console.log("data.etiqueta", data.etiqueta, "usuario_id", usuario_id);
+            //console.log("data.etiqueta", data.etiqueta, "usuario_id", usuario_id);
             const qunatidadeDeProcesso = 50;
             var tarefas: any[]
             do {
@@ -76,7 +76,7 @@ export class VerificadorValidadeDossiePrevidenciarioUseCase {
 
                     const xpathInformacaoDeCabeçalho = "/html/body/div/p[2]/b[1]"
                     const informacaoDeCabeçalho = getXPathText(parginaDosPrevFormatada, xpathInformacaoDeCabeçalho);
-                    console.log("informacaoDeCabeçalho", informacaoDeCabeçalho)
+                    //console.log("informacaoDeCabeçalho", informacaoDeCabeçalho)
                     const informacaoDeCabeçalhoNaoExiste = !informacaoDeCabeçalho;
                     if (informacaoDeCabeçalhoNaoExiste) {
                         console.log("DOSPREV FORA DO PRAZO DO PRAZO DE VALIDADE");

@@ -11,7 +11,7 @@ export class UploadDocumentUseCase {
         const data = conteudo;
         return await axios.post(baseURL, data, {headers}).then(response =>{
             console.log(response.status)
-            console.log(response.data)
+            //console.log(response.data)
             return response.status;
         }).catch(error =>{
             console.log(error)

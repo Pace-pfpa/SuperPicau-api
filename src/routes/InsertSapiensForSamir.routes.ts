@@ -36,7 +36,7 @@ export const routerInsertSapiens = Router();
 routerInsertSapiens.post("/insertMinutas", async (req, res) => {
     return insertSapiensMinutasController.handle(req, res);
 })
-console.log("fdsfsdfscvvc")
+
  
 /**
  * @swagger

@@ -64,9 +64,11 @@ class Access_sapiens:
                 dict_cookie = f'{str(cookie_name_2)}={str(cookie_value_2)}'
                 return True, dict_cookie
             else:
-                return False, 'Houve um problema na tentativa de captar o cookie de acesso. Tente novamente!'
+                return False, 'Erro Login'
+                #return False, 'Houve um problema na tentativa de captar o cookie de acesso. Tente novamente!'
         else:
-            return False, 'Acesso negado, verifique se o CPF e a senha estão corretos!'
+            return False, 'Acesso negado'
+            #return False, 'Acesso negado. Verifique se o CPF e a senha estão corretos!'
 
 
     def get_tid(self):
@@ -88,4 +90,4 @@ if __name__ == '__main__':
     tuple_cookie = acesso.cookie
     #tuple_cookie = str(sys.argv[1])
     print(tuple_cookie[1])
-   
+    #print(tuple_cookie)

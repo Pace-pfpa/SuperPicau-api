@@ -19,7 +19,7 @@ export class RequestInformationForSamir {
         const tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta, processoJudicial: data.minutas[0].numeroprocesso })
 
         const processo: string = tarefas[0].pasta.processoJudicial.numero;
-        console.log(processo, tarefas.length);
+        //console.log(processo, tarefas.length);
         const tarefa_id = `${tarefas[0].id}`;
         const pasta_id = `${tarefas[0].pasta.id}`;
         const processo_setor = `${tarefas[0].setorResponsavel_id}`

@@ -18,7 +18,7 @@ export class GetInformationDossieForPicaPau {
     try {
       const DatasAtualEMenosDezesseis: Array<Date> =
         await requerimentos.dataRequerimento(paginaDosprevFormatada); 
-        console.log("data atual menos dezesseis: ", DatasAtualEMenosDezesseis)
+      //console.log("data atual menos dezesseis: ", DatasAtualEMenosDezesseis)
       //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
       if (DatasAtualEMenosDezesseis[0] == null) {
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
@@ -31,7 +31,7 @@ export class GetInformationDossieForPicaPau {
           );
           
         if (verificarDataFinal) {
-          console.log('emprego?')
+          //console.log('emprego?')
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }
@@ -53,7 +53,7 @@ export class GetInformationDossieForPicaPau {
     const verificarLitispedencia = await litispendencia.funcLitis(
       paginaDosprevFormatada
     );
-    console.log("litispendencia se false: ", verificarLitispedencia)
+    //console.log("litispendencia se false: ", verificarLitispedencia)
     if (!verificarLitispedencia) {
       ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -";
     }
