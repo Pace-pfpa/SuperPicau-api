@@ -10,6 +10,7 @@ export class GetArvoreDocumentoController {
             const result = await this.requestInformationForSamir.execute(data);
             response.status(200).json(result);
         } catch (error) {
+            console.log("Arvore de documento não foi recebida: ");
             return response.status(400).json({
                 message: error.message || "Unexpected error"
             });

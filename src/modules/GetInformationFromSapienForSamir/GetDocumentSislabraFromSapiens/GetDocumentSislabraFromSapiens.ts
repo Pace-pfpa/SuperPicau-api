@@ -18,9 +18,9 @@ export class GetDocumentSislabraFromSapiens{
         
         const GetEmpregoSislabra = await getEmpregoSislabra(paginaformatada);
         if(GetEmpregoSislabra && indentificadorDocumento == 'AUTOR'){
-            response = response + " EMPREGO SISLABRA AUTOR -"
+            response = response + " EMPREGO AUTOR -"
         }else if(GetEmpregoSislabra && indentificadorDocumento == 'CONJUGE'){
-            response = response + " EMPREGO SISLABRA CONJUGE -"
+            response = response + " EMPREGO CONJUGE -"
         }
 
         const GetImoveisRuraisSislabra = await getImoveisRurais(paginaformatada);
@@ -34,6 +34,7 @@ export class GetDocumentSislabraFromSapiens{
 
 
        }catch(e){
+            console.log ("ERRO AO LE O SISLABRA AUTOR")
          return `ERRO AO LE O SISLABRA AUTOR`
        }
         

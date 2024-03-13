@@ -20,11 +20,11 @@ import { json } from 'express';
 import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPicaPau';
 import { getDocumentSislabraFromSapiens } from './GetDocumentSislabraFromSapiens';
 import { getInformationCapa } from './GetInformationCapa';
-
-
+import { compararNup } from "./helps/ComparaNUP";
 export class GetInformationFromSapienForSamirUseCase {
-
+    
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
+        
         const cookie = await loginUseCase.execute(data.login);
         const usuario = (await getUsuarioUseCase.execute(cookie));
         let impedDossie: string  = '';
@@ -34,29 +34,40 @@ export class GetInformationFromSapienForSamirUseCase {
         var objectDosPrev
         let response: string = '';
         let dosprevThisTrue = true;
+        let nupInicio = undefined;
+        let nupFim = undefined;
         try {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
+            
+            nupInicio = tarefas[0].pasta.NUP
+            console.log("NupInicio: ",nupInicio)
+            
             /* const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.nup }); */
             let VerificarSeAindExisteProcesso: boolean = true;
             while(VerificarSeAindExisteProcesso){
                             
                 for (var i = 0; i <= tarefas.length - 1; i++) {
                     console.log("Qantidade faltando triar", (tarefas.length - i));
+                    
                     let superDosprevExist = false;
                     const tarefaId = tarefas[i].id;
                     const etiquetaParaConcatenar = tarefas[i].postIt
                     const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
                     let arrayDeDocumentos: ResponseArvoreDeDocumento[];
+                    
 
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
+                        let comparaNup = compararNup(tarefas[0].pasta.NUP,tarefas[i].pasta.NUP)
+                        
+///                        
                     } catch (error) {
-                        console.log(error);
+                        console.log("Erro ao aplicar getArvoreDocumentoUseCase!!!!");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
                         continue
                     }
 
-
+//
 
 
 
@@ -318,8 +329,13 @@ export class GetInformationFromSapienForSamirUseCase {
                 tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
                 console.log("Etiqueta: ", data.etiqueta )
                 console.log("tarefassssssssss = " + tarefas.length)
+                
                     if(tarefas.length==0){
                         VerificarSeAindExisteProcesso = false;
+                    }else{
+                        if(compararNup){
+                            VerificarSeAindExisteProcesso = false;
+                        }
                     }      
 
             }    
