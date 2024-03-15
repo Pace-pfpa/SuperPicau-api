@@ -33,10 +33,10 @@ export class GetDocumentSislabraFromSapiens{
 
         const GetEmpresaSislabra = await getEmpresa(paginaformatada)
         if(GetEmpresaSislabra && indentificadorDocumento == 'AUTOR'){
-            console.log("GetEmpresaSislabra: ", GetEmpresaSislabra)
+            //console.log("GetEmpresaSislabra: ", GetEmpresaSislabra)
             response = response + " EMPRESA AUTOR -"
         }else if(GetEmpresaSislabra && indentificadorDocumento == 'CONJUGE'){
-            console.log("GetEmpresaSislabra: ", GetEmpresaSislabra)
+            //console.log("GetEmpresaSislabra: ", GetEmpresaSislabra)
             response = response + " EMPRESA CONJUGE -"
         }
 

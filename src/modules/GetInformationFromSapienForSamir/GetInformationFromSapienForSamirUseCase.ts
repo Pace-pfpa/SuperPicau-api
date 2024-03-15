@@ -244,9 +244,9 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                     const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
                         const nomeMovimentacao = Documento.movimento;
-                        //console.log(" ")  
-                        //console.log("Documento: ", Documento);     
                         const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
+                        //const name2 = nomeMovimentacao.indexOf("nova string");
+                        //if(name !=-1 || name2 !=-1)
                         if(name != -1){
                             return Documento
 
