@@ -58,7 +58,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
-                        let comparaNup = compararNup(tarefas[0].pasta.NUP,tarefas[i].pasta.NUP)
+                        let comparaNup = compararNup(nupInicio,tarefas[i].pasta.NUP)
                         
 ///                        
                     } catch (error) {
@@ -111,7 +111,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
                         const capaFormatada = new JSDOM(capaParaVerificar)
                         const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b"
-                        const novaNup = getXPathText(capaFormatada, xpathNovaNup)
+                        const novaNup = await getXPathText(capaFormatada, xpathNovaNup)
                         const novoObjectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: novaNup, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
                         try { 
                             const novaNupTratada = novaNup.split("(")[0].trim().replace(/[-/.]/g, "")
@@ -170,7 +170,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     if(!infoClasseExist){
                 
                         const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b"
-                        const novaNup = getXPathText(capaFormatada, xpathNovaNup)
+                        const novaNup = await getXPathText(capaFormatada, xpathNovaNup)
                         const nupFormatada:string = (novaNup.split('(')[0]).replace(/[./-]/g, "").trim();
                         capa = (await getCapaDoPassivaUseCase.execute(nupFormatada, cookie));
                         novaCapa = new JSDOM(capa)
@@ -219,7 +219,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
                             parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
                             parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
-                            const NewDossiewithErro = getXPathText(parginaDosPrevFormatada, '/html/body/div').trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
+                            const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
                             if(NewDossiewithErro) {
                                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })
                                 response = '';
@@ -335,7 +335,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     }else{
                         if(compararNup){
                             VerificarSeAindExisteProcesso = false;
-                        }
+                        }else{VerificarSeAindExisteProcesso = true; }
                     }      
 
             }    

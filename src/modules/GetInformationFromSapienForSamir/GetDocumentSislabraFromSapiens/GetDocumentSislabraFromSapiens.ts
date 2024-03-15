@@ -2,6 +2,7 @@ import { getEmpregoSislabra } from "./SislabraBusiness/GetEmpregoSislabra";
 import { getImoveisRurais } from "./SislabraBusiness/GetImoveisRuraisSislabra";
 import { getImoveis } from "./SislabraBusiness/GetImoveisSp";
 import { getVeiculos } from "./SislabraBusiness/GetVeiculosSislabra";
+import { getEmpresa } from "./SislabraBusiness/GetEmpresaSislabra";
 
 
 export class GetDocumentSislabraFromSapiens{
@@ -28,6 +29,15 @@ export class GetDocumentSislabraFromSapiens{
             response = response + " IMOVEIS RURAIS AUTOR -"
         }else if(GetImoveisRuraisSislabra && indentificadorDocumento == 'CONJUGE'){
             response = response + " IMOVEIS RURAIS CONJUGE -"
+        }
+
+        const GetEmpresaSislabra = await getEmpresa(paginaformatada)
+        if(GetEmpresaSislabra && indentificadorDocumento == 'AUTOR'){
+            console.log("GetEmpresaSislabra: ", GetEmpresaSislabra)
+            response = response + " EMPRESA AUTOR -"
+        }else if(GetEmpresaSislabra && indentificadorDocumento == 'CONJUGE'){
+            console.log("GetEmpresaSislabra: ", GetEmpresaSislabra)
+            response = response + " EMPRESA CONJUGE -"
         }
 
         return response
