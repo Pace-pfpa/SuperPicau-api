@@ -17,7 +17,7 @@ export class GetArvoreDocumentoUseCase {
         return await axios.get(baseURL, {headers}).then(response =>{
             //console.log(response.status)
             //console.log(response.data)
-            console.log("Entrou em GetArvoreDocumentoUseCase")
+            
             return response.data;
         }).catch(error =>{
             console.log(error)

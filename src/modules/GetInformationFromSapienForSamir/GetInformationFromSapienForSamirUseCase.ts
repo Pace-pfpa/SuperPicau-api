@@ -101,7 +101,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }
                             }else{
                                 dosprevThisTrue = false;
-                                response = response + " DOSPREV NÃO EXISTE"
+                                response = response + " DOSPREV NÃO EXISTE -"
                             }
                             
 
@@ -127,7 +127,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                                 if(objectDosPrev == undefined && objectDosPrev2 == undefined){
-                                    (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
+                                    (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO -", tarefaId }));
                                     continue
                                 }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
                                     objectDosPrev = objectDosPrev2;
@@ -139,10 +139,10 @@ export class GetInformationFromSapienForSamirUseCase {
                                     }
                                 }
                                 dosprevThisTrue = false;
-                                response = response + ' ERRO AO LÊ NOVO DOSPREV - '
+                                response = response + ' ERRO AO LÊ NOVO DOSPREV -'
                             }else{
                                 dosprevThisTrue = false;
-                                response = response + " DOSPREV NÃO EXISTE"
+                                response = response + " DOSPREV NÃO EXISTE -"
                             }
                                 
 
@@ -185,7 +185,7 @@ export class GetInformationFromSapienForSamirUseCase {
                 
                     const cpfCapa = buscarTableCpf(novaCapa);
                     if(!cpfCapa){
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF NÃO ENCONTRADO`, tarefaId }))
+                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO -`, tarefaId }))
                         continue;
                     }
 
