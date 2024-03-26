@@ -14,11 +14,17 @@ export class CalcularIdade{
         /* console.log("Tipo " + typeof(generoFormatado))
         console.log("Genero:" + generoFormatado + "Genero:");
         console.log("Verificar Vazio: " + (generoFormatado.length == 0)) */
+        if(generoFormatado ==  null){
+            console.log("entrou genero vazio")
+            return []
+            
+        }
         if(generoFormatado.length == 0){
             console.log("entrou genero vazio")
             return []
             
         }
+        
         let dataAjuizArray = dataAjuizFormatado.split("/");
         let year = parseFloat(dataAjuizArray[2])
         let month = parseFloat(dataAjuizArray[1])
