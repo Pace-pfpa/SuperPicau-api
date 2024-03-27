@@ -94,7 +94,8 @@ export class GetInformationFromSapienForSamirUseCase {
                                     objectDosPrev = objectDosPrev2;
                                     superDosprevExist = true;
                                 }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
-                                    if(objectDosPrev.numeracaoSequencial < objectDosPrev2.numeracaoSequencial){
+                                   
+                                    if(objectDosPrev.numeracaoSequencial <= objectDosPrev2.numeracaoSequencial){
                                         objectDosPrev = objectDosPrev2;
                                         superDosprevExist = true;
                                     }
@@ -104,7 +105,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 response = response + " DOSPREV NÃO EXISTE -"
                             }
                             
-
+                            
 
                     } else{
                         
@@ -207,6 +208,9 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
                         
                         if(!superDosprevExist){
+
+                            //vericacao para saber se foi gerado o super dossie
+                            
                             const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
                             parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
 
@@ -216,9 +220,17 @@ export class GetInformationFromSapienForSamirUseCase {
                             response = response + impedDossie
                         }else{
                             
+                            
+
+                            
                             const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
                             parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
                             parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
+
+                            const verifarSeFoiGerado = (getXPathText(parginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
+                            if(verifarSeFoiGerado) continue
+
+
                             const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
                             if(NewDossiewithErro) {
                                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })

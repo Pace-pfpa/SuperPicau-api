@@ -16,7 +16,6 @@ export class SuperDossie {
         AgeDossie: boolean
       ): Promise<string> {
         let ArrayImpedimentos: string = '';
-    
         try {
           const DatasAtualEMenosDezesseis: Array<Date> =
             await datasRequerimentoNewDossie.dataRequerimento(paginaDosprevFormatada)

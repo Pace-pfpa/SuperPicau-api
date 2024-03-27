@@ -32,7 +32,6 @@ export class DatasRequerimentoNewDossie{
                         arrayDatas.push(...date);
                     }
                 }
-                console.log("noif")
             }
             const dataAtual = encontrarDataMaisAtual(arrayDatas);
             const dataMenosdezesseis = SubtrairAnoMaisAtual(dataAtual, -16);

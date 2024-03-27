@@ -14,6 +14,7 @@ export class CalcularIdade{
         /* console.log("Tipo " + typeof(generoFormatado))
         console.log("Genero:" + generoFormatado + "Genero:");
         console.log("Verificar Vazio: " + (generoFormatado.length == 0)) */
+        console.log("generoFormatado: ",generoFormatado)
         if(generoFormatado ==  null){
             console.log("entrou genero vazio")
             return []

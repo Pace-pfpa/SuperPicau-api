@@ -13,6 +13,12 @@ export class CalcularIdadeNewDossie{
         /* console.log("Tipo " + typeof(generoFormatado))
         console.log("Genero:" + generoFormatado + "Genero:");
         console.log("Verificar Vazio: " + (generoFormatado.length == 0)) */
+        
+        if(generoFormatado == null){
+            console.log("entrou idade null")
+            return []
+            
+        }
         if(generoFormatado.length == 0){
             console.log("entrou idade vazia")
             return []
