@@ -55,7 +55,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
                     let arrayDeDocumentos: ResponseArvoreDeDocumento[];
                     
-
+//SOLICITA ARVORE DE DOCUMENTOS
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
                         let comparaNup = compararNup(nupInicio,tarefas[i].pasta.NUP)
@@ -72,16 +72,19 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                     
-
+//CAPA DO PROCESSO
                     const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
                     const tcapaFormatada = new JSDOM(tcapaParaVerificar)
                     
                     const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
-
+//SE POSSUIR INFORMAÇÃO DE CLASSE
                     if(tinfoClasseExist){
+//DOSPREV
 
                             objectDosPrev = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
+//SE EXISTIR NA ARVORE DE DOCUMENTOS COM SIGLA DOSPREV
                             if(objectDosPrev){
+                                //SE EM  MOVIMENTO EXISTIR O TEXTO "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF", IDENTIFICAR COMO DOSPREV2, OUSEJA É O NEWDOSSIE
                                 var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
                                     const movimento = (Documento.movimento).split(".");
                                     return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
@@ -93,12 +96,15 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
                                     objectDosPrev = objectDosPrev2;
                                     superDosprevExist = true;
+                                    
                                 }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
                                    
                                     if(objectDosPrev.numeracaoSequencial <= objectDosPrev2.numeracaoSequencial){
                                         objectDosPrev = objectDosPrev2;
                                         superDosprevExist = true;
+                                        
                                     }
+                                    
                                 }
                             }else{
                                 dosprevThisTrue = false;
@@ -228,7 +234,12 @@ export class GetInformationFromSapienForSamirUseCase {
                             parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
 
                             const verifarSeFoiGerado = (getXPathText(parginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
-                            if(verifarSeFoiGerado) continue
+                            console.log("verficarSeFoiGerado: "+verifarSeFoiGerado)
+                            if(verifarSeFoiGerado) {
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: " Falha ao gerar Super DOSPREV ", tarefaId });
+                                //response = response + " Falha ao gerar Super DOSPREV ";
+                                continue
+                            }
 
 
                             const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
