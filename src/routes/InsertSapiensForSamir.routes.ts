@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { insertSapiensMinutasController } from "../modules/InsertSapiensMinutas";
 import { loginController } from "../modules/LoginUsuario";
+import { getUsuarioController } from "../modules/GetUsuario";
+import { getTarefaController } from "../modules/GetTarefa";
+import { getArvoreDocumentoController } from "../modules/GetArvoreDocumento";
+import { updateEtiquetaController } from "../modules/UpdateEtiqueta";
+import { getCapaDoPassivaController } from "../modules/GetCapaDoPassiva";
 
 //const sessao = request.session();
 
@@ -68,3 +73,37 @@ routerInsertSapiens.post("/insertMinutas", async (req, res) => {
 routerInsertSapiens.post("/login", async (req, res) => {
     return loginController.handle(req, res);
 })
+
+routerInsertSapiens.post("/getUsuarioController", async (req, res) => {
+    return getUsuarioController.handle(req, res);
+})
+
+routerInsertSapiens.post("/getTarefaController", async (req, res) => {
+    return getTarefaController.handle(req, res);
+})
+
+routerInsertSapiens.post("/getArvoreDocumentoController", async (req, res) => {
+    return getArvoreDocumentoController.handle(req, res);
+})
+
+routerInsertSapiens.post("/updateEtiqueta", async (req, res) => {
+    return updateEtiquetaController.handle(req, res);
+})
+
+routerInsertSapiens.post("/getCapaDoPassivaController", async (req, res) => {
+    return getCapaDoPassivaController.handle(req, res);
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+

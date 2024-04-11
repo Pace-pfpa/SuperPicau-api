@@ -15,8 +15,6 @@ import { getCapaDoPassivaUseCase } from '../GetCapaDoPassiva';
 import { verificarCapaTrue } from './helps/verificarCapaTrue';
 import { buscarTableCpf } from './helps/procurarTableCpf';
 import { superDossie } from './DossieSuperSapiens';
-import { MinhaErroPersonalizado } from './helps/ErrorMensage';
-import { json } from 'express';
 import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPicaPau';
 import { getDocumentSislabraFromSapiens } from './GetDocumentSislabraFromSapiens';
 import { getInformationCapa } from './GetInformationCapa';
@@ -36,6 +34,7 @@ export class GetInformationFromSapienForSamirUseCase {
         let dosprevThisTrue = true;
         let nupInicio = undefined;
         let nupFim = undefined;
+        let erros = {};
         try {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             
@@ -44,27 +43,25 @@ export class GetInformationFromSapienForSamirUseCase {
             
             /* const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.nup }); */
             let VerificarSeAindExisteProcesso: boolean = true;
-            while(VerificarSeAindExisteProcesso){
                             
-                for (var i = 0; i <= tarefas.length - 1; i++) {
-                    console.log("Qantidade faltando triar", (tarefas.length - i));
+                
                     
                     let superDosprevExist = false;
-                    const tarefaId = tarefas[i].id;
-                    const etiquetaParaConcatenar = tarefas[i].postIt
-                    const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
+                    const tarefaId = data.tarefa.id;
+                    const etiquetaParaConcatenar = data.tarefa.postIt
+                    const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: data.tarefa.pasta.NUP, chave: data.tarefa.pasta.chaveAcesso, cookie, tarefa_id: data.tarefa.id }
                     let arrayDeDocumentos: ResponseArvoreDeDocumento[];
                     
 //SOLICITA ARVORE DE DOCUMENTOS
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
-                        let comparaNup = compararNup(nupInicio,tarefas[i].pasta.NUP)
+                        let comparaNup = compararNup(nupInicio,data.tarefa.pasta.NUP)
                         
 ///                        
                     } catch (error) {
                         console.log("Erro ao aplicar getArvoreDocumentoUseCase!!!!");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
-                        continue
+                        return {warning: "DOSPREV COM FALHA NA PESQUISA"}
                     }
 
 //
@@ -73,9 +70,9 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
 //CAPA DO PROCESSO
-                    const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
+                    const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
                     const tcapaFormatada = new JSDOM(tcapaParaVerificar)
-                    
+
                     const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
 //SE POSSUIR INFORMAÇÃO DE CLASSE
                     if(tinfoClasseExist){
@@ -92,7 +89,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 
                                 if(objectDosPrev == undefined && objectDosPrev2 == undefined){
                                     (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
-                                    continue
+                                    return {warning: "DOSPREV NÃO ENCONTRADO"}
                                 }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
                                     objectDosPrev = objectDosPrev2;
                                     superDosprevExist = true;
@@ -115,11 +112,11 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     } else{
                         
-                        const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
+                        const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
                         const capaFormatada = new JSDOM(capaParaVerificar)
                         const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b"
                         const novaNup = await getXPathText(capaFormatada, xpathNovaNup)
-                        const novoObjectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: novaNup, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
+                        const novoObjectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: novaNup, chave: data.tarefa.pasta.chaveAcesso, cookie, tarefa_id: data.tarefa.id }
                         try { 
                             const novaNupTratada = novaNup.split("(")[0].trim().replace(/[-/.]/g, "")
                             novoObjectGetArvoreDocumento.nup = novaNupTratada
@@ -135,7 +132,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                                 if(objectDosPrev == undefined && objectDosPrev2 == undefined){
                                     (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO -", tarefaId }));
-                                    continue
+                                    return {warning: "DOSPREV NÃO ENCONTRADO"}
                                 }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
                                     objectDosPrev = objectDosPrev2;
                                     superDosprevExist = true;
@@ -157,7 +154,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         } catch (error) {
                             console.log(error);
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
-                            continue
+                            return {warning: "DOSPREV COM FALHA NA GERAÇAO"}
                         }
                     }
 
@@ -169,7 +166,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     
 
                     //Verificar a capa caso exista outra capa com os dados necessários
-                    const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
+                    const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
                     const capaFormatada = new JSDOM(capaParaVerificar)
                     //const xPathClasse = "/html/body/div/div[4]/table/tbody/tr[2]/td[1]"
                     const infoClasseExist = await verificarCapaTrue(capaFormatada) 
@@ -183,7 +180,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         novaCapa = new JSDOM(capa)
                     }else{
                         
-                        capa = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
+                        capa = (await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie));
                         novaCapa = new JSDOM(capa)
                     }
                     
@@ -193,7 +190,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     const cpfCapa = buscarTableCpf(novaCapa);
                     if(!cpfCapa){
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO -`, tarefaId }))
-                        continue;
+                        return {erro: ` CPF NÃO ENCONTRADO -`}
                     }
 
                     const informationcapa = await getInformationCapa.ImpedimentosCapa(capa);
@@ -210,7 +207,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         if (dosPrevSemIdParaPesquisa) {
                             console.log("DOSPREV COM FALHA NA PESQUISA");
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
-                            continue;
+                            return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }
                         
                         if(!superDosprevExist){
@@ -236,9 +233,9 @@ export class GetInformationFromSapienForSamirUseCase {
                             const verifarSeFoiGerado = (getXPathText(parginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
                             console.log("verficarSeFoiGerado: "+verifarSeFoiGerado)
                             if(verifarSeFoiGerado) {
-                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: " Falha ao gerar Super DOSPREV ", tarefaId });
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: "Falha ao gerar Super DOSPREV ", tarefaId });
                                 //response = response + " Falha ao gerar Super DOSPREV ";
-                                continue
+                                return {warning: "Falha ao gerar Super DOSPREV"}
                             }
 
 
@@ -246,7 +243,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             if(NewDossiewithErro) {
                                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })
                                 response = '';
-                                continue 
+                                return {warning: `Falha ao gerar dossiê super sapiens`}
                             }
                             
                             
@@ -331,43 +328,30 @@ export class GetInformationFromSapienForSamirUseCase {
                     }
                     
                     
-                    
+                    console.log("RESPONSEEEEEEE")
+                    console.log(response)
                     
 
                         
 
                     if(response.length == 0){
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
-                        response = '';
-                        continue 
+                        return {impeditivos: ''} 
                     }else{
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
-                        response = '';
-                        continue  
+                        console.log("RESPONSEEEE")
+                        console.log(response)
+                        return {impeditivos: response}  
                     }
                     
                         
+   
 
-                }
-                tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
-                console.log("Etiqueta: ", data.etiqueta )
-                console.log("tarefassssssssss = " + tarefas.length)
-                
-                    if(tarefas.length==0){
-                        VerificarSeAindExisteProcesso = false;
-                    }else{
-                        if(compararNup){
-                            VerificarSeAindExisteProcesso = false;
-                        }else{VerificarSeAindExisteProcesso = true; }
-                    }      
-
-            }    
-            return await response
         } catch (error) {
             console.log(error);
             //console.log(response.length)
             if (response.length > 0) {
-                return response
+                return {error: "error"}
             }
             else {
                 return error;

@@ -4,8 +4,7 @@ import { GetTarefaUseCase } from './GetTarefaUseCase';
 export class GetTarefaController {
     constructor(private GetUsuarioUseCase: GetTarefaUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
-        const { cookie, etiqueta } = request.body;
-        const {usuario_id} = request.params;
+        const { cookie, etiqueta, usuario_id } = request.body;
         try {
             const result = await this.GetUsuarioUseCase.execute({cookie, usuario_id, etiqueta});
             response.status(200).json(result);
