@@ -284,7 +284,10 @@ export class GetInformationFromSapienForSamirUseCase {
                             }
                         }
                     });
-                    
+
+                    let sislabraAutorESislabraConjugeNoExistem = false;
+
+
                     if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
                         const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
                         const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
@@ -325,6 +328,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         response = response + sislabraConjuge
                     }else{
                         response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+                        sislabraAutorESislabraConjugeNoExistem = true;
                     }
                     
                     
@@ -332,16 +336,20 @@ export class GetInformationFromSapienForSamirUseCase {
                     console.log(response)
                     
 
-                        
-
+                    
+                    console.log(response)
                     if(response.length == 0){
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
-                        return {impeditivos: ''} 
+                        return {impeditivos: true} 
                     }else{
+                        if(response == " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"){
+                            await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
+                            return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
+                        }
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
                         console.log("RESPONSEEEE")
                         console.log(response)
-                        return {impeditivos: response}  
+                        return {impeditivos: true}  
                     }
                     
                         
