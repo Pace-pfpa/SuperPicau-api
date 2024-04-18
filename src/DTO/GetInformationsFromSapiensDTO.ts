@@ -5,6 +5,7 @@ export interface IGetInformationsFromSapiensDTO {
     etiqueta: string;
     tarefa: any
     readDosprevAge: boolean;
+    loas: boolean
 }
 
 

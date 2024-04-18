@@ -19,6 +19,9 @@ import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPic
 import { getDocumentSislabraFromSapiens } from './GetDocumentSislabraFromSapiens';
 import { getInformationCapa } from './GetInformationCapa';
 import { compararNup } from "./helps/ComparaNUP";
+import { LoasDossieUseCase } from './loas/LoasDossieUseCase';
+import { LoasSuperDossieUseCase } from './loas/LoasSuperDossieUseCase ';
+import { loasDossieUseCase, loasSuperDossieUseCase } from './loas';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -221,6 +224,16 @@ export class GetInformationFromSapienForSamirUseCase {
 
                             impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
                             response = response + impedDossie
+                            console.log(data.loas)
+                            console.log('1')
+                            if(data.loas){
+                                const loasDissieNormal = await loasDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
+                                if(loasDissieNormal instanceof Error){
+                                    response = response + " erro estabelecimento -"
+                                }else if(loasDissieNormal){
+                                    response = response + " RESTABELECIMENTO -"
+                               }
+                            }
                         }else{
                             
                             
@@ -236,6 +249,15 @@ export class GetInformationFromSapienForSamirUseCase {
                                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: "Falha ao gerar Super DOSPREV ", tarefaId });
                                 //response = response + " Falha ao gerar Super DOSPREV ";
                                 return {warning: "Falha ao gerar Super DOSPREV"}
+                            }
+
+                            if(data.loas){
+                               const loasSuperDossie = await loasSuperDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
+                                if(loasSuperDossie instanceof Error){
+                                    response = response + " erro estabelecimento -"
+                                }else if(loasSuperDossie){
+                                    response = response + " RESTABELECIMENTO -"
+                               }
                             }
 
 
@@ -331,6 +353,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         sislabraAutorESislabraConjugeNoExistem = true;
                     }
                     
+                  
                     
                     console.log("RESPONSEEEEEEE")
                     console.log(response)
