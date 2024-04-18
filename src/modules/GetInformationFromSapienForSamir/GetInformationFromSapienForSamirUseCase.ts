@@ -224,8 +224,6 @@ export class GetInformationFromSapienForSamirUseCase {
 
                             impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
                             response = response + impedDossie
-                            console.log(data.loas)
-                            console.log('1')
                             if(data.loas){
                                 const loasDissieNormal = await loasDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
                                 if(loasDissieNormal instanceof Error){

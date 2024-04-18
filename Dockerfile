@@ -2,7 +2,7 @@ FROM node:18
 
 WORKDIR /user/src/app
 COPY . .
-RUN apt update && apt upgrade
+RUN apt update && apt upgrade -y
 RUN apt install -y python3 python3-pip
 
 
