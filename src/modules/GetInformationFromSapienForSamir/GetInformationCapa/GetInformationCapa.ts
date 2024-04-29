@@ -32,7 +32,10 @@ export class GetInformationCapa{
         "GUTEMBERG BARROS DE ANDRADE",
         "JOÃO PAULO DE LIMA SILVA",
         "RAIMUNDO MAURICIO PINTO JUNIOR",
-        "GEORGE STHEFANE PIMENTA DA SILVA"];
+        "GEORGE STHEFANE PIMENTA DA SILVA",
+        "CAROLINE RODRIGUES MOREIRA",
+        "DALTON HUGOLINO ARRUDA",
+        "DIOGO ARRUDA DE SOUSA"];
         for(let i=0; i<arrayAdvogadosPilantra.length; i++){
             //console.log(arrayAdvogadosPilantra[i])
             if((capaHTML.indexOf(arrayAdvogadosPilantra[i])) !== -1){

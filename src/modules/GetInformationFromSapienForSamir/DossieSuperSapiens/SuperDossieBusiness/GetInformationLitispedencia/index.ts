@@ -1,3 +1,5 @@
-import { LitispedenciaNewDossie } from "./litispendenciaNewDossie";
+import { LitispedenciaNewDossieRural } from "./LitispedenciaNewDossieRural";
+import { LitispedenciaNewDossieMaternidade } from "./LitispedenciaNewDossieMaternidade";
 
-export const litispedenciaNewDossie = new LitispedenciaNewDossie();
+export const litispedenciaNewDossieRural = new LitispedenciaNewDossieRural();
+export const litispedenciaNewDossieMaternidade = new LitispedenciaNewDossieMaternidade();

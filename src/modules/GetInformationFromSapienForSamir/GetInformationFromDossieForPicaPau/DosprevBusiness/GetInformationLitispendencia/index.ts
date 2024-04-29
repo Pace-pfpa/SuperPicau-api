@@ -1,3 +1,5 @@
-import { Litispedencia } from "./getInformationLitispendenciaForPicaPau";
+import { LitispedenciaMaternidade } from "./getInformationLitispendenciaMaternidadeForPicaPau";
+import { LitispedenciaRural } from "./getInformationLitispendenciarRuralForPicaPau";
 
-export const litispendencia = new Litispedencia(); 
+export const litispendenciaMaternidade = new LitispedenciaMaternidade(); 
+export const litispedenciaRural = new LitispedenciaRural();

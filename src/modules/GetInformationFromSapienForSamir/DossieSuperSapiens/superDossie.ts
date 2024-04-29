@@ -1,10 +1,9 @@
 import { calcularIdade } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationIdade";
-import { litispendencia } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationLitispendencia";
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
 import { requerimentos, requerimentosAtivos } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformatioRequerimento";
 import { dataPrevidencias } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformationPrevidenciarias";
 import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
-import { litispedenciaNewDossie } from "./SuperDossieBusiness/GetInformationLitispedencia";
+import { litispedenciaNewDossieMaternidade, litispedenciaNewDossieRural } from "./SuperDossieBusiness/GetInformationLitispedencia";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
 import { datasRequerimentoAtivoNewDossie, datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformationRequerimento";
 
@@ -13,7 +12,8 @@ export class SuperDossie {
     async impedimentos(
         paginaDosprevFormatada: any,
         parginaDosPrev: any,
-        AgeDossie: boolean
+        AgeDossie: boolean,
+        loas: any
       ): Promise<string> {
         let ArrayImpedimentos: string = '';
         try {
@@ -45,14 +45,40 @@ export class SuperDossie {
           } else if (!verificarIdade[0] && verificarIdade.length != 0) {
             ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
           }
+
+
+          const verificarLitispedencia = await litispedenciaNewDossieRural.funcLitis(
+            paginaDosprevFormatada
+          );
+
+          if (verificarLitispedencia) {
+            ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m -";
+          }
+
+
+        }else if(AgeDossie && !loas){
+
+          const verificarLitispedencia = await litispedenciaNewDossieMaternidade.funcLitis(
+            paginaDosprevFormatada
+          );
+          if (verificarLitispedencia) {
+            ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r-";
+          }
+        }else if(AgeDossie){
+
+          const verificarIdade: Array<boolean> = await calcularIdade.calcIdade(
+            paginaDosprevFormatada
+          );
+         
+          if (verificarIdade.length == 0) {
+            ArrayImpedimentos = ArrayImpedimentos + " IDADE INDEFINIDA -";
+          } else if (!verificarIdade[0] && verificarIdade.length != 0) {
+            ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
+          }
+    
+    
         }
     
-        const verificarLitispedencia = await litispedenciaNewDossie.funcLitis(
-          paginaDosprevFormatada
-        );
-        if (!verificarLitispedencia) {
-          ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -";
-        }
     
         const segurado = await seguradoEspecial.handle(parginaDosPrev);
         const requerimentoAtivo: boolean = await datasRequerimentoAtivoNewDossie.handle(

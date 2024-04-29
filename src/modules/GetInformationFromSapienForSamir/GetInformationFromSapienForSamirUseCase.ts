@@ -221,8 +221,9 @@ export class GetInformationFromSapienForSamirUseCase {
                             parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
 
                             parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
-
-                            impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
+                            console.log("LOOASADSAJIDHASJGAJDSA")
+                            console.log(data.loas)
+                            impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas);
                             response = response + impedDossie
                             if(data.loas){
                                 const loasDissieNormal = await loasDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
@@ -231,6 +232,31 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }else if(loasDissieNormal){
                                     response = response + " RESTABELECIMENTO -"
                                }
+
+                               const loasLitis = await loasDossieUseCase.executeLitispendenciaDossie(parginaDosPrev,parginaDosPrevFormatada)
+
+                               if(loasLitis instanceof Error){
+                                response = response + " erro estabelecimento -"
+                            }else if(loasLitis){
+                                response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
+                           }
+
+
+
+
+                            const loasEmprego: any = await loasDossieUseCase.executeEmprego(parginaDosPrev,parginaDosPrevFormatada)
+                                if(typeof(loasEmprego) == "boolean"){
+                                    if(loasEmprego){
+                                        response = response + " LOAS EMPREGO -"
+                                    }
+                                }else if(typeof(loasEmprego) == "object"){
+                                    if(loasEmprego.valorBooleano){
+                                        response = response + loasEmprego.message
+                                    }else{
+                                        response = response + loasEmprego.message
+                                    }
+                                }
+
                             }
                         }else{
                             
@@ -256,6 +282,15 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }else if(loasSuperDossie){
                                     response = response + " RESTABELECIMENTO -"
                                }
+
+
+                               const loasLitis = await loasDossieUseCase.executeLitispendenciaSuperDossie(parginaDosPrev,parginaDosPrevFormatada);
+                               if(loasLitis instanceof Error){
+                                response = response + " erro estabelecimento -"
+                                }else if(loasLitis){
+                                response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
+                                }
+
                             }
 
 
@@ -267,7 +302,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             }
                             
                             
-                            impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge);
+                            impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas);
                             response = response + impedDossie
                         }
                         

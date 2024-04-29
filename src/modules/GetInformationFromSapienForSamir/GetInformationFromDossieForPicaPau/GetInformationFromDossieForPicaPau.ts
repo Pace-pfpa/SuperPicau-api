@@ -1,5 +1,5 @@
 import { calcularIdade } from "./DosprevBusiness/GetInformationIdade";
-import { litispendencia } from "./DosprevBusiness/GetInformationLitispendencia";
+import { litispedenciaRural, litispendenciaMaternidade } from "./DosprevBusiness/GetInformationLitispendencia";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
 import {
   requerimentos,
@@ -11,7 +11,8 @@ export class GetInformationDossieForPicaPau {
   async impedimentos(
     paginaDosprevFormatada: any,
     parginaDosPrev: any,
-    AgeDossie: boolean
+    AgeDossie: boolean,
+    loas: any
   ): Promise<string> {
     let ArrayImpedimentos: string = '';
 
@@ -39,7 +40,11 @@ export class GetInformationDossieForPicaPau {
       ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
     }
     
-    if (!AgeDossie) {
+    console.log(loas)
+    console.log("paraaaaaaaa")
+    console.log(AgeDossie)
+
+    if (!AgeDossie && !loas) {
       const verificarIdade: Array<boolean> = await calcularIdade.calcIdade(
         paginaDosprevFormatada
       );
@@ -49,15 +54,43 @@ export class GetInformationDossieForPicaPau {
       } else if (!verificarIdade[0] && verificarIdade.length != 0) {
         ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
       }
+
+      const verificarLitispedencia = await litispedenciaRural.funcLitis(
+        paginaDosprevFormatada
+      );
+      
+      if (verificarLitispedencia) {
+        ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA R-";
+      }
+
+
+    }else if(AgeDossie && !loas){
+      
+      const verificarLitispedencia = await litispendenciaMaternidade.funcLitis(
+        paginaDosprevFormatada
+      );
+      
+      if (verificarLitispedencia) {
+        ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -";
+      }
+      //caso precise tirar o idade do loas, basta tirar esse (else if) aqui de baixo
+    }else if(AgeDossie){
+
+      const verificarIdade: Array<boolean> = await calcularIdade.calcIdade(
+        paginaDosprevFormatada
+      );
+     
+      if (verificarIdade.length == 0) {
+        ArrayImpedimentos = ArrayImpedimentos + " IDADE INDEFINIDA -";
+      } else if (!verificarIdade[0] && verificarIdade.length != 0) {
+        ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
+      }
+
+
     }
 
-    const verificarLitispedencia = await litispendencia.funcLitis(
-      paginaDosprevFormatada
-    );
-    //console.log("litispendencia se false: ", verificarLitispedencia)
-    if (!verificarLitispedencia) {
-      ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -";
-    }
+
+
 
     const segurado = await seguradoEspecial.handle(parginaDosPrev);
     const requerimentoAtivo: boolean = await requerimentosAtivos.handle(

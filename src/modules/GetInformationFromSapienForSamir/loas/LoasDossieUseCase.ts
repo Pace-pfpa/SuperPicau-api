@@ -1,4 +1,4 @@
-import { restabelecimentoRequerimentosDossie } from "./Business";
+import { loasEmpregoDossie, loasLitispendencia, loasLitispendenciaSuperDossie, restabelecimentoRequerimentosDossie } from "./Business";
 
 export class LoasDossieUseCase{
     constructor(){}
@@ -9,5 +9,32 @@ export class LoasDossieUseCase{
         }catch(e){
             return e
         }
+    }
+
+    async executeLitispendenciaDossie(parginaDoesprev: any, paginaDosprevFormatada: any){
+        try{
+            
+            return await loasLitispendencia.handle(paginaDosprevFormatada);
+
+
+        }catch(e){
+            return e
+        }
+    }
+
+    async executeLitispendenciaSuperDossie(parginaDoesprev: any, paginaDosprevFormatada: any){
+        try{
+
+            return await loasLitispendenciaSuperDossie.handle(paginaDosprevFormatada);
+
+
+        }catch(e){
+            return e
+        }
+    }
+
+
+    async executeEmprego(parginaDoesprev: any, paginaDosprevFormatada: any):  Promise<boolean | object>{
+        return await loasEmpregoDossie.execute(paginaDosprevFormatada)
     }
 }
