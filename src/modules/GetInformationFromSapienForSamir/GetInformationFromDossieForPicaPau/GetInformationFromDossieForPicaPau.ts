@@ -1,3 +1,4 @@
+import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { calcularIdade } from "./DosprevBusiness/GetInformationIdade";
 import { litispedenciaRural, litispendenciaMaternidade } from "./DosprevBusiness/GetInformationLitispendencia";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
@@ -40,9 +41,7 @@ export class GetInformationDossieForPicaPau {
       ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
     }
     
-    console.log(loas)
-    console.log("paraaaaaaaa")
-    console.log(AgeDossie)
+
 
     if (!AgeDossie && !loas) {
       const verificarIdade: Array<boolean> = await calcularIdade.calcIdade(
@@ -55,24 +54,46 @@ export class GetInformationDossieForPicaPau {
         ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
       }
 
-      const verificarLitispedencia = await litispedenciaRural.funcLitis(
-        paginaDosprevFormatada
-      );
-      
-      if (verificarLitispedencia) {
-        ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA R-";
+
+      //so vau fazer a litispendencia caso a string "Não há relação dos processos movidos pelo autor contra o INSS." nao exista
+
+      const xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss = "/html/body/div/div[2]/table/tbody/tr[2]/td"
+
+      const NaoRelacaoDosProcessosMovidosPeloAutorContraOInss = getXPathText(paginaDosprevFormatada, xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss);
+
+      if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
+
+        const verificarLitispedencia = await litispedenciaRural.funcLitis(
+          paginaDosprevFormatada
+        );
+        
+        if (verificarLitispedencia) {
+          ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA R-";
+        }
       }
+
 
 
     }else if(AgeDossie && !loas){
-      
-      const verificarLitispedencia = await litispendenciaMaternidade.funcLitis(
-        paginaDosprevFormatada
-      );
-      
-      if (verificarLitispedencia) {
-        ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -";
+
+
+      const xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss = "/html/body/div/div[2]/table/tbody/tr[2]/td"
+
+      const NaoRelacaoDosProcessosMovidosPeloAutorContraOInss = getXPathText(paginaDosprevFormatada, xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss);
+
+      if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
+
+        const verificarLitispedencia = await litispendenciaMaternidade.funcLitis(
+          paginaDosprevFormatada
+        );
+        
+        if (verificarLitispedencia) {
+          ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -";
+        }
       }
+
+
+      
       //caso precise tirar o idade do loas, basta tirar esse (else if) aqui de baixo
     }else if(AgeDossie){
 
