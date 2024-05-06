@@ -22,16 +22,6 @@ export class LoasDossieUseCase{
         }
     }
 
-    async executeLitispendenciaSuperDossie(parginaDoesprev: any, paginaDosprevFormatada: any){
-        try{
-
-            return await loasLitispendenciaSuperDossie.handle(paginaDosprevFormatada);
-
-
-        }catch(e){
-            return e
-        }
-    }
 
 
     async executeEmprego(parginaDoesprev: any, paginaDosprevFormatada: any):  Promise<boolean | object>{

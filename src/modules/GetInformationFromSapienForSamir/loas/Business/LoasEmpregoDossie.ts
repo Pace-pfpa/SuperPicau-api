@@ -16,13 +16,14 @@ export class LoasEmpregoDossie{
 
         try{
 
-            const xpathDataAjuzamento = "/html/body/div/div[1]/table/tbody/tr[2]/td"
+            const xpathDataAjuzamento = "/html/body/div/div[4]/table/tbody/tr[2]/td"
             const dateAjuizamento = getXPathText(parginaDosPrevFormatada, xpathDataAjuzamento);
     
             if(!dateAjuizamento) new Error("data ajuizamento não encontrada");
+            if(dateAjuizamento.length == 0) new Error("data ajuizamento não encontrada");
             if(!(typeof(convertToDate(dateAjuizamento.trim())) == typeof(new Date()))) new Error("pegou xpath errado do ajuizamento");
 
-
+            // /html/body/div/div[6]/table/tbody/tr[1]
             let tamanhoColunasRequerimentos = 2;
         const arrayDatas: Array<Date> = [];
         let verificarWhileRequerimentos = true;

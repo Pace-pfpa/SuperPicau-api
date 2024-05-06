@@ -221,8 +221,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
 
                             parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
-                            console.log("LOOASADSAJIDHASJGAJDSA")
-                            console.log(data.loas)
+                            
                             impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas);
                             response = response + impedDossie
                             if(data.loas){
@@ -284,11 +283,27 @@ export class GetInformationFromSapienForSamirUseCase {
                                }
 
 
-                               const loasLitis = await loasDossieUseCase.executeLitispendenciaSuperDossie(parginaDosPrev,parginaDosPrevFormatada);
+                               const loasLitis = await loasSuperDossieUseCase.executeLitispendenciaSuperDossie(parginaDosPrev,parginaDosPrevFormatada);
                                if(loasLitis instanceof Error){
                                 response = response + " erro estabelecimento -"
                                 }else if(loasLitis){
                                 response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
+                                }
+
+
+                                const loasEmprego: any = await loasSuperDossieUseCase.executeEmprego(parginaDosPrev,parginaDosPrevFormatada)
+                                console.log("passou")
+                                console.log(loasEmprego)
+                                if(typeof(loasEmprego) == "boolean"){
+                                    if(loasEmprego){
+                                        response = response + " LOAS EMPREGO -"
+                                    }
+                                }else if(typeof(loasEmprego) == "object"){
+                                    if(loasEmprego.valorBooleano){
+                                        response = response + loasEmprego.message
+                                    }else{
+                                        response = response + loasEmprego.message
+                                    }
                                 }
 
                             }

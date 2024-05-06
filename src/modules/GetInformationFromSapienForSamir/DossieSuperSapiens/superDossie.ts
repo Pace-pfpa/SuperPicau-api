@@ -37,7 +37,7 @@ export class SuperDossie {
           ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
         }
         
-        if (!AgeDossie) {
+        if (!AgeDossie && !loas) {
           const verificarIdade: Array<boolean> = await calcularIdadeNewDossie.calcIdade(
             paginaDosprevFormatada
           );
@@ -47,21 +47,34 @@ export class SuperDossie {
             ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
           }
 
+          
 
 
           const xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss = "/html/body/div/div[5]/table/tbody/tr/td"
 
           const NaoRelacaoDosProcessosMovidosPeloAutorContraOInss = getXPathText(paginaDosprevFormatada, xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss);
 
+
           if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
 
-            const verificarLitispedencia = await litispedenciaNewDossieRural.funcLitis(
-              paginaDosprevFormatada
-            );
-      
-            if (verificarLitispedencia) {
-              ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m -";
+
+            const xpathNumeroUnicoCnj = "/html/body/div/div[4]/table/tbody/tr[1]/td";
+            const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
+
+            const xpathProcessoJudicial = "/html/body/div/div[5]/table/tbody/tr/td[1]";
+            const processoJudicial = getXPathText(paginaDosprevFormatada, xpathProcessoJudicial);
+
+            if(processoJudicial && processoJudicial.trim() == numeroUnicoCnj.trim()){
+
+              const verificarLitispedencia = await litispedenciaNewDossieRural.funcLitis(
+                paginaDosprevFormatada
+              );
+        
+              if (verificarLitispedencia) {
+                ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m -";
+              }
             }
+            
           }
 
 
@@ -77,12 +90,25 @@ export class SuperDossie {
 
           if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
 
-            const verificarLitispedencia = await litispedenciaNewDossieMaternidade.funcLitis(
-              paginaDosprevFormatada
-            );
-            if (verificarLitispedencia) {
-              ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r-";
+
+            const xpathNumeroUnicoCnj = "/html/body/div/div[4]/table/tbody/tr[1]/td";
+            const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
+
+            const xpathProcessoJudicial = "/html/body/div/div[5]/table/tbody/tr/td[1]";
+            const processoJudicial = getXPathText(paginaDosprevFormatada, xpathProcessoJudicial);
+
+            if(processoJudicial && processoJudicial.trim() == numeroUnicoCnj.trim()){
+
+              const verificarLitispedencia = await litispedenciaNewDossieMaternidade.funcLitis(
+                paginaDosprevFormatada
+              );
+              if (verificarLitispedencia) {
+                ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r-";
+              }
+
             }
+
+
           }
 
 
