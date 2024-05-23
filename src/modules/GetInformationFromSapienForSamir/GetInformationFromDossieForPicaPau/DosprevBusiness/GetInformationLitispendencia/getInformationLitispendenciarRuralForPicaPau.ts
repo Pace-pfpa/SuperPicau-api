@@ -6,19 +6,6 @@ import { EncontrarDataMaisAtual } from "../../../loas/Business/Help/EncontrarDat
 //Se retornar false é porque tem litispedencia.                                               
 export class LitispedenciaRural{
     async funcLitis(parginaDosPrevFormatada: any): Promise<any>{
-       /*  try{
-           
-            const xpathRelacaoProcesso = "/html/body/div/div[2]/table/tbody/tr[2]/td";                   
-            const xpathRelacaoProcessoFormatada: string = (getXPathText(parginaDosPrevFormatada, xpathRelacaoProcesso).trim());
-           
-            const StringParaVerificar: string = "Não há relação dos processos movidos pelo autor contra o INSS.";
-            const xpathRelacaoProcessoMovidosFormatada:boolean = xpathRelacaoProcessoFormatada===StringParaVerificar;
-            
-            return xpathRelacaoProcessoMovidosFormatada;
-        }catch(e){
-            console.log('ERRO LITISPENDENCIA LEITURA PATH DOSSIE SAPIENS 1')
-            return false
-        } */
         
         try{
 

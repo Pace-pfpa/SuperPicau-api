@@ -4,7 +4,7 @@ export interface IGetInformationsFromSapiensDTO {
     login: ILoginDTO;
     etiqueta: string;
     tarefa: any
-    readDosprevAge: boolean;
+    readDosprevAge: Number;
     loas: boolean
 }
 

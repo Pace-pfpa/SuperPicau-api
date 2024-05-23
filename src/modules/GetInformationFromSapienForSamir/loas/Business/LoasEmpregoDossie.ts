@@ -106,8 +106,8 @@ export class LoasEmpregoDossie{
                 const xpathDataInicioPrevidenciarias = `/html/body/div/div[4]/table/tbody/tr[${i}]/td[5]`
                 const xpathDataFimPrevidenciarias = `/html/body/div/div[4]/table/tbody/tr[${i}]/td[6]`
                 
-                const dataInicioPrevidenciaria = getXPathText(parginaDosPrevFormatada, xpathDataInicioPrevidenciarias);
-                const dataFimPrevidenciaria = getXPathText(parginaDosPrevFormatada, xpathDataFimPrevidenciarias);
+                let dataInicioPrevidenciaria = getXPathText(parginaDosPrevFormatada, xpathDataInicioPrevidenciarias);
+                let dataFimPrevidenciaria = getXPathText(parginaDosPrevFormatada, xpathDataFimPrevidenciarias);
 
                 
                 if(dataInicioPrevidenciaria.trim().length == 0 && dataFimPrevidenciaria.trim().length == 0){

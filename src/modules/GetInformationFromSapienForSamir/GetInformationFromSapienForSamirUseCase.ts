@@ -22,10 +22,11 @@ import { compararNup } from "./helps/ComparaNUP";
 import { LoasDossieUseCase } from './loas/LoasDossieUseCase';
 import { LoasSuperDossieUseCase } from './loas/LoasSuperDossieUseCase ';
 import { loasDossieUseCase, loasSuperDossieUseCase } from './loas';
+import { verificarDossieMaisAtual } from './helps/verificarDossieMaisAtual';
+import { cadUnico } from './loas/CadUnico';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
-        
         const cookie = await loginUseCase.execute(data.login);
         const usuario = (await getUsuarioUseCase.execute(cookie));
         let impedDossie: string  = '';
@@ -34,10 +35,12 @@ export class GetInformationFromSapienForSamirUseCase {
         let novaCapa: any = false;
         var objectDosPrev
         let response: string = '';
-        let dosprevThisTrue = true;
+        let dossieNormal = false;
         let nupInicio = undefined;
         let nupFim = undefined;
         let erros = {};
+        let dosprevEncontrado = false;
+        
         try {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             
@@ -55,7 +58,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: data.tarefa.pasta.NUP, chave: data.tarefa.pasta.chaveAcesso, cookie, tarefa_id: data.tarefa.id }
                     let arrayDeDocumentos: ResponseArvoreDeDocumento[];
                     
-//SOLICITA ARVORE DE DOCUMENTOS
+                    
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
                         let comparaNup = compararNup(nupInicio,data.tarefa.pasta.NUP)
@@ -67,30 +70,48 @@ export class GetInformationFromSapienForSamirUseCase {
                         return {warning: "DOSPREV COM FALHA NA PESQUISA"}
                     }
 
-//
+                    
 
 
 
                     
-//CAPA DO PROCESSO
+
                     const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
                     const tcapaFormatada = new JSDOM(tcapaParaVerificar)
 
                     const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
-//SE POSSUIR INFORMAÇÃO DE CLASSE
+                    
                     if(tinfoClasseExist){
-//DOSPREV
+                        
+                        objectDosPrev = arrayDeDocumentos.filter(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
+                        
+                        
+                            if(objectDosPrev.length > 0){
+                                dossieNormal = true;
+                                dosprevEncontrado = true;
 
-                            objectDosPrev = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
-//SE EXISTIR NA ARVORE DE DOCUMENTOS COM SIGLA DOSPREV
-                            if(objectDosPrev){
-                                //SE EM  MOVIMENTO EXISTIR O TEXTO "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF", IDENTIFICAR COMO DOSPREV2, OUSEJA É O NEWDOSSIE
-                                var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
+                                var objectDosPrev2 = arrayDeDocumentos.filter(Documento => {
                                     const movimento = (Documento.movimento).split(".");
                                     return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
                                 });
+
                                 
-                                if(objectDosPrev == undefined && objectDosPrev2 == undefined){
+                                /* if(objectDosPrev.length > 0 && objectDosPrev2.length == 0){
+                                    return {
+                                        dossieType: "normal",
+                                        dossie: normalDossie
+                                    }
+                                } */
+                            
+                                if(objectDosPrev2.length > 0){
+                                    superDosprevExist = true;
+                                }
+                            
+                               
+                               
+
+                                
+                                /* if(objectDosPrev == undefined && objectDosPrev2 == undefined){
                                     (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
                                     return {warning: "DOSPREV NÃO ENCONTRADO"}
                                 }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
@@ -105,10 +126,26 @@ export class GetInformationFromSapienForSamirUseCase {
                                         
                                     }
                                     
-                                }
+                                } */
                             }else{
-                                dosprevThisTrue = false;
-                                response = response + " DOSPREV NÃO EXISTE -"
+
+                                var objectDosPrev2 = arrayDeDocumentos.filter(Documento => {
+                                    const movimento = (Documento.movimento).split(".");
+                                    return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
+                                });
+
+                                if(objectDosPrev2.length > 0){
+                                    dosprevEncontrado = true;
+                                    superDosprevExist = true;
+                                }else{
+
+                                    response = response + " DOSPREV NÃO EXISTE -"
+                                }
+                                
+
+
+                                /* dosprevThisTrue = false;
+                                response = response + " DOSPREV NÃO EXISTE -" */
                             }
                             
                             
@@ -126,14 +163,24 @@ export class GetInformationFromSapienForSamirUseCase {
                             arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(novoObjectGetArvoreDocumento)).reverse();
                             objectDosPrev = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
     
-                            if(objectDosPrev){
-                                var objectDosPrev2 = arrayDeDocumentos.find(Documento => {
+                            if(objectDosPrev.length > 0){
+                                dossieNormal = true;
+                                dosprevEncontrado = true;
+
+                                let objectDosPrev2 = arrayDeDocumentos.filter(Documento => {
                                     const movimento = (Documento.movimento).split(".");
                                     return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
                                 });
 
 
-                                if(objectDosPrev == undefined && objectDosPrev2 == undefined){
+
+
+                                if(objectDosPrev2.length > 0){
+                                    superDosprevExist = true;
+                                }
+
+
+                                /* if(objectDosPrev == undefined && objectDosPrev2 == undefined){
                                     (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO -", tarefaId }));
                                     return {warning: "DOSPREV NÃO ENCONTRADO"}
                                 }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
@@ -144,12 +191,23 @@ export class GetInformationFromSapienForSamirUseCase {
                                         objectDosPrev = objectDosPrev2;
                                         superDosprevExist = true;
                                     }
-                                }
-                                dosprevThisTrue = false;
-                                response = response + ' ERRO AO LÊ NOVO DOSPREV -'
+                                } */
+                                
                             }else{
-                                dosprevThisTrue = false;
-                                response = response + " DOSPREV NÃO EXISTE -"
+
+                                let objectDosPrev2 = arrayDeDocumentos.filter(Documento => {
+                                    const movimento = (Documento.movimento).split(".");
+                                    return movimento[0] == "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";
+                                });
+                            
+                                if(objectDosPrev2.length > 0){
+                                    superDosprevExist = true;
+                                    dosprevEncontrado = true;
+                                }else{
+                                    response = response + " DOSPREV NÃO EXISTE -"
+                                }
+
+                                
                             }
                                 
 
@@ -161,8 +219,14 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
                     }
 
+                    
+                    
+
+
 
                     
+
+
 
 
 
@@ -171,7 +235,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     //Verificar a capa caso exista outra capa com os dados necessários
                     const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
                     const capaFormatada = new JSDOM(capaParaVerificar)
-                    //const xPathClasse = "/html/body/div/div[4]/table/tbody/tr[2]/td[1]"
+                    
                     const infoClasseExist = await verificarCapaTrue(capaFormatada) 
                     let capa = ""
                     if(!infoClasseExist){
@@ -187,14 +251,66 @@ export class GetInformationFromSapienForSamirUseCase {
                         novaCapa = new JSDOM(capa)
                     }
                     
-
+                    
                     
                 
                     const cpfCapa = buscarTableCpf(novaCapa);
                     if(!cpfCapa){
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO -`, tarefaId }))
+                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
                         return {erro: ` CPF NÃO ENCONTRADO -`}
                     }
+
+                   
+                   
+                    
+
+                    if(dossieNormal && !superDosprevExist){
+                        const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, null);
+                        
+
+                        if(dossieIsvalid instanceof Error){
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            return {warning: `DOSPREV COM FALHA NA PESQUISA`}
+                        }else{
+
+                            objectDosPrev = dossieIsvalid[0]
+                        }
+
+                       
+
+
+
+                    }else if(!dossieNormal && superDosprevExist){
+                        const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, null, objectDosPrev2);
+                        
+                        if(dossieIsvalid instanceof Error){
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            return {warning: `DOSPREV COM FALHA NA PESQUISA`}
+                        }else{
+
+                            objectDosPrev = dossieIsvalid[0]
+                        }
+                    }else{
+                        const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, objectDosPrev2);
+                        
+                        if(dossieIsvalid instanceof Error){
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            return {warning: `DOSPREV COM FALHA NA PESQUISA`}
+                        }else{
+                            if(dossieIsvalid[1] == 0){
+                                dossieNormal = true;
+                                superDosprevExist = false;
+                            }else if(dossieIsvalid[1] == 1){
+                                dossieNormal = false;
+                                superDosprevExist = true;
+                            }
+                            console.log(dossieIsvalid)
+                            objectDosPrev = dossieIsvalid[0]
+                        }
+                    }
+                    
+
+
 
                     const informationcapa = await getInformationCapa.ImpedimentosCapa(capa);
                     if(!informationcapa){
@@ -204,17 +320,12 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     let parginaDosPrev;
                     let parginaDosPrevFormatada;
-                    if(dosprevThisTrue){
+                    if(dosprevEncontrado){
 
-                        const dosPrevSemIdParaPesquisa = (objectDosPrev.documentoJuntado.componentesDigitais.length) <= 0;
-                        if (dosPrevSemIdParaPesquisa) {
-                            console.log("DOSPREV COM FALHA NA PESQUISA");
-                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
-                            return {warning: `DOSPREV COM FALHA NA PESQUISA`}
-                        }
+                        
                         
                         if(!superDosprevExist){
-
+                            console.log("passou")
                             //vericacao para saber se foi gerado o super dossie
                             
                             const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
@@ -222,9 +333,31 @@ export class GetInformationFromSapienForSamirUseCase {
 
                             parginaDosPrevFormatada = new JSDOM(parginaDosPrev); 
                             
-                            impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas);
+                            if(data.readDosprevAge == 0){
+                                impedDossie = await getInformationDossieForPicaPau.impeditivosRural(parginaDosPrevFormatada, parginaDosPrev);
+                            }else if(data.readDosprevAge == 1){
+                                impedDossie = await getInformationDossieForPicaPau.impedimentosMaternidade(parginaDosPrevFormatada);
+                            }else if(data.readDosprevAge == 2){
+                                console.log("entrou")
+                                const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
+
+                                const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
+                                const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
+
+                                const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
+
+
+
+                                
+                               console.log(await cadUnico.execute(paginaDossieSocialFormatada))
+
+
+                                impedDossie = await getInformationDossieForPicaPau.impeditivoLoas(parginaDosPrevFormatada);
+                            }
+
+                            /* impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas); */
                             response = response + impedDossie
-                            if(data.loas){
+                            /* if(data.loas){
                                 const loasDissieNormal = await loasDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
                                 if(loasDissieNormal instanceof Error){
                                     response = response + " erro estabelecimento -"
@@ -255,79 +388,108 @@ export class GetInformationFromSapienForSamirUseCase {
                                         response = response + loasEmprego.message
                                     }
                                 }
+ */
+                            }else{
 
+
+
+
+                                
+                                
+                            
+                                const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
+                                parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+                                parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
+    
+                                const verifarSeFoiGerado = (getXPathText(parginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
+                                console.log("verficarSeFoiGerado: "+verifarSeFoiGerado)
+                                if(verifarSeFoiGerado) {
+                                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: "Falha ao gerar Super DOSPREV ", tarefaId });
+                                    //response = response + " Falha ao gerar Super DOSPREV ";
+                                    return {warning: "Falha ao gerar Super DOSPREV"}
+                                }
+    
+    /*                             if(data.loas){
+                                   const loasSuperDossie = await loasSuperDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
+                                    if(loasSuperDossie instanceof Error){
+                                        response = response + " erro estabelecimento -"
+                                    }else if(loasSuperDossie){
+                                        response = response + " RESTABELECIMENTO -"
+                                   }
+    
+    
+                                   const loasLitis = await loasSuperDossieUseCase.executeLitispendenciaSuperDossie(parginaDosPrev,parginaDosPrevFormatada);
+                                   if(loasLitis instanceof Error){
+                                    response = response + " erro estabelecimento -"
+                                    }else if(loasLitis){
+                                    response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
+                                    }
+    
+    
+                                    const loasEmprego: any = await loasSuperDossieUseCase.executeEmprego(parginaDosPrev,parginaDosPrevFormatada)
+                                    console.log("passou")
+                                    console.log(loasEmprego)
+                                    if(typeof(loasEmprego) == "boolean"){
+                                        if(loasEmprego){
+                                            response = response + " LOAS EMPREGO -"
+                                        }
+                                    }else if(typeof(loasEmprego) == "object"){
+                                        if(loasEmprego.valorBooleano){
+                                            response = response + loasEmprego.message
+                                        }else{
+                                            response = response + loasEmprego.message
+                                        }
+                                    }
+    
+                                } */
+    
+    
+                                const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
+                                if(NewDossiewithErro) {
+                                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })
+                                    response = '';
+                                    return {warning: `Falha ao gerar dossiê super sapiens`}
+                                }
+                                
+                                
+                                /* impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas); */
+    
+    
+                                if(data.readDosprevAge == 0){
+                                    impedDossie = await superDossie.impeditivosRural(parginaDosPrevFormatada, parginaDosPrev);
+                                }else if(data.readDosprevAge == 1){
+                                    impedDossie = await superDossie.impedimentosMaternidade(parginaDosPrevFormatada, parginaDosPrev);
+                                }else if(data.readDosprevAge == 2){
+                                    
+                                    const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
+    
+                                    const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
+                                    const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
+    
+                                    const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
+    
+    
+    
+                                    console.log("passouuuuuuuuuuu")
+                                    console.log(await cadUnico.execute(paginaDossieSocialFormatada));
+                                    console.log("acima")
+    
+    
+    
+    
+    
+    
+    
+                                    impedDossie = await superDossie.impeditivosLoas(parginaDosPrevFormatada, parginaDosPrev);
+                                }
+                                response = response + impedDossie
                             }
                         }else{
                             
-                            
-
-                            
-                            const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
-                            parginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-                            parginaDosPrevFormatada = new JSDOM(parginaDosPrev);
-
-                            const verifarSeFoiGerado = (getXPathText(parginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
-                            console.log("verficarSeFoiGerado: "+verifarSeFoiGerado)
-                            if(verifarSeFoiGerado) {
-                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: "Falha ao gerar Super DOSPREV ", tarefaId });
-                                //response = response + " Falha ao gerar Super DOSPREV ";
-                                return {warning: "Falha ao gerar Super DOSPREV"}
-                            }
-
-                            if(data.loas){
-                               const loasSuperDossie = await loasSuperDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
-                                if(loasSuperDossie instanceof Error){
-                                    response = response + " erro estabelecimento -"
-                                }else if(loasSuperDossie){
-                                    response = response + " RESTABELECIMENTO -"
-                               }
-
-
-                               const loasLitis = await loasSuperDossieUseCase.executeLitispendenciaSuperDossie(parginaDosPrev,parginaDosPrevFormatada);
-                               if(loasLitis instanceof Error){
-                                response = response + " erro estabelecimento -"
-                                }else if(loasLitis){
-                                response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
-                                }
-
-
-                                const loasEmprego: any = await loasSuperDossieUseCase.executeEmprego(parginaDosPrev,parginaDosPrevFormatada)
-                                console.log("passou")
-                                console.log(loasEmprego)
-                                if(typeof(loasEmprego) == "boolean"){
-                                    if(loasEmprego){
-                                        response = response + " LOAS EMPREGO -"
-                                    }
-                                }else if(typeof(loasEmprego) == "object"){
-                                    if(loasEmprego.valorBooleano){
-                                        response = response + loasEmprego.message
-                                    }else{
-                                        response = response + loasEmprego.message
-                                    }
-                                }
-
-                            }
-
-
-                            const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
-                            if(NewDossiewithErro) {
-                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })
-                                response = '';
-                                return {warning: `Falha ao gerar dossiê super sapiens`}
-                            }
-                            
-                            
-                            impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas);
-                            response = response + impedDossie
                         }
                         
 
-
-        
-
-                        
-
-                    }    
+                    
                         
 
 
@@ -335,16 +497,29 @@ export class GetInformationFromSapienForSamirUseCase {
                     const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
                         const nomeMovimentacao = Documento.movimento;
                         const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
-                        //const name2 = nomeMovimentacao.indexOf("nova string");
-                        //if(name !=-1 || name2 !=-1)
                         if(name != -1){
                             return Documento
 
                         }
                     });
+
+                    let paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao =  arrayDeDocumentos.find((Documento) => {
+                        if(Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla){
+                            const nomeMovimentacao = Documento.movimento;       
+                            const name = nomeMovimentacao.indexOf("SISLABRA - GF");
+                            const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF')
+                            if(name != -1 && siglaSlabra != -1){
+                                console.log(Documento.documentoJuntado.tipoDocumento)
+                                const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
+                                if(typeDpcumento == "html"){
+                                    return Documento
+                                }
+                            }
+                        }
+                    });
                     
                     
-                    const paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
+                    let paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
                         const nomeMovimentacao = Documento.movimento;       
                         const name = nomeMovimentacao.indexOf("POSSÍVEL CÔNJUGE");
                         if(name != -1){
@@ -354,6 +529,14 @@ export class GetInformationFromSapienForSamirUseCase {
                             }
                         }
                     });
+
+                   if(paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
+                        if(paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao.numeracaoSequencial > paginaSislabraConjuge.numeracaoSequencial){
+                            paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
+                        }
+                   }else if(!paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
+                        paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
+                   }
 
                     let sislabraAutorESislabraConjugeNoExistem = false;
 
@@ -403,12 +586,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                   
                     
-                    console.log("RESPONSEEEEEEE")
-                    console.log(response)
-                    
 
-                    
-                    console.log(response)
                     if(response.length == 0){
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 

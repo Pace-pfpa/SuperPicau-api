@@ -11,10 +11,14 @@ export class GetDocumentSislabraFromSapiens{
         let response = "";
 
         const GetVeiculosSislabra = await getVeiculos(paginaformatada)
-        if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'AUTOR'){
-            response = response + " VEICULO AUTOR -"
-        }else if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'CONJUGE'){
-            response = response + " VEICULO CONJUGE -"
+        if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].tipo == "MOTOCICLETA" || 
+        GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA"
+        )){
+            if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'AUTOR'){
+                response = response + " VEICULO AUTOR -"
+            }else if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'CONJUGE'){
+                response = response + " VEICULO CONJUGE -"
+            }
         }
         
         const GetEmpregoSislabra = await getEmpregoSislabra(paginaformatada);

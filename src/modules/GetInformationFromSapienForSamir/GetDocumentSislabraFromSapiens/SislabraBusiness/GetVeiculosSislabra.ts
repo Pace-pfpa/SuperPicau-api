@@ -16,16 +16,16 @@ export async function getVeiculos(paginaSislabra: string): Promise<Array<any>> {
 
         if(VeiculoMarca && !tipoVeiculo){
             veiculosEncontrados.push({
-                "Marca": `${VeiculoMarca}`,
-                "Tipo": "TIPO NÃO ENCONTRADO"
+                Marca: `${VeiculoMarca}`,
+                Tipo: "TIPO NÃO ENCONTRADO"
             })
         }
 
         if(!VeiculoMarca && tipoVeiculo){
             if(tipoVeiculo.trim() != "MOTOCICLETA"){
                 veiculosEncontrados.push({
-                    "Marca": "MARCA NÃO ENCONTRADO",
-                    "Tipo": `${tipoVeiculo}`
+                    Marca: "MARCA NÃO ENCONTRADO",
+                    Tipo: `${tipoVeiculo}`
                 })
             }
             
@@ -34,8 +34,8 @@ export async function getVeiculos(paginaSislabra: string): Promise<Array<any>> {
         if(VeiculoMarca && tipoVeiculo){
             if(tipoVeiculo.trim() != "MOTOCICLETA"){
                 veiculosEncontrados.push({
-                    "Marca": `${VeiculoMarca}`,
-                    "Tipo": `${tipoVeiculo}`
+                    Marca: `${VeiculoMarca}`,
+                    Tipo: `${tipoVeiculo}`
                 })
             }
             
