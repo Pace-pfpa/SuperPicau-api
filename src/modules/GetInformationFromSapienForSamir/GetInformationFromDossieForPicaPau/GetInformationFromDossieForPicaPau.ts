@@ -17,19 +17,7 @@ export class GetInformationDossieForPicaPau {
 
     
 
-
-
-      const verificarIdade: Array<boolean> = await calcularIdade.calcIdade(
-        paginaDosprevFormatada
-      );
-     
-      if (verificarIdade.length == 0) {
-        ArrayImpedimentos = ArrayImpedimentos + " IDADE INDEFINIDA -";
-      } else if (!verificarIdade[0] && verificarIdade.length != 0) {
-        ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
-      }
-
-
+ 
 
 
       const xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss = "/html/body/div/div[2]/table/tbody/tr[2]/td"
