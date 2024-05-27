@@ -19,14 +19,6 @@ export class SuperDossie {
 
         
     
-          const verificarIdade: Array<boolean> = await calcularIdadeNewDossie.calcIdade(
-            paginaDosprevFormatada
-          );
-          if (verificarIdade.length == 0) {
-            ArrayImpedimentos = ArrayImpedimentos + " IDADE INDEFINIDA -";
-          } else if (!verificarIdade[0] && verificarIdade.length != 0) {
-            ArrayImpedimentos = ArrayImpedimentos + " IDADE -";
-          }
 
           
 
