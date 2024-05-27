@@ -71,6 +71,7 @@ routerInsertSapiens.post("/insertMinutas", async (req, res) => {
 
 
 routerInsertSapiens.post("/login", async (req, res) => {
+    console.log(req.body)
     return loginController.handle(req, res);
 })
 

@@ -67,6 +67,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     } catch (error) {
                         console.log("Erro ao aplicar getArvoreDocumentoUseCase!!!!");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
+                        console.log('eroor1')
                         return {warning: "DOSPREV COM FALHA NA PESQUISA"}
                     }
 
@@ -83,7 +84,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                     if(tinfoClasseExist){
                         
-                        objectDosPrev = arrayDeDocumentos.filter(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV");
+                        objectDosPrev = arrayDeDocumentos.filter(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSPREV" && Documento.documentoJuntado.origemDados.fonteDados === "SAT_INSS");
                         
                         
                             if(objectDosPrev.length > 0){
@@ -263,13 +264,14 @@ export class GetInformationFromSapienForSamirUseCase {
                    
                    
                     
-
+                  
                     if(dossieNormal && !superDosprevExist){
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, null);
                         
 
                         if(dossieIsvalid instanceof Error){
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            console.log('eroor2')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
 
@@ -285,9 +287,11 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                         if(dossieIsvalid instanceof Error){
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            console.log('eroor3')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
-
+                            console.log("retornouu")
+                            console.log(dossieIsvalid)
                             objectDosPrev = dossieIsvalid[0]
                         }
                     }else{
@@ -295,6 +299,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                         if(dossieIsvalid instanceof Error){
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            console.log('eroor4')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
                             if(dossieIsvalid[1] == 0){
@@ -587,11 +592,23 @@ export class GetInformationFromSapienForSamirUseCase {
                   
                     
 
-                    if(response.length == 0){
+                    if (response.length == 0) {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
-                    }else{
-                        if(response == " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"){
+                    }
+                    else if (response == " *RURAL* ") {
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                        return {impeditivos: true} 
+                    }
+                    else if (response == " *MATERNIDADE* ") {
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                        return {impeditivos: true} 
+                    } else if (response == " *LOAS* ") {
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                        return {impeditivos: true} 
+                    }
+                    else {
+                        if(response == " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE") {
                             await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
                             return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
                         }
