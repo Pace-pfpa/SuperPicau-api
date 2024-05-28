@@ -287,11 +287,10 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                         if(dossieIsvalid instanceof Error){
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
-                            console.log('eroor3')
+                            
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
-                            console.log("retornouu")
-                            console.log(dossieIsvalid)
+                            
                             objectDosPrev = dossieIsvalid[0]
                         }
                     }else{
@@ -309,7 +308,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 dossieNormal = false;
                                 superDosprevExist = true;
                             }
-                            console.log(dossieIsvalid)
+                           
                             objectDosPrev = dossieIsvalid[0]
                         }
                     }
@@ -341,7 +340,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             if(data.readDosprevAge == 0){
                                 impedDossie = await getInformationDossieForPicaPau.impeditivosRural(parginaDosPrevFormatada, parginaDosPrev);
                             }else if(data.readDosprevAge == 1){
-                                impedDossie = await getInformationDossieForPicaPau.impedimentosMaternidade(parginaDosPrevFormatada);
+                                impedDossie = await getInformationDossieForPicaPau.impedimentosMaternidade(parginaDosPrevFormatada, parginaDosPrev);
                             }else if(data.readDosprevAge == 2){
                                 console.log("entrou")
                                 const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
@@ -585,12 +584,12 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         response = response + sislabraConjuge
                     }else{
-                        response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+                        /* response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" */
                         sislabraAutorESislabraConjugeNoExistem = true;
                     }
                     
                   
-                    
+                    console.log(response)
 
                     if (response.length == 0) {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
@@ -604,6 +603,15 @@ export class GetInformationFromSapienForSamirUseCase {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
                     } else if (response == " *LOAS* ") {
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                        return {impeditivos: true} 
+                    }else if(response == " *MATERNIDADE* SISLABRA (AUTOR) E (CONJUGE) NÃO EXISTE"){
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                        return {impeditivos: true} 
+                    }else if(response == " *RURAL* SISLABRA (AUTOR) E (CONJUGE) NÃO EXISTE"){
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                        return {impeditivos: true} 
+                    }else if(response == " *LOAS* SISLABRA (AUTOR) E (CONJUGE) NÃO EXISTE"){
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
                     }

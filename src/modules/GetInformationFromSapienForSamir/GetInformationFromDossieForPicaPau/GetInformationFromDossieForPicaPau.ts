@@ -8,16 +8,68 @@ import {
   requerimentosAtivos,
 } from "./DosprevBusiness/InformatioRequerimento";
 import { dataPrevidencias } from "./DosprevBusiness/InformationPrevidenciarias";
+import { buscarTabelaRelacaoDeProcessosNormalDossie } from "./Help/BuscarTabelaRelacaoDeProcessosNormalDossie";
 
 export class GetInformationDossieForPicaPau {
   async impedimentosMaternidade(
-    paginaDosprevFormatada: any
+    paginaDosprevFormatada: any,
+    parginaDosPrev: any
     ): Promise<string> {
     let ArrayImpedimentos: string = '';
 
     
 
  
+
+    try {
+
+      const dataSubtrair = 5;
+      const DatasAtualEMenocinco: Array<Date> =
+        await requerimentos.dataRequerimento(paginaDosprevFormatada, dataSubtrair); 
+      //console.log("data atual menos dezesseis: ", DatasAtualEMenosDezesseis)
+      //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
+      if (DatasAtualEMenocinco[0] == null) {
+        ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
+      } else {
+        const verificarDataFinal: boolean =
+          await dataPrevidencias.Previdenciarias(
+            DatasAtualEMenocinco[0],
+            DatasAtualEMenocinco[1],
+            paginaDosprevFormatada
+          );
+          
+        if (verificarDataFinal) {
+          //console.log('emprego?')
+          ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
+        }
+      }
+    } catch {
+      ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const segurado = await seguradoEspecial.handle(parginaDosPrev);
+    const requerimentoAtivo: boolean = await requerimentosAtivos.handle(
+      paginaDosprevFormatada
+    );
+
+    if (segurado !== -1 || requerimentoAtivo == true) {
+      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+    }
+
+
+
 
 
       const xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss = "/html/body/div/div[2]/table/tbody/tr[2]/td"
@@ -26,13 +78,24 @@ export class GetInformationDossieForPicaPau {
 
       if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
 
-        const verificarLitispedencia = await litispendenciaMaternidade.funcLitis(
+
+
+        const xpathNumeroUnicoCnj = "/html/body/div/div[1]/table/tbody/tr[1]/td[1]";
+
+        const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
+
+        const processoJudicial = await buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
+
+        if(processoJudicial){
+          ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -"
+        }
+       /*  const verificarLitispedencia = await litispendenciaMaternidade.funcLitis(
           paginaDosprevFormatada
         );
         
         if (verificarLitispedencia) {
           ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -";
-        }
+        } */
       }
 
 
@@ -60,8 +123,10 @@ export class GetInformationDossieForPicaPau {
 
 
     try {
+
+      const dataSubtrair = 16;
       const DatasAtualEMenosDezesseis: Array<Date> =
-        await requerimentos.dataRequerimento(paginaDosprevFormatada); 
+        await requerimentos.dataRequerimento(paginaDosprevFormatada, dataSubtrair); 
       //console.log("data atual menos dezesseis: ", DatasAtualEMenosDezesseis)
       //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
       if (DatasAtualEMenosDezesseis[0] == null) {
@@ -104,11 +169,16 @@ export class GetInformationDossieForPicaPau {
 
       if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
 
-        const verificarLitispedencia = await litispedenciaRural.funcLitis(
-          paginaDosprevFormatada
-        );
+
+        const xpathNumeroUnicoCnj = "/html/body/div/div[1]/table/tbody/tr[1]/td[1]";
+
+        const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
+
+
+
+        const processoJudicial = await buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
         
-        if (verificarLitispedencia) {
+        if (processoJudicial) {
           ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA R-";
         }
       }
