@@ -1,9 +1,11 @@
-import { RestabelecimentoRequerimentos } from "./RestabelecimentoRequerimentosDossie";
-import { RestabelecimentoRequerimentosSuperDossie } from "./RestabelecimentoRequerimentosSuperDossie";
-import { LoasLitispendencia } from "./LoasLitispendenciadDossie";
-import { LoasLitispendenciaSuperDossie } from "./LoasLitispendenciaSuperDossie";
-import { LoasEmpregoDossie } from "./LoasEmpregoDossie";
-import { LoasEmpregoSuperDossie } from "./LoasEmpregoSuperDossie";
+import { RestabelecimentoRequerimentos } from "./Dossie/RestabelecimentoRequerimentosDossie";
+import { RestabelecimentoRequerimentosSuperDossie } from "./SuperDossie/RestabelecimentoRequerimentosSuperDossie";
+import { LoasLitispendencia } from "./Dossie/LoasLitispendenciadDossie";
+import { LoasLitispendenciaSuperDossie } from "./SuperDossie/LoasLitispendenciaSuperDossie";
+import { LoasEmpregoDossie } from "./Dossie/LoasEmpregoDossie";
+import { LoasEmpregoSuperDossie } from "./SuperDossie/LoasEmpregoSuperDossie";
+import { LoasAtivoSuperDossie } from "./SuperDossie/LoasAtivoSuperDossie";
+import { LoasAtivoDossie } from "./Dossie/LoasAtivoDossie";
 
 
 export const loasEmpregoSuperDossie = new LoasEmpregoSuperDossie();
@@ -11,4 +13,6 @@ export const loasEmpregoDossie = new LoasEmpregoDossie();
 export const loasLitispendenciaSuperDossie = new LoasLitispendenciaSuperDossie();
 export const loasLitispendencia = new LoasLitispendencia();
 export const restabelecimentoRequerimentosDossie = new RestabelecimentoRequerimentos();
-export const restabelecimentoRequerimentosSuperDossie = new RestabelecimentoRequerimentosSuperDossie()
+export const restabelecimentoRequerimentosSuperDossie = new RestabelecimentoRequerimentosSuperDossie();
+export const loasAtivoSuperDossie = new LoasAtivoSuperDossie();
+export const loasAtivoDossie = new LoasAtivoDossie();
