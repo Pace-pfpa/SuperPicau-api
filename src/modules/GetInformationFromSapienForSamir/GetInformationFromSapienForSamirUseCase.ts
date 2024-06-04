@@ -45,7 +45,7 @@ export class GetInformationFromSapienForSamirUseCase {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             
             nupInicio = tarefas[0].pasta.NUP
-            console.log("NupInicio: ",nupInicio)
+            //console.log("NupInicio: ",nupInicio)
             
             /* const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.nup }); */
             let VerificarSeAindExisteProcesso: boolean = true;
@@ -343,20 +343,30 @@ export class GetInformationFromSapienForSamirUseCase {
                                 impedDossie = await getInformationDossieForPicaPau.impedimentosMaternidade(parginaDosPrevFormatada, parginaDosPrev);
                             }else if(data.readDosprevAge == 2){
                                 console.log("entrou")
+
                                 const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
 
-                                const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
-                                const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
+                                if (!dossieSocial) {
 
-                                const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
+                                    response += " CADÚNICO "
+                                    impedDossie = await getInformationDossieForPicaPau.impeditivoLoas(parginaDosPrevFormatada);
+                                    
+                                } else {
 
+                                    const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
+                                    const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
+    
+                                    const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
+    
+    
+    
+                                    
+                                    console.log(await cadUnico.execute(paginaDossieSocialFormatada))
+    
+    
+                                    impedDossie = await getInformationDossieForPicaPau.impeditivoLoas(parginaDosPrevFormatada);
+                                }
 
-
-                                
-                               console.log(await cadUnico.execute(paginaDossieSocialFormatada))
-
-
-                                impedDossie = await getInformationDossieForPicaPau.impeditivoLoas(parginaDosPrevFormatada);
                             }
 
                             /* impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas); */
@@ -466,25 +476,25 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }else if(data.readDosprevAge == 2){
                                     
                                     const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
+
+                                    if (!dossieSocial) {
+                                        response += " CADÚNICO "
+                                        impedDossie = await superDossie.impeditivosLoas(parginaDosPrevFormatada, parginaDosPrev);
+                                    } else {
+
+                                        const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
+                                        const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
+        
+                                        const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
+        
+                                        console.log("passouuuuuuuuuuu")
+                                        console.log(await cadUnico.execute(paginaDossieSocialFormatada));
+                                        console.log("acima")
+        
+        
+                                        impedDossie = await superDossie.impeditivosLoas(parginaDosPrevFormatada, parginaDosPrev);
+                                    }
     
-                                    const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
-                                    const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
-    
-                                    const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
-    
-    
-    
-                                    console.log("passouuuuuuuuuuu")
-                                    console.log(await cadUnico.execute(paginaDossieSocialFormatada));
-                                    console.log("acima")
-    
-    
-    
-    
-    
-    
-    
-                                    impedDossie = await superDossie.impeditivosLoas(parginaDosPrevFormatada, parginaDosPrev);
                                 }
                                 response = response + impedDossie
                             }
@@ -513,7 +523,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             const name = nomeMovimentacao.indexOf("SISLABRA - GF");
                             const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF')
                             if(name != -1 && siglaSlabra != -1){
-                                console.log(Documento.documentoJuntado.tipoDocumento)
+                                //console.log(Documento.documentoJuntado.tipoDocumento)
                                 const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
                                 if(typeDpcumento == "html"){
                                     return Documento
