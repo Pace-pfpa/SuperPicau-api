@@ -4,7 +4,7 @@ import { calcularIdade } from "../GetInformationFromDossieForPicaPau/DosprevBusi
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
 import { requerimentos, requerimentosAtivos } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformatioRequerimento";
 import { dataPrevidencias } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformationPrevidenciarias";
-import { loasEmpregoSuperDossie, loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie } from "../loas/Business";
+import { loasEmpregoSuperDossie, loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie } from "../loas/Business";
 import { buscarTabelaRelacaoDeProcessos } from "./Help/BuscarTabelaRelacaoDeProcessos";
 import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { litispedenciaNewDossieMaternidade, litispedenciaNewDossieRural } from "./SuperDossieBusiness/GetInformationLitispedencia";
@@ -244,6 +244,17 @@ export class SuperDossie {
                 ArrayImpedimentos = ArrayImpedimentos + loasEmprego.message
               }else{
                 ArrayImpedimentos = ArrayImpedimentos + loasEmprego.message
+              }
+            }
+
+
+
+
+            const loasAtivo = await loasAtivoSuperDossie.handle(paginaDosprevFormatada)
+
+            if (typeof(loasAtivo) == "object") {
+              if (loasAtivo.valorBooleano) {
+                ArrayImpedimentos = ArrayImpedimentos + loasAtivo.impeditivo
               }
             }
   
