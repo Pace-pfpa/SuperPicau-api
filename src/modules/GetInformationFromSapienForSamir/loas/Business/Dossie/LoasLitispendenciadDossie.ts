@@ -1,7 +1,4 @@
-import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
-import { arrayExisteCessadoOuSuspenso } from "./Help/ArrayExisteCessaoOuSuspenso";
-import { buscardatasLoas } from "./Help/BuscarDatas";
-import { EncontrarDataMaisAtual } from "./Help/EncontrarDataMaisAtual";
+import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 
 export class LoasLitispendencia{
     async handle(parginaDosPrevFormatada: any):Promise<any>{

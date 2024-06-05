@@ -48,8 +48,8 @@ export class GetDocumentSislabraFromSapiens{
 
 
        }catch(e){
-            console.log ("ERRO AO LE O SISLABRA AUTOR")
-         return `ERRO AO LE O SISLABRA AUTOR`
+            console.log ("ERRO AO LER O SISLABRA AUTOR")
+         return `ERRO AO LER O SISLABRA AUTOR`
        }
         
     }
