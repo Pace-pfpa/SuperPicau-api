@@ -3,7 +3,6 @@ import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 export class LoasLitispendencia{
     async handle(parginaDosPrevFormatada: any):Promise<any>{
         try{
-
             let tamanhoColunasRequerimentos = 2;
             const arrayDatas: Array<Date> = [];
             let verificarWhileRequerimentos = true;
@@ -13,7 +12,7 @@ export class LoasLitispendencia{
                     break;
                 }
                 tamanhoColunasRequerimentos++;
-            }
+            } 
                 const objetosEncontradosParaVerificar = []
                 for(let t=2; t<tamanhoColunasRequerimentos; t++){
                     if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[3]/table/tbody/tr[${t}]`)) === 'string'){
@@ -34,6 +33,7 @@ export class LoasLitispendencia{
                         
                     }
                 }
+                console.log(objetosEncontradosParaVerificar.length)
                 if(objetosEncontradosParaVerificar.length < 2) return false
                 return true
         }catch(e){

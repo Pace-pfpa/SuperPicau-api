@@ -20,6 +20,7 @@ export class LoasAtivoDossie {
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
                     if (xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1) {
                         if (xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("88 - ") !== -1) {
+                            console.log("-------LOAS DOSSIE")
                             // IMPEDITIVOS: LOAS ATIVO
                             return {
                                 valorBooleano: true,

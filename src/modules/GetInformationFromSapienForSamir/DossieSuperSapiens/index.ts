@@ -1,3 +1,3 @@
 import { SuperDossie } from "./superDossie";
 
-export const superDossie = new SuperDossie;
+export const superDossie = new SuperDossie();

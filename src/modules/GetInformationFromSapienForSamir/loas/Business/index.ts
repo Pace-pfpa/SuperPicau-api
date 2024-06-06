@@ -6,6 +6,8 @@ import { LoasEmpregoDossie } from "./Dossie/LoasEmpregoDossie";
 import { LoasEmpregoSuperDossie } from "./SuperDossie/LoasEmpregoSuperDossie";
 import { LoasAtivoSuperDossie } from "./SuperDossie/LoasAtivoSuperDossie";
 import { LoasAtivoDossie } from "./Dossie/LoasAtivoDossie";
+import { LoasIdadeSuperDossie } from "./SuperDossie/LoasIdadeSuperDossie";
+import { LoasIdadeDossie } from "./Dossie/LoasIdadeDossie";
 
 
 export const loasEmpregoSuperDossie = new LoasEmpregoSuperDossie();
@@ -16,3 +18,5 @@ export const restabelecimentoRequerimentosDossie = new RestabelecimentoRequerime
 export const restabelecimentoRequerimentosSuperDossie = new RestabelecimentoRequerimentosSuperDossie();
 export const loasAtivoSuperDossie = new LoasAtivoSuperDossie();
 export const loasAtivoDossie = new LoasAtivoDossie();
+export const loasIdadeSuperDossie = new LoasIdadeSuperDossie();
+export const loasIdadeDossie = new LoasIdadeDossie();

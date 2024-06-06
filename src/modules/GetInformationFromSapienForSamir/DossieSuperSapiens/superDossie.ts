@@ -4,7 +4,7 @@ import { calcularIdade } from "../GetInformationFromDossieForPicaPau/DosprevBusi
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
 import { requerimentos, requerimentosAtivos } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformatioRequerimento";
 import { dataPrevidencias } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformationPrevidenciarias";
-import { loasEmpregoSuperDossie, loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie } from "../loas/Business";
+import { loasEmpregoSuperDossie, loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie, loasIdadeSuperDossie } from "../loas/Business";
 import { buscarTabelaRelacaoDeProcessos } from "./Help/BuscarTabelaRelacaoDeProcessos";
 import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { litispedenciaNewDossieMaternidade, litispedenciaNewDossieRural } from "./SuperDossieBusiness/GetInformationLitispedencia";
@@ -257,6 +257,17 @@ export class SuperDossie {
                 ArrayImpedimentos = ArrayImpedimentos + loasAtivo.impeditivo
               }
             }
+
+
+
+            const loasIdade = await loasIdadeSuperDossie.handle(paginaDosprevFormatada)
+            console.log("MAIOR QUE 65 ANOS? " + loasIdade)
+
+            if (!loasIdade) {
+              ArrayImpedimentos += " IDADE "
+            }
+
+
   
   
   
@@ -265,7 +276,7 @@ export class SuperDossie {
 
           }catch(e){
             console.log(e)
-            return "erro ao le loas"
+            return "Erro ao ler LOAS"
           }
 
 

@@ -23,10 +23,9 @@ export class RestabelecimentoRequerimentosSuperDossie{
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
                     if(xpathCoulaFormatadoRequerimentos.indexOf("CESSADO") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("SUSPENSO") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("INDEFERIDO") !== -1){
                         if(xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("88 - ") !== -1){
-                            console.log("----LOOOOP")
                             if(xpathCoulaFormatadoRequerimentos.indexOf("CESSADO") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("SUSPENSO") !== -1){
                                 const buscarDataCessaoOuSuspenso = buscardatasLoas(xpathCoulaFormatadoRequerimentos);
-                                console.log("---DATA: " + buscarDataCessaoOuSuspenso[0])
+                                console.log("---DATA RESTABELECIMENTO: " + buscarDataCessaoOuSuspenso[0])
                                 if(!buscarDataCessaoOuSuspenso) return new Error("beneficio sem data")
                                 const restabelecimento = {
                                     beneficio: "cessaoOuSuspenso",
@@ -53,7 +52,7 @@ export class RestabelecimentoRequerimentosSuperDossie{
                 }
             }
 
-            console.log("---DATA MAIS ATUAL: " + EncontrarDataMaisAtual(objetosEncontradosParaVerificar).data)
+            //console.log("---DATA MAIS ATUAL: " + EncontrarDataMaisAtual(objetosEncontradosParaVerificar).data)
 
             if(objetosEncontradosParaVerificar.length == 0) return false
             if(!arrayExisteCessadoOuSuspenso(objetosEncontradosParaVerificar)) return false

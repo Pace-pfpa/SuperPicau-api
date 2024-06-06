@@ -1,5 +1,6 @@
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
-import { loasEmpregoDossie, loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie } from "../loas/Business";
+import { loasEmpregoDossie, loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
+import { LoasIdadeDossie } from "../loas/Business/Dossie/LoasIdadeDossie";
 import { calcularIdade } from "./DosprevBusiness/GetInformationIdade";
 import { litispedenciaRural, litispendenciaMaternidade } from "./DosprevBusiness/GetInformationLitispendencia";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
@@ -253,15 +254,19 @@ export class GetInformationDossieForPicaPau {
       }
 
 
+      const loasIdade = await loasIdadeDossie.handle(paginaDosprevFormatada)
+
+      if (!loasIdade) {
+        impeditivos += " IDADE -"
+      }
+
+
       return impeditivos + " *LOAS* "
-    }catch(e){
+      
+    } catch(e) {
 
       console.log(e)
-      return "erro ao le loas"
-      
-
-
-
+      return "Erro ao ler LOAS"
     }
     
   }
