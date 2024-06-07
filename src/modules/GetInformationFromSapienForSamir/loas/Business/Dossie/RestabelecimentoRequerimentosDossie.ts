@@ -72,9 +72,6 @@ export class RestabelecimentoRequerimentos{
                 }
             }
             
-            console.log("LENGTH: " + objetosEncontradosParaVerificar.length)
-            console.log("CONTENT: " + objetosEncontradosParaVerificar[0].data)
-            console.log("DATA AJUIZ: " + dateAjuizamento)
             if(objetosEncontradosParaVerificar.length == 0) {
                 return {
                     valorBooleano: true,
@@ -83,12 +80,9 @@ export class RestabelecimentoRequerimentos{
             }
 
             if (arrayExisteCessadoOuSuspenso(objetosEncontradosParaVerificar)) {
-                console.log("DATA CES/SUS COMUM: " + EncontrarDataCesSusMaisAtual(objetosEncontradosParaVerificar))
+
                 const dataCessado = formatDate(EncontrarDataCesSusMaisAtual(objetosEncontradosParaVerificar))
-                console.log(dataCessado)
-                console.log(dateAjuizamento)
                 const tempoCesSus = calcularIdadeIdoso(dataCessado, dateAjuizamento)
-                console.log(tempoCesSus)
 
                 // Existem cessados/suspensos e o mais atual tem menos de 5 anos, independente do indeferido = Restabelecimento
                 if (tempoCesSus < 5) {

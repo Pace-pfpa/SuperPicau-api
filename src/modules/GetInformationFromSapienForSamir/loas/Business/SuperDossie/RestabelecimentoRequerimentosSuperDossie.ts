@@ -10,7 +10,7 @@ import { formatDate } from "../Help/FormatarDataLoas";
 
 export class RestabelecimentoRequerimentosSuperDossie{
     async handle(parginaDosPrevFormatada: any):Promise<any>{
-        //Estrutura para identificar a maior data, e fazer a subtração dela
+        // Estrutura para etiquetar os requerimentos
 
 
         const xpathDataAjuzamento = "/html/body/div/div[4]/table/tbody/tr[2]/td"
@@ -67,8 +67,7 @@ export class RestabelecimentoRequerimentosSuperDossie{
                 }
             }
 
-            
-            console.log("LENGTH: " + objetosEncontradosParaVerificar.length)
+
             if(objetosEncontradosParaVerificar.length == 0) {
                 return {
                     valorBooleano: true,
@@ -77,12 +76,9 @@ export class RestabelecimentoRequerimentosSuperDossie{
             }
 
             if (arrayExisteCessadoOuSuspenso(objetosEncontradosParaVerificar)) {
-                console.log("DATA CES/SUS SUPER: " + EncontrarDataCesSusMaisAtual(objetosEncontradosParaVerificar))
+
                 const dataCessado = formatDate(EncontrarDataCesSusMaisAtual(objetosEncontradosParaVerificar))
-                console.log(dataCessado)
-                console.log(dateAjuizamento)
                 const tempoCesSus = calcularIdadeIdoso(dataCessado, dateAjuizamento)
-                console.log(tempoCesSus)
 
                 // Existem cessados/suspensos e o mais atual tem menos de 5 anos, independente do indeferido = Restabelecimento
                 if (tempoCesSus < 5) {

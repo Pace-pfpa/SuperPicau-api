@@ -285,6 +285,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     }else if(!dossieNormal && superDosprevExist){
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, null, objectDosPrev2);
                         
+                        
                         if(dossieIsvalid instanceof Error){
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
                             
@@ -348,7 +349,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                                 if (!dossieSocial) {
 
-                                    response += " CADÚNICO "
+                                    response += " CADÚNICO -"
                                     impedDossie = await getInformationDossieForPicaPau.impeditivoLoas(parginaDosPrevFormatada);
                                     
                                 } else {
@@ -478,7 +479,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                     const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
 
                                     if (!dossieSocial) {
-                                        response += " CADÚNICO "
+                                        response += " CADÚNICO -"
                                         impedDossie = await superDossie.impeditivosLoas(parginaDosPrevFormatada, parginaDosPrev);
                                     } else {
 

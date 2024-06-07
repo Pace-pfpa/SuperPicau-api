@@ -68,9 +68,9 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
      
      if(normalDossie && superDossie){
         console.log("23213213")
-     console.log(normalDossie[0].documentoJuntado)
-     console.log(superDossie[0].documentoJuntado)
-     console.log("23213213")
+        console.log(normalDossie[0].documentoJuntado)
+        console.log(superDossie[0].documentoJuntado)
+        console.log("23213213")
          if(normalDossie.length >= superDossie.length){
              for(let i=0; i < superDossie.length; i++){
                 
@@ -216,6 +216,7 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
                  let objetoDosprevNormal =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
      
                  if(objetoDosprevNormal){
+                    console.log('-----CAIU AQUI? 2')
                      return new Error("DOSPREV COM FALHA NA PESQUISA")
                  }
      
