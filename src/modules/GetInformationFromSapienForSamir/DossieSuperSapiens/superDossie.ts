@@ -208,15 +208,17 @@ export class SuperDossie {
 
           
           try{
+            
             const restabelecimentoRequerimentos = await restabelecimentoRequerimentosSuperDossie.handle(paginaDosprevFormatada)
+            console.log('RESTAB SUPER: ' + restabelecimentoRequerimentos)
   
-  
-            if(restabelecimentoRequerimentos instanceof Error){
+            if (restabelecimentoRequerimentos instanceof Error) {
               ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
-            }else if(restabelecimentoRequerimentos){
-              ArrayImpedimentos = ArrayImpedimentos + " RESTABELECIMENTO -"
+            } else if (restabelecimentoRequerimentos.valorBooleano) {
+              console.log("IMPEDITIVO: " + restabelecimentoRequerimentos.impeditivo)
+              ArrayImpedimentos = ArrayImpedimentos + restabelecimentoRequerimentos.impeditivo
             }
-  
+
   
   
   
@@ -264,7 +266,7 @@ export class SuperDossie {
             console.log("MAIOR QUE 65 ANOS? " + loasIdade)
 
             if (!loasIdade) {
-              ArrayImpedimentos += " IDADE "
+              ArrayImpedimentos += " IDADE -"
             }
 
 

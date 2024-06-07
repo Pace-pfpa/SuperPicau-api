@@ -33,7 +33,6 @@ export class LoasLitispendencia{
                         
                     }
                 }
-                console.log(objetosEncontradosParaVerificar.length)
                 if(objetosEncontradosParaVerificar.length < 2) return false
                 return true
         }catch(e){

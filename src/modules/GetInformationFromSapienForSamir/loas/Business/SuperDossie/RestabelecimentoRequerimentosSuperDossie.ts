@@ -1,11 +1,26 @@
+import { correçaoDoErroDeFormatoDoSapiens } from "../../../../../helps/CorreçaoDoErroDeFormatoDoSapiens";
 import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
+import { convertToDate } from "../../../helps/createFormatDate";
 import { arrayExisteCessadoOuSuspenso } from "../Help/ArrayExisteCessaoOuSuspenso";
 import { buscardatasLoas } from "../Help/BuscarDatas";
+import { calcularIdadeIdoso } from "../Help/CalcularIdadeIdoso";
+import { EncontrarDataCesSusMaisAtual } from "../Help/EncontrarCesSusMaisAtual";
 import { EncontrarDataMaisAtual } from "../Help/EncontrarDataMaisAtual";
+import { formatDate } from "../Help/FormatarDataLoas";
 
 export class RestabelecimentoRequerimentosSuperDossie{
     async handle(parginaDosPrevFormatada: any):Promise<any>{
         //Estrutura para identificar a maior data, e fazer a subtração dela
+
+
+        const xpathDataAjuzamento = "/html/body/div/div[4]/table/tbody/tr[2]/td"
+        const dateAjuizamento = correçaoDoErroDeFormatoDoSapiens(getXPathText(parginaDosPrevFormatada, xpathDataAjuzamento));
+    
+        if(!dateAjuizamento) new Error("data ajuizamento não encontrada");
+        if(dateAjuizamento.length == 0) new Error("data ajuizamento não encontrada");
+        if(!(typeof(convertToDate(dateAjuizamento.trim())) == typeof(new Date()))) new Error("pegou xpath errado do ajuizamento");
+
+
         let tamanhoColunasRequerimentos = 1;
         const arrayDatas: Array<Date> = [];
         let verificarWhileRequerimentos = true;
@@ -15,7 +30,7 @@ export class RestabelecimentoRequerimentosSuperDossie{
                 break;
             }
             tamanhoColunasRequerimentos++;
-        }
+        } // /html/body/div/div[6]/table/tbody/tr[1]/td[5]
         const objetosEncontradosParaVerificar = []
             for(let t=1; t<tamanhoColunasRequerimentos; t++){
                 if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[6]/table/tbody/tr[${t}]`)) === 'string'){
@@ -25,11 +40,11 @@ export class RestabelecimentoRequerimentosSuperDossie{
                         if(xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("88 - ") !== -1){
                             if(xpathCoulaFormatadoRequerimentos.indexOf("CESSADO") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("SUSPENSO") !== -1){
                                 const buscarDataCessaoOuSuspenso = buscardatasLoas(xpathCoulaFormatadoRequerimentos);
-                                console.log("---DATA RESTABELECIMENTO: " + buscarDataCessaoOuSuspenso[0])
+                                console.log("---DATA RESTABELECIMENTO: " + buscarDataCessaoOuSuspenso[2])
                                 if(!buscarDataCessaoOuSuspenso) return new Error("beneficio sem data")
                                 const restabelecimento = {
                                     beneficio: "cessaoOuSuspenso",
-                                    data: new Date(parseInt(buscarDataCessaoOuSuspenso[0].split("/")[2]), parseInt(buscarDataCessaoOuSuspenso[0].split("/")[1]) - 1, parseInt(buscarDataCessaoOuSuspenso[0].split("/")[0]))
+                                    data: new Date(parseInt(buscarDataCessaoOuSuspenso[2].split("/")[2]), parseInt(buscarDataCessaoOuSuspenso[2].split("/")[1]) - 1, parseInt(buscarDataCessaoOuSuspenso[2].split("/")[0]))
                                 }
                                 objetosEncontradosParaVerificar.push(restabelecimento)
                             }
@@ -52,14 +67,43 @@ export class RestabelecimentoRequerimentosSuperDossie{
                 }
             }
 
-            //console.log("---DATA MAIS ATUAL: " + EncontrarDataMaisAtual(objetosEncontradosParaVerificar).data)
+            
+            console.log("LENGTH: " + objetosEncontradosParaVerificar.length)
+            if(objetosEncontradosParaVerificar.length == 0) {
+                return {
+                    valorBooleano: true,
+                    impeditivo: " AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO -"
+                }
+            }
 
-            if(objetosEncontradosParaVerificar.length == 0) return false
-            if(!arrayExisteCessadoOuSuspenso(objetosEncontradosParaVerificar)) return false
-            if(EncontrarDataMaisAtual(objetosEncontradosParaVerificar).beneficio == "cessaoOuSuspenso") return true
-            return false;
-            
-            
+            if (arrayExisteCessadoOuSuspenso(objetosEncontradosParaVerificar)) {
+                console.log("DATA CES/SUS SUPER: " + EncontrarDataCesSusMaisAtual(objetosEncontradosParaVerificar))
+                const dataCessado = formatDate(EncontrarDataCesSusMaisAtual(objetosEncontradosParaVerificar))
+                console.log(dataCessado)
+                console.log(dateAjuizamento)
+                const tempoCesSus = calcularIdadeIdoso(dataCessado, dateAjuizamento)
+                console.log(tempoCesSus)
+
+                // Existem cessados/suspensos e o mais atual tem menos de 5 anos, independente do indeferido = Restabelecimento
+                if (tempoCesSus < 5) {
+                    return {
+                        valorBooleano: true,
+                        impeditivo: " RESTABELECIMENTO -"
+                    }
+                } else {
+                    if(EncontrarDataMaisAtual(objetosEncontradosParaVerificar).beneficio == "indeferido") {
+                        return false
+                    }
+                    return {
+                        valorBooleano: true,
+                        impeditivo: " AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO -"
+                    }
+                }
+
+            } else {
+                return false
+            }
+                
     }
     
     }

@@ -207,13 +207,15 @@ export class GetInformationDossieForPicaPau {
 
 
       const restabelecimentoRequerimento = await restabelecimentoRequerimentosDossie.handle(paginaDosprevFormatada)
+      console.log('----RESTAB: ' + restabelecimentoRequerimento)
 
 
 
       if(restabelecimentoRequerimento instanceof Error){
         impeditivos = impeditivos + " erro estabelecimento -"
-      }else if(restabelecimentoRequerimento){
-        impeditivos = impeditivos + " RESTABELECIMENTO -"
+      }else if(restabelecimentoRequerimento.valorBooleano){
+        console.log("IMPEDITIVO: " + restabelecimentoRequerimento.impeditivo)
+        impeditivos = impeditivos + restabelecimentoRequerimento.impeditivo
       }
 
 
