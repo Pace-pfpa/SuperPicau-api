@@ -7,12 +7,13 @@ export function buscarTableCpf(capa: string){
         if(tableIsTrue){  
             let verificarLinhaPoloAtivo = tableIsTrue.indexOf("PÓLO ATIVO")
             if(verificarLinhaPoloAtivo != -1){
-                 for(let j=0; j<=6;j++){ 
+                 for(let j=0; j<=6;j++){
                     let xpathCpf = `html/body/div/div[${i}]/table/tbody/tr[${j}]`
                     let poloAtivo = getXPathText(capa, xpathCpf)                    
                     if(poloAtivo){
                          let poloAtivoCpf = poloAtivo.indexOf("PÓLO ATIVO")
                          if(poloAtivoCpf != -1){
+                            console.log(`html/body/div/div[${i}]/table/tbody/tr[${j}]`)
                             return (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
                          }
                     }
@@ -25,3 +26,7 @@ export function buscarTableCpf(capa: string){
 ///html/body/div/div[7]/table/tbody/tr[2]
 
 ///html/body/div/div[6]/table/tbody/tr[2]
+
+// /html/body/div/div[6]/table/tbody/tr[5]/td[1]
+
+// html/body/div/div[6]/table/tbody/tr[5]

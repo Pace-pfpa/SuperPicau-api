@@ -46,6 +46,8 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
          
                  const xpathCpfDosprev = "/html/body/div/div[4]/table/tbody/tr[7]/td"
                  const cpfDosprev = getXPathText(parginaDosPrevFormatada, xpathCpfDosprev);
+                 console.log('----CPF DOSPREV: ')
+                 console.log(cpfDosprev)
                  
                  if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
                     

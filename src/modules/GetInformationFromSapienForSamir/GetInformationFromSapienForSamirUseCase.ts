@@ -31,8 +31,10 @@ export class GetInformationFromSapienForSamirUseCase {
         const usuario = (await getUsuarioUseCase.execute(cookie));
         let impedDossie: string  = '';
         
+        
         const usuario_id = `${usuario[0].id}`;
-        let novaCapa: any = false;
+        console.log('----USUARIO_ID: ' + JSON.stringify(usuario))
+        let novaCapa: any = false; 
         var objectDosPrev
         let response: string = '';
         let dossieNormal = false;
@@ -255,7 +257,9 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                     
                 
+                    console.log("CPF: ")
                     const cpfCapa = buscarTableCpf(novaCapa);
+                    console.log(cpfCapa)
                     if(!cpfCapa){
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
                         return {erro: ` CPF NÃO ENCONTRADO -`}
