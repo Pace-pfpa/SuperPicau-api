@@ -14,7 +14,14 @@ export function buscarTableCpf(capa: string){
                          let poloAtivoCpf = poloAtivo.indexOf("PÓLO ATIVO")
                          if(poloAtivoCpf != -1){
                             console.log(`html/body/div/div[${i}]/table/tbody/tr[${j}]`)
-                            return (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
+                            let isCpf = (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
+                            console.log("CPF OU ADVOGADO: ")
+                            console.log(!/\D/.test(isCpf))
+                            if (!/\D/.test(isCpf)) {
+                                return isCpf
+                            } else {
+                                return undefined
+                            }
                          }
                     }
                  }
