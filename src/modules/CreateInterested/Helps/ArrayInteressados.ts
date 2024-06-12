@@ -22,7 +22,7 @@ export function arrayInteressados(inputArray: InputArray): string[] {
     }
 
     const objeto = inputArray[0];
-    const resultado: string[] = [];
+    const resultado: string[] = ['0000000000-'];
 
     if (objeto.result && Array.isArray(objeto.result.records)) {
         for (let i = 0; i < objeto.result.records.length; i++) {
