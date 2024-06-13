@@ -17,13 +17,14 @@ export async function GetPessoa_id(cpf: string, cookie: string){
         console.log("chegou " + cpf)
         console.log(cookie)
         const response = await axios.post(UrlRequest, payload, {headers})
-        console.log("Dasdasdas")
+        console.log("---RESPOSTA GETPESSOA_ID: ")
+        console.log(response.data[0])
 
         if (!response.data[0].result.records.length) {
             return null
         } else {
             const pessoa_id = response.data[0].result.records[0].pessoa_id
-            console.log(pessoa_id)
+            console.log('PESSOA_ID: ' + pessoa_id)
             return pessoa_id;
         }
 

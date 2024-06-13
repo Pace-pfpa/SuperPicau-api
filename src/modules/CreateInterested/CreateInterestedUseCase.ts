@@ -112,33 +112,55 @@ export class CreateInterestedUseCase{
                 const buscarTabelaGrupoFamiliar = new BuscarTabelaGrupoFamiliar;
                 const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocialFormatada); 
                  
-                
+                let cpfInvalidoEncontrado = false
+                let arrayDeCpfInválido = []
+
                 try {
-                    for(let j = 0; j < arrayCpfsInteressados.length; j++ ){
-                        console.log('aquiiiiiiiiiiii ' + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
-                        let cpfExistente = ArrayEnvolvidos.filter((element) => element === CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
-                        console.log(cpfExistente)
-    
-                        if(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()) !== cpfCapa.trim() && !cpfExistente.length){
-                            const pessoa_id =  await GetPessoa_id(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
-                            if (!pessoa_id) {
-                                throw new Error('CPF NÃO CONSTA NA RECEITA')
-                            } else {
-                                const pasta_id = tarefas[i].pasta_id;
-                                await CreateTarefa(pasta_id, pessoa_id, cookie)
+                    for (let j = 0; j < arrayCpfsInteressados.length; j++ ) {
+
+                        try {
+                            console.log('aquiiiiiiiiiiii ' + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
+                            let cpfExistente = ArrayEnvolvidos.filter((element) => element === CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
+                            console.log(cpfExistente)
+
+
+                            if(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()) !== cpfCapa.trim() && !cpfExistente.length){
+                                const pessoa_id =  await GetPessoa_id(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
+                                console.log('-----PESSOA ID NO LAÇO: ')
+                                console.log(pessoa_id)
+                                if (!pessoa_id) {
+                                    throw new Error('CPF NÃO CONSTA NA RECEITA')
+                                } else {
+                                    const pasta_id = tarefas[i].pasta_id;
+                                    await CreateTarefa(pasta_id, pessoa_id, cookie)
+                                }
+                            }
+
+                            
+
+                        } catch (error) {
+                            arrayDeCpfInválido.push(" " + arrayCpfsInteressados[j].trim())
+                            cpfInvalidoEncontrado = true
+                            if (error.message === 'CPF NÃO CONSTA NA RECEITA') {
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInválido} NÃO CONSTA NA RECEITA`, tarefaId })
                             }
                         }
+
+
+
+
+                        
+    
+                        
                     }
 
-                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ENVOLVIDOS CADASTRADOS`, tarefaId })
+                    if (!cpfInvalidoEncontrado) {
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ENVOLVIDOS CADASTRADOS`, tarefaId })
+                    }
+
 
                 } catch (error) {
-                    if (error.message === 'CPF NÃO CONSTA NA RECEITA') {
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ENVOLVIDO NÃO CONSTA NA RECEITA`, tarefaId })
-                    } else {
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ERRO AO CADASTRAR ENVOLVIDOS`, tarefaId })
-                    }
-
+                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ERRO AO CADASTRAR ENVOLVIDOS`, tarefaId })
                 }
 
     

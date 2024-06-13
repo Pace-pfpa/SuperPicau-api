@@ -253,6 +253,8 @@ export class SuperDossie {
 
 
             const loasAtivo = await loasAtivoSuperDossie.handle(paginaDosprevFormatada)
+            console.log('----TA ATIVO: ')
+            console.log(loasAtivo)
 
             if (typeof(loasAtivo) == "object") {
               if (loasAtivo.valorBooleano) {

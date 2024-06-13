@@ -33,7 +33,6 @@ export class GetInformationFromSapienForSamirUseCase {
         
         
         const usuario_id = `${usuario[0].id}`;
-        console.log('----USUARIO_ID: ' + JSON.stringify(usuario))
         let novaCapa: any = false; 
         var objectDosPrev
         let response: string = '';
