@@ -139,7 +139,7 @@ export class CreateInterestedUseCase{
                             
 
                         } catch (error) {
-                            arrayDeCpfInválido.push(" " + arrayCpfsInteressados[j].trim())
+                            arrayDeCpfInválido.push(" " + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
                             cpfInvalidoEncontrado = true
                             if (error.message === 'CPF NÃO CONSTA NA RECEITA') {
                                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInválido} NÃO CONSTA NA RECEITA`, tarefaId })
