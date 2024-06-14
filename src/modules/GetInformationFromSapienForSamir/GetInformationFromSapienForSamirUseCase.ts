@@ -509,9 +509,9 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
                         
+                    // LÓGICA DO SISLABRA 
 
-
-                    
+                    /*
                     const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
                         const nomeMovimentacao = Documento.movimento;
                         const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
@@ -604,11 +604,12 @@ export class GetInformationFromSapienForSamirUseCase {
     
                             response = response + sislabraConjuge
                         }else{
-                            /* response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" */
+                            /* response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" 
                             sislabraAutorESislabraConjugeNoExistem = true;
                         }
                     }
 
+                    */
                     
                   
                     console.log("---BEFORE RESPONSE: " + response)

@@ -100,6 +100,8 @@ export class LoasEmpregoSuperDossie{
             
             // /html/body/div/div[7]/table/tbody/tr[1]/td[5]
             // /html/body/div/div[7]/table/tbody/tr[2]/td[5]
+            // /html/body/div/div[8]/table/tbody/tr[1]/td[5]
+            // /html/body/div/div[7]
             let dataInicioPrevidenciariasNaoExiste = false;
             let dataFimPrevidenciariasNaoExiste = false;
             let dataInicioEDataFimNaoExistem = false;
@@ -110,7 +112,9 @@ export class LoasEmpregoSuperDossie{
                 const dataInicioPrevidenciaria = getXPathText(parginaDosPrevFormatada, xpathDataInicioPrevidenciarias);
                 const dataFimPrevidenciaria = getXPathText(parginaDosPrevFormatada, xpathDataFimPrevidenciarias);
 
-                
+                console.log('----DATA INICIO PREVIDENCIARIA: ')
+                console.log(dataInicioPrevidenciaria)
+
                 if(dataInicioPrevidenciaria.trim().length == 0 && dataFimPrevidenciaria.trim().length == 0){
                     dataInicioEDataFimNaoExistem = true;
                     continue;

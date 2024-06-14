@@ -3,6 +3,7 @@ import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
 export async function getEmpregoSislabra(paginaSislabra: string){
     ///html/body/div/main/div/div[8]/table/tbody/tr[2]/td[8]
     ///html/body/div/main/div/div[8]/table/tbody/tr[3]/td[8]
+    ///html/body/div/main/div/div[8]/table/tbody/tr[2]/td[5]
     let contadorWhile = true;
     let contadorXpath = 2;
     while(contadorWhile){

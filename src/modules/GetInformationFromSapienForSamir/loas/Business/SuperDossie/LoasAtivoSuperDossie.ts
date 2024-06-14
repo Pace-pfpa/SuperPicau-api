@@ -23,13 +23,13 @@ export class LoasAtivoSuperDossie {
                             // IMPEDITIVOS: LOAS ATIVO
                             return {
                                 valorBooleano: true,
-                                impeditivo: " LOAS ATIVO "
+                                impeditivo: " LOAS ATIVO -"
                             }
                         } else {
                             // IMPEDITIVOS: BENEFÍCIO ATIVO
                             return {
                                 valorBooleano: true,
-                                impeditivo: " BENEFÍCIO ATIVO "
+                                impeditivo: " BENEFÍCIO ATIVO -"
                             }
                         }
                       

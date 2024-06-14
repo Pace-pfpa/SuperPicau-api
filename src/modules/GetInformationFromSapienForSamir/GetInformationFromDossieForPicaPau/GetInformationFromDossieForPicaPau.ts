@@ -230,7 +230,7 @@ export class GetInformationDossieForPicaPau {
 
 
 
-
+      /*
       const loasEmprego: any = await loasEmpregoDossie.execute(paginaDosprevFormatada)
         if(typeof(loasEmprego) == "boolean"){
           if(loasEmprego){
@@ -243,13 +243,14 @@ export class GetInformationDossieForPicaPau {
               impeditivos = impeditivos + loasEmprego.message
           }
       }
+      */
 
 
 
 
       const loasAtivo = await loasAtivoDossie.handle(paginaDosprevFormatada)
-
-      if (typeof(loasAtivo) == "object") {
+      
+      if (typeof (loasAtivo) == "object") {
         if (loasAtivo.valorBooleano) {
           impeditivos = impeditivos + loasAtivo.impeditivo
         }

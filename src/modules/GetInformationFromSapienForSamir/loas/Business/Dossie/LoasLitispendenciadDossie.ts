@@ -1,49 +1,43 @@
 import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 
-export class LoasLitispendencia{
+export class LoasLitispendencia {
     async handle(parginaDosPrevFormatada: any):Promise<any>{
-        try{
-            let tamanhoColunasRequerimentos = 2;
-            const arrayDatas: Array<Date> = [];
-            let verificarWhileRequerimentos = true;
-            while(verificarWhileRequerimentos){
-                if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[3]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object'){
-                    verificarWhileRequerimentos = false; 
-                    break;
-                }
-                tamanhoColunasRequerimentos++;
-            } 
-                const objetosEncontradosParaVerificar = []
-                for(let t=2; t<tamanhoColunasRequerimentos; t++){
-                    if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[3]/table/tbody/tr[${t}]`)) === 'string'){
-                        const xpathColunaRequerimentos = `/html/body/div/div[3]/table/tbody/tr[${t}]`;
-                        const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
-                        //console.log(buscardatasLoas(xpathCoulaFormatadoRequerimentos))
-                            if(xpathCoulaFormatadoRequerimentos.indexOf("86 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1){
-                                
-                                    const restabelecimento = {
-                                        beneficio: "qualquerEspecie",
-                                    }
-                                    objetosEncontradosParaVerificar.push(restabelecimento)
-                                
-    
-                               
-                            }
-                          
-                        
+
+        let inicioLitis = 2;
+        let tamanhoColunaLitis = 0;
+        ///html/body/div/div[2]
+        ///html/body/div/div[2]/table/tbody
+        let verificarWhileLitis = true;
+        while (verificarWhileLitis) {
+            if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[2]/table/tbody/tr[${inicioLitis}]`)) == 'object'){
+                verificarWhileLitis = false; 
+                break;
+            }
+            inicioLitis++;
+            tamanhoColunaLitis++;
+        }
+        console.log('---COLUNA LIST: ' + tamanhoColunaLitis)
+
+        const objetosEncontradosParaVerificar = []
+        for (let t = 1; t < tamanhoColunaLitis; t++) {
+            if (typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[2]/table/tbody/tr[${t}]`)) === 'string') {
+                    const restabelecimento = {
+                        beneficio: "qualquerEspecie",
                     }
-                }
-                if(objetosEncontradosParaVerificar.length < 2) return false
-                return true
-        }catch(e){
-            console.log("erro no maternidade litispendencia"  +e)
-            return false;
+                    objetosEncontradosParaVerificar.push(restabelecimento)
+            }
         }
 
-            
-            
+        console.log(objetosEncontradosParaVerificar)
+
+        if (objetosEncontradosParaVerificar.length < 2) {
+            return false
+        } else {
+            return true
+        }         
     }
     
-    }
+}
 
+    
     

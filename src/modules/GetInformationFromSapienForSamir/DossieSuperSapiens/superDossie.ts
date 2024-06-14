@@ -234,7 +234,10 @@ export class SuperDossie {
   
   
   
+            /*  
             const loasEmprego = await loasEmpregoSuperDossie.execute(paginaDosprevFormatada)
+            console.log('----LOAS EMPREGO: ')
+            console.log(loasEmprego)
   
   
             if(typeof(loasEmprego) == "boolean"){
@@ -248,6 +251,7 @@ export class SuperDossie {
                 ArrayImpedimentos = ArrayImpedimentos + loasEmprego.message
               }
             }
+            */  
 
 
 
