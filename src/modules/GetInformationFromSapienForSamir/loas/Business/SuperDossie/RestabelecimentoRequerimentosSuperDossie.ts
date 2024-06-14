@@ -22,15 +22,16 @@ export class RestabelecimentoRequerimentosSuperDossie{
 
 
         let tamanhoColunasRequerimentos = 1;
-        const arrayDatas: Array<Date> = [];
         let verificarWhileRequerimentos = true;
-        while(verificarWhileRequerimentos){
+        while(verificarWhileRequerimentos) {
             if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object'){
                 verificarWhileRequerimentos = false; 
                 break;
             }
             tamanhoColunasRequerimentos++;
-        } // /html/body/div/div[6]/table/tbody/tr[1]/td[5]
+        }
+        
+        // /html/body/div/div[6]/table/tbody/tr[1]/td[5]
         const objetosEncontradosParaVerificar = []
             for(let t=1; t<tamanhoColunasRequerimentos; t++){
                 if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[6]/table/tbody/tr[${t}]`)) === 'string'){

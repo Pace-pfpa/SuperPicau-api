@@ -225,7 +225,7 @@ export class GetInformationDossieForPicaPau {
       if(litispendenciaLoas instanceof Error){
         impeditivos = impeditivos + " erro estabelecimento -"
       }else if(litispendenciaLoas){
-        impeditivos = impeditivos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
+        impeditivos = impeditivos + " LITISPENDÊNCIA -"
       }
 
 
@@ -249,7 +249,7 @@ export class GetInformationDossieForPicaPau {
 
 
       const loasAtivo = await loasAtivoDossie.handle(paginaDosprevFormatada)
-      
+
       if (typeof (loasAtivo) == "object") {
         if (loasAtivo.valorBooleano) {
           impeditivos = impeditivos + loasAtivo.impeditivo

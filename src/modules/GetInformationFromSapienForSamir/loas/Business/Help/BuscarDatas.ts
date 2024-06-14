@@ -8,10 +8,9 @@ export function buscardatasLoas(text) {
     const dates = text.match(dateRegex);
 
     
-    if (dates) {     
+    if (dates) {   
         return dates; 
     } else {
-        console.log(dates)
         return false
     }
 }

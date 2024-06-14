@@ -228,7 +228,7 @@ export class SuperDossie {
             if(loasLitispendencia instanceof Error){
               ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
               }else if(loasLitispendencia){
-                ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
+                ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -"
               }
   
   

@@ -614,6 +614,8 @@ export class GetInformationFromSapienForSamirUseCase {
                   
                     console.log("---BEFORE RESPONSE: " + response)
 
+                    
+
                     if (response.length == 0) {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
@@ -633,7 +635,37 @@ export class GetInformationFromSapienForSamirUseCase {
                             await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
                             return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
                         }
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `IMPEDITIVOS:  ${response}`, tarefaId })
+
+
+                        function findSubstring(str: string) {
+                            const substrings = ['*LOAS*', '*MATERNIDADE*', '*RURAL*'];
+                        
+                            for (let substring of substrings) {
+                                if (str.includes(substring)) {
+                                    return substring.replace(/\*/g, '');
+                                }
+                            }
+                            
+                            return null;
+                        }
+
+                        function removeSubstring(str) {
+                            const substrings = ['*LOAS*', '*MATERNIDADE*', '*RURAL*'];
+                        
+                            for (let substring of substrings) {
+                                if (str.includes(substring)) {
+                                    return str.replace(substring, '');
+                                }
+                            }
+                            
+                            return str; // Retorna a string original se nenhuma substring for encontrada
+                        }
+    
+                        const tipo = findSubstring(response)
+
+                        const newResponse = removeSubstring(response)
+
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `${tipo} IMPEDITIVOS:  ${newResponse}`, tarefaId })
                         console.log("RESPONSEEEE")
                         console.log(response)
                         return {impeditivos: true}  
