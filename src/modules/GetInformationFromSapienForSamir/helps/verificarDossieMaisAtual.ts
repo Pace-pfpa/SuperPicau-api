@@ -33,7 +33,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
      }
      
      
-     console.log(superDossie.length)
      if(!normalDossie && superDossie){
          for(let i = 0; i < superDossie.length; i++){
             console.log("exectou")
@@ -70,8 +69,10 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
      
      if(normalDossie && superDossie){
         console.log("23213213")
-        console.log(normalDossie[0].documentoJuntado)
-        console.log(superDossie[0].documentoJuntado)
+        //console.log(normalDossie[0].documentoJuntado)
+        //console.log(superDossie[0].documentoJuntado)
+        console.log(normalDossie.length)
+        console.log(superDossie)
         console.log("23213213")
          if(normalDossie.length >= superDossie.length){
              for(let i=0; i < superDossie.length; i++){
@@ -212,11 +213,21 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
      
      
          }else{
-     
+            // INZAGHI
+
+            console.log('---NORMAL: ')
+            console.log(superDossie)
+
+            const superDossieSorted = superDossie.sort((a, b) => a.numeracaoSequencial - b.numeracaoSequencial)
+
+            console.log('---SORTED: ')
+            console.log(superDossieSorted)
+            
+
              for(let i=0; i < normalDossie.length; i++){
-     
+                
                  let objetoDosprevNormal =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
-     
+
                  if(objetoDosprevNormal){
                     console.log('-----CAIU AQUI? 2')
                      return new Error("DOSPREV COM FALHA NA PESQUISA")
@@ -231,7 +242,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
      
      
                  if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
-     
      
                      const idDosprevParaPesquisaDossieNormal = superDossie[i].documentoJuntado.componentesDigitais[0].id;
                      const parginaDosPrevDossieNormal = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieNormal });
@@ -250,21 +260,39 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
      
      
                  }else{
-     
                      const idDosprevParaPesquisaDossieSuper = superDossie[i].documentoJuntado.componentesDigitais[0].id;
                      const parginaDosPrevDossieSuper = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieSuper });
-     
+    
+
                      const parginaDosPrevFormatadaDossieNormal = new JSDOM(parginaDosPrevDossieSuper); 
-     
-     
-     
+      
                      const xpathCpfDosprev = "/html/body/div/div[4]/table/tbody/tr[7]/td"
                      const cpfDosprev = getXPathText(parginaDosPrevFormatadaDossieNormal, xpathCpfDosprev);
-     
+
                      if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-     
+                        
+                     // AO ENCONTRAR O CPF, COMPARAR COM O DA CAPA, SE FOR DIFERENTE FAZER OUTRA BUSCA.
+
+                     // ENCONTRA UM DOSSIÊ DE OUTRA PESSOA PRIMEIRO E NÃO CAI NESSE IF   
                      if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev.trim())){
-                         return [superDossie[i], 1]
+                        
+                        return [superDossie[i], 1]
+
+                     } else {
+                        const idDosprevParaPesquisaDossieSuper = superDossieSorted[i].documentoJuntado.componentesDigitais[0].id;
+                        const parginaDosPrevDossieSuper = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieSuper });
+    
+
+                        const parginaDosPrevFormatadaDossieNormal = new JSDOM(parginaDosPrevDossieSuper); 
+      
+                        const xpathCpfDosprev = "/html/body/div/div[4]/table/tbody/tr[7]/td"
+                        const cpfDosprev = getXPathText(parginaDosPrevFormatadaDossieNormal, xpathCpfDosprev);
+
+                        if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
+                        
+                        if (cpf.trim() == CorrigirCpfComZeros(cpfDosprev.trim())) {
+                            return [superDossieSorted[i], 1]
+                        }    
                      }    
      
                  }

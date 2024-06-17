@@ -286,6 +286,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                     }else if(!dossieNormal && superDosprevExist){
+                        console.log('---INZAGHI')
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, null, objectDosPrev2);
                         
                         
@@ -299,6 +300,8 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
                     }else{
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, objectDosPrev2);
+                        console.log('---DOSSIE IS VALID?')
+                        console.log(dossieIsvalid)
                         
                         if(dossieIsvalid instanceof Error){
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
