@@ -96,21 +96,28 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
 
                     if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
                         console.log('AQUI?')
-
+                        console.log(normalDossie[i].numeracaoSequencial)
                         try {
-                            const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
+                            const cpfDosprev = await getCPFDosPrevNormal(normalDossie[i], cookie)
+                            console.log(cpfDosprev)
+                            if(!cpfDosprev) throw new Error("cpf com falha na pesquisa dosprev")
         
-                        if(!cpfDosprev) throw new Error("cpf com falha na pesquisa dosprev")
-        
-                        if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                            return [normalDossie[i], 0]
-                        }  
+                            if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()) {
+                                return [normalDossie[i], 0]
+                            }  
                         } catch (error) {
-                            console.error(`Erro no documento ${superDossie[i]}: ${error.message}`)
+                            console.error(`Erro no documento ${normalDossie[i]}: ${error.message}`)
                         }
                 
                           
-        
+                         // SHEVCHENKO: se não retornar pelo if de cima é um SHEVCHENKO (só que SUPER).
+                        const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
+    
+                        if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
+    
+                        if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()){
+                            return [superDossie[i], 1]
+                        }
         
                     }else{
                         console.log('OU AQUI?')
@@ -151,7 +158,7 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string ,norma
                  if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
      
                  if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                     return [normalDossie[i], 1]
+                     return [normalDossie[i], 0]
                  }    
      
              }
