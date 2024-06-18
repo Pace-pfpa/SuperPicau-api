@@ -286,7 +286,6 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                     }else if(!dossieNormal && superDosprevExist){
-                        console.log('---INZAGHI')
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, null, objectDosPrev2);
                         
                         
