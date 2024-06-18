@@ -302,7 +302,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         console.log('---DOSSIE IS VALID?')
                         console.log(dossieIsvalid)
                         
-                        if(dossieIsvalid instanceof Error){
+                        if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
                             console.log('eroor4')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
