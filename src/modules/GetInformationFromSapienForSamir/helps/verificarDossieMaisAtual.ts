@@ -1,11 +1,8 @@
-const { JSDOM } = require('jsdom');
-
 import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfComZeros";
 import { getCPFDosPrevNormal } from "./getCPFDosPrevNormal";
 import { getCPFDosPrevSuper } from "./getCPFDosPrevSuper";
 
 export async function verificarDossieMaisAtual(cpf: string, cookie:string, normalDossie?: any[], superDossie?: any[]){
-
     
  try{
      if(normalDossie && !superDossie){

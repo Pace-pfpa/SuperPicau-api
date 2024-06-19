@@ -24,6 +24,7 @@ import { LoasSuperDossieUseCase } from './loas/LoasSuperDossieUseCase ';
 import { loasDossieUseCase, loasSuperDossieUseCase } from './loas';
 import { verificarDossieMaisAtual } from './helps/verificarDossieMaisAtual';
 import { cadUnico } from './loas/CadUnico';
+import { getInfoCalcDossieSuper } from './helps/getInfoCalcDossieSuper';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -229,7 +230,6 @@ export class GetInformationFromSapienForSamirUseCase {
                             console.log('eroor2')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
-
                             objectDosPrev = dossieIsvalid[0]
                         }
 
@@ -246,8 +246,8 @@ export class GetInformationFromSapienForSamirUseCase {
                             
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
-                            
                             objectDosPrev = dossieIsvalid[0]
+                            const dataCalc = await getInfoCalcDossieSuper(cookie, objectDosPrev)
                         }
                     }else{
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, objectDosPrev2);
@@ -268,6 +268,11 @@ export class GetInformationFromSapienForSamirUseCase {
                             }
                            
                             objectDosPrev = dossieIsvalid[0]
+                            if (superDosprevExist) {
+                                const dataCalc = await getInfoCalcDossieSuper(cookie, objectDosPrev)
+                                console.log('---YEAH BUDDY')
+                                console.log(dataCalc)
+                            }
                         }
                     }
 
@@ -280,8 +285,9 @@ export class GetInformationFromSapienForSamirUseCase {
                     // AQUI JÁ FOI ACHADO O DOSSIÊ DO REQUERENTE, QUE PASSARÁ PELA ETIQUETAGEM
 
 
+                    console.log('---CHECK RETURN')
+                    console.log(objectDosPrev)
 
-                    
 
 
 
