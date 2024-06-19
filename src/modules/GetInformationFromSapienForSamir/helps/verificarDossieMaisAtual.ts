@@ -4,7 +4,7 @@ import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfCom
 import { getCPFDosPrevNormal } from "./getCPFDosPrevNormal";
 import { getCPFDosPrevSuper } from "./getCPFDosPrevSuper";
 
-export async function verificarDossieMaisAtual(cpf: string, cookie:string ,normalDossie?: any[], superDossie?: any[]){
+export async function verificarDossieMaisAtual(cpf: string, cookie:string, normalDossie?: any[], superDossie?: any[]){
 
     
  try{

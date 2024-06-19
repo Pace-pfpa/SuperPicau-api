@@ -46,9 +46,7 @@ export class GetInformationFromSapienForSamirUseCase {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             
             nupInicio = tarefas[0].pasta.NUP
-            //console.log("NupInicio: ",nupInicio)
-            
-            /* const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.nup }); */
+
             let VerificarSeAindExisteProcesso: boolean = true;
                             
                 
@@ -98,37 +96,12 @@ export class GetInformationFromSapienForSamirUseCase {
                                 });
 
                                 
-                                /* if(objectDosPrev.length > 0 && objectDosPrev2.length == 0){
-                                    return {
-                                        dossieType: "normal",
-                                        dossie: normalDossie
-                                    }
-                                } */
                             
                                 if(objectDosPrev2.length > 0){
                                     superDosprevExist = true;
                                 }
                             
-                               
-                               
 
-                                
-                                /* if(objectDosPrev == undefined && objectDosPrev2 == undefined){
-                                    (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO", tarefaId }));
-                                    return {warning: "DOSPREV NÃO ENCONTRADO"}
-                                }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
-                                    objectDosPrev = objectDosPrev2;
-                                    superDosprevExist = true;
-                                    
-                                }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
-                                   
-                                    if(objectDosPrev.numeracaoSequencial <= objectDosPrev2.numeracaoSequencial){
-                                        objectDosPrev = objectDosPrev2;
-                                        superDosprevExist = true;
-                                        
-                                    }
-                                    
-                                } */
                             }else{
 
                                 var objectDosPrev2 = arrayDeDocumentos.filter(Documento => {
@@ -145,9 +118,6 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }
                                 
 
-
-                                /* dosprevThisTrue = false;
-                                response = response + " DOSPREV NÃO EXISTE -" */
                             }
                             
                             
@@ -181,19 +151,6 @@ export class GetInformationFromSapienForSamirUseCase {
                                     superDosprevExist = true;
                                 }
 
-
-                                /* if(objectDosPrev == undefined && objectDosPrev2 == undefined){
-                                    (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV NÃO ENCONTRADO -", tarefaId }));
-                                    return {warning: "DOSPREV NÃO ENCONTRADO"}
-                                }else if(objectDosPrev2 != undefined && objectDosPrev == undefined){
-                                    objectDosPrev = objectDosPrev2;
-                                    superDosprevExist = true;
-                                }else if(objectDosPrev != undefined &&  objectDosPrev2 != undefined){
-                                    if(objectDosPrev.numeracaoSequencial < objectDosPrev2.numeracaoSequencial){
-                                        objectDosPrev = objectDosPrev2;
-                                        superDosprevExist = true;
-                                    }
-                                } */
                                 
                             }else{
 
@@ -220,17 +177,6 @@ export class GetInformationFromSapienForSamirUseCase {
                             return {warning: "DOSPREV COM FALHA NA GERAÇAO"}
                         }
                     }
-
-                    
-                    
-
-
-
-                    
-
-
-
-
 
                     
 
@@ -265,6 +211,12 @@ export class GetInformationFromSapienForSamirUseCase {
                     }
 
                    
+
+
+                    // NESSA PARTE DA TRIAGEM, JÁ TEMOS OS ARRAYS COM TODOS OS DOSSIÊS (objectDosPrev para dossiês normais e objectDosPrev2 para super dossiês)
+
+
+
                    
                     
                   
@@ -318,6 +270,17 @@ export class GetInformationFromSapienForSamirUseCase {
                             objectDosPrev = dossieIsvalid[0]
                         }
                     }
+
+
+
+
+                    
+
+
+                    // AQUI JÁ FOI ACHADO O DOSSIÊ DO REQUERENTE, QUE PASSARÁ PELA ETIQUETAGEM
+
+
+
                     
 
 
@@ -375,40 +338,8 @@ export class GetInformationFromSapienForSamirUseCase {
 
                             }
 
-                            /* impedDossie = await getInformationDossieForPicaPau.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas); */
                             response = response + impedDossie
-                            /* if(data.loas){
-                                const loasDissieNormal = await loasDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
-                                if(loasDissieNormal instanceof Error){
-                                    response = response + " erro estabelecimento -"
-                                }else if(loasDissieNormal){
-                                    response = response + " RESTABELECIMENTO -"
-                               }
 
-                               const loasLitis = await loasDossieUseCase.executeLitispendenciaDossie(parginaDosPrev,parginaDosPrevFormatada)
-
-                               if(loasLitis instanceof Error){
-                                response = response + " erro estabelecimento -"
-                            }else if(loasLitis){
-                                response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
-                           }
-
-
-
-
-                            const loasEmprego: any = await loasDossieUseCase.executeEmprego(parginaDosPrev,parginaDosPrevFormatada)
-                                if(typeof(loasEmprego) == "boolean"){
-                                    if(loasEmprego){
-                                        response = response + " LOAS EMPREGO -"
-                                    }
-                                }else if(typeof(loasEmprego) == "object"){
-                                    if(loasEmprego.valorBooleano){
-                                        response = response + loasEmprego.message
-                                    }else{
-                                        response = response + loasEmprego.message
-                                    }
-                                }
- */
                             }else{
 
 
@@ -429,39 +360,6 @@ export class GetInformationFromSapienForSamirUseCase {
                                     return {warning: "Falha ao gerar Super DOSPREV"}
                                 }
     
-    /*                             if(data.loas){
-                                   const loasSuperDossie = await loasSuperDossieUseCase.execute(parginaDosPrev,parginaDosPrevFormatada)
-                                    if(loasSuperDossie instanceof Error){
-                                        response = response + " erro estabelecimento -"
-                                    }else if(loasSuperDossie){
-                                        response = response + " RESTABELECIMENTO -"
-                                   }
-    
-    
-                                   const loasLitis = await loasSuperDossieUseCase.executeLitispendenciaSuperDossie(parginaDosPrev,parginaDosPrevFormatada);
-                                   if(loasLitis instanceof Error){
-                                    response = response + " erro estabelecimento -"
-                                    }else if(loasLitis){
-                                    response = response + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA l-"
-                                    }
-    
-    
-                                    const loasEmprego: any = await loasSuperDossieUseCase.executeEmprego(parginaDosPrev,parginaDosPrevFormatada)
-                                    console.log("passou")
-                                    console.log(loasEmprego)
-                                    if(typeof(loasEmprego) == "boolean"){
-                                        if(loasEmprego){
-                                            response = response + " LOAS EMPREGO -"
-                                        }
-                                    }else if(typeof(loasEmprego) == "object"){
-                                        if(loasEmprego.valorBooleano){
-                                            response = response + loasEmprego.message
-                                        }else{
-                                            response = response + loasEmprego.message
-                                        }
-                                    }
-    
-                                } */
     
     
                                 const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
@@ -472,7 +370,6 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }
                                 
                                 
-                                /* impedDossie = await superDossie.impedimentos(parginaDosPrevFormatada, parginaDosPrev, data.readDosprevAge, data.loas); */
     
     
                                 if(data.readDosprevAge == 0){
