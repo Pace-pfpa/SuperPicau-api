@@ -8,5 +8,5 @@ export function EncontrarDataMaisAtual(datas: Array<any>){
         }
     }
    
-    return maiorData
+    return maiorData.data
 }

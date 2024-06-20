@@ -24,7 +24,9 @@ import { LoasSuperDossieUseCase } from './loas/LoasSuperDossieUseCase ';
 import { loasDossieUseCase, loasSuperDossieUseCase } from './loas';
 import { verificarDossieMaisAtual } from './helps/verificarDossieMaisAtual';
 import { cadUnico } from './loas/CadUnico';
-import { getInfoCalcDossieSuper } from './helps/getInfoCalcDossieSuper';
+import { getInfoReqDossieSuper } from './helps/getInfoReqDossieSuper';
+import { normalize } from 'path';
+import { getValueCalcDossieSuper } from './helps/getValueCalcDossieSuper';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -247,7 +249,6 @@ export class GetInformationFromSapienForSamirUseCase {
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
                             objectDosPrev = dossieIsvalid[0]
-                            const dataCalc = await getInfoCalcDossieSuper(cookie, objectDosPrev)
                         }
                     }else{
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, objectDosPrev2);
@@ -268,11 +269,6 @@ export class GetInformationFromSapienForSamirUseCase {
                             }
                            
                             objectDosPrev = dossieIsvalid[0]
-                            if (superDosprevExist) {
-                                const dataCalc = await getInfoCalcDossieSuper(cookie, objectDosPrev)
-                                console.log('---YEAH BUDDY')
-                                console.log(dataCalc)
-                            }
                         }
                     }
 
@@ -518,7 +514,35 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                   
                     console.log("---BEFORE RESPONSE: " + response)
+                    const totalImpeditivos = response.split("-")
+                    console.log("----TOTAL IMPEDITIVOS")
+                    console.log(totalImpeditivos)
 
+                    // CADÚNICO
+                    const impeditivos = [' LOAS ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO FRAUDE ' ]
+
+                    const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
+                    console.log(possuiImpeditivo)
+
+                    if (superDosprevExist && !possuiImpeditivo) {
+                        // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+                        const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
+                        console.log('---YEAH BUDDY')
+                        console.log(objectRequerente)
+
+                        const valoresRequerente = getValueCalcDossieSuper(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
+                        console.log(valoresRequerente)
+
+                        // DATACALC DOS ENVOLVIDOS
+
+
+                    } else if (dossieNormal && !possuiImpeditivo) {
+                        // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+
+                        // DATACALC DOS ENVOLVIDOS
+                    }
+
+                    
                     
 
                     if (response.length == 0) {

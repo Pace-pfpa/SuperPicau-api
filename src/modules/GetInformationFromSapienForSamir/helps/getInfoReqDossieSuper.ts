@@ -1,13 +1,13 @@
 const { JSDOM } = require('jsdom');
 import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfComZeros";
-import { IInformationsForCalculeDTO } from "../../../DTO/InformationsForCalcule";
+import { IPicaPauCalculeDTO } from "../../../DTO/InformationsForCalculePicaPau";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { correçaoDoErroDeFormatoDoSapiens } from "../../../helps/CorreçaoDoErroDeFormatoDoSapiens";
 import { convertToDate } from "./createFormatDate";
-import { getDERorDCB } from "./getDERorDCB";
+import { getDERorDCBSuper } from "./getDERorDCBSuper";
 
-export async function getInfoCalcDossieSuper(cookie:string, superDossie: any) {
+export async function getInfoReqDossieSuper(cookie:string, superDossie: any) {
 
     try {
 
@@ -31,25 +31,20 @@ export async function getInfoCalcDossieSuper(cookie:string, superDossie: any) {
 
         const cpfDosprev = correçaoDoErroDeFormatoDoSapiens(getXPathText(paginaDosPrevFormatadaDossieSuper, xpathCpfDosprev));
         if (!cpfDosprev || cpfDosprev.length == 0) throw new Error("CPF não encontrado")
+        const cpfFormatado = CorrigirCpfComZeros(cpfDosprev)
 
         const dateNascimento = correçaoDoErroDeFormatoDoSapiens(getXPathText(paginaDosPrevFormatadaDossieSuper, xpathDataNascimento));
         if(!dateNascimento || dateNascimento.length == 0) throw new Error("Data de nascimento não encontrada");
         if(!(typeof(convertToDate(dateNascimento.trim())) == typeof(new Date()))) throw new Error("Pegou xpath errado do nascimento");
 
-        console.log('----TESTANDO: ')
-        console.log(dateAjuizamento)
-        console.log(nomeDosPrev)
-        console.log(CorrigirCpfComZeros(cpfDosprev))
-        console.log(dateNascimento)
+        // DATA DER OU DCB 
+
+        const dataReq = await getDERorDCBSuper(paginaDosPrevFormatadaDossieSuper, dateAjuizamento)
+
+        const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq }
 
 
-
-
-        // REQUERIMENTOS
-
-        const dataReq = await getDERorDCB(paginaDosPrevFormatadaDossieSuper, dateAjuizamento)
-
-
+        return objeto
 
     } catch (error) {
         console.error(error.message)
