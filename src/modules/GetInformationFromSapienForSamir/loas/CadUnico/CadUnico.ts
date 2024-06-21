@@ -1,5 +1,6 @@
 import { ta } from "date-fns/locale";
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
+import { CorrigirCpfComZeros } from "../../../CreateInterested/Helps/CorrigirCpfComZeros";
 
 export class CadUnico{
 
@@ -78,6 +79,45 @@ export class CadUnico{
 
 
         
+    }
+
+
+    async grupoFamiliar (paginaCadUnico: any, cpfCapa: string) {
+        console.log(cpfCapa)
+        const armazenamentoDeCpf = [];
+        const procurarporTabelaCorretaDiv = 15;
+        for(let i = 1; i <= procurarporTabelaCorretaDiv; i++){
+            const xpathtable = `/html/body/table[${i}]/tbody`
+            const table = getXPathText(paginaCadUnico, xpathtable);
+            if(table && table.length > 0){
+                for(let j = 1; j <= 40; j++){
+                    const xpathTaline = `/html/body/table[2]/tbody/tr[${j}]/td[4]`
+                    const cpf = getXPathText(paginaCadUnico, xpathTaline);
+
+                    if (!cpf) {
+                        break
+                    }
+                    
+                    const cpfFormatado = CorrigirCpfComZeros(cpf)
+                    
+
+                   if(cpfFormatado && cpfFormatado.length > 0 && cpfFormatado !== cpfCapa){
+                    armazenamentoDeCpf.push(cpfFormatado)
+                   }
+                        
+                    
+                }
+
+
+            }
+            return  armazenamentoDeCpf
+        }
+       
+       
+        
+
+
+        return null;
     }
 
 

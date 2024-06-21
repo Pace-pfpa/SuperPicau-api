@@ -5,23 +5,23 @@ import { isDateInRange } from "./dataIsInRange";
 import { getRemuneracaoAjuizamentoSuper } from "./getRemuneracaoAjuizamentoSuper";
 const { JSDOM } = require('jsdom');
 
-export async function getValueCalcDossieSuper(cookie:string, superDossie: any, dataAjuizamento: string, dataRequerimento: string) {
+export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any, dataAjuizamento: string, dataRequerimento: string) {
     try {
 
-        const idDosprevParaPesquisaDossieSuper = superDossie.documentoJuntado.componentesDigitais[0].id;
-        const paginaDosPrevDossieSuper = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieSuper });
+        const idDosprevParaPesquisaDossieNormal = dossieNormal.documentoJuntado.componentesDigitais[0].id;
+        const paginaDosPrevDossieNormal = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieNormal });
         
-        const paginaDosPrevFormatadaDossieSuper = new JSDOM(paginaDosPrevDossieSuper); 
+        const paginaDosPrevFormatadaDossieNormal = new JSDOM(paginaDosPrevDossieNormal); 
 
 
         // RELAÇÕES PREVIDENCIÁRIAS
 
         try {
-            
-            let tamanhoColunasRelacoes = 1;
+            // /html/body/div/div[4]/table/tbody/tr[2]
+            let tamanhoColunasRelacoes = 2;
             let verificarWhileRelacoes = true;
             while(verificarWhileRelacoes) {
-                if(typeof (getXPathText(paginaDosPrevFormatadaDossieSuper, `/html/body/div/div[7]/table/tbody/tr[${tamanhoColunasRelacoes}]`)) == 'object'){
+                if(typeof (getXPathText(paginaDosPrevFormatadaDossieNormal, `/html/body/div/div[4]/table/tbody/tr[${tamanhoColunasRelacoes}]`)) == 'object'){
                     verificarWhileRelacoes = false; 
                     break;
                 }
@@ -32,10 +32,10 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
             const regexSeq = /\b\d{1,2}\b/g;
             const regexData: RegExp = /\b(?:\d{1,2}\/)?\d{1,2}\/\d{4}\b/g;
 
-            for(let t = 1; t < tamanhoColunasRelacoes; t++) {
-                if(typeof (getXPathText(paginaDosPrevFormatadaDossieSuper,`/html/body/div/div[7]/table/tbody/tr[${t}]`)) === 'string') {
-                    const xpathColunaRelacoes = `/html/body/div/div[7]/table/tbody/tr[${t}]`
-                    const xpathCoulaFormatadoRelacoes: string = getXPathText(paginaDosPrevFormatadaDossieSuper, xpathColunaRelacoes)
+            for(let t = 2; t < tamanhoColunasRelacoes; t++) {
+                if(typeof (getXPathText(paginaDosPrevFormatadaDossieNormal,`/html/body/div/div[4]/table/tbody/tr[${t}]`)) === 'string') {
+                    const xpathColunaRelacoes = `/html/body/div/div[4]/table/tbody/tr[${t}]`
+                    const xpathCoulaFormatadoRelacoes: string = getXPathText(paginaDosPrevFormatadaDossieNormal, xpathColunaRelacoes)
                     const isBeneficio = xpathCoulaFormatadoRelacoes.indexOf('Benefício') !== -1
                     if(!isBeneficio) {
                         const identificarSeq = xpathCoulaFormatadoRelacoes.match(regexSeq)
@@ -76,8 +76,10 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
 
             if (seqIntervaloAjuizamento && seqIntervaloRequerimento) {
                 // ACHANDO AS RELAÇÕES PARA AS DUAS DATAS, É POSSÍVEL COLETAR AS REMUNERAÇÕES
+                /*
                 const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper)
                 console.log(remuneracaoAjuizamento)
+                */
             }
 
 

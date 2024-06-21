@@ -27,6 +27,8 @@ import { cadUnico } from './loas/CadUnico';
 import { getInfoReqDossieSuper } from './helps/getInfoReqDossieSuper';
 import { normalize } from 'path';
 import { getValueCalcDossieSuper } from './helps/getValueCalcDossieSuper';
+import { getInfoReqDossieNormal } from './helps/getInfoReqDossieNormal';
+import { getValueCalcDossieNormal } from './helps/getValueCalcDossieNormal';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -44,6 +46,8 @@ export class GetInformationFromSapienForSamirUseCase {
         let nupFim = undefined;
         let erros = {};
         let dosprevEncontrado = false;
+        let gastoComMedicamentos;
+        let grupoFamiliarCpfs;
         
         try {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
@@ -219,7 +223,8 @@ export class GetInformationFromSapienForSamirUseCase {
                     // NESSA PARTE DA TRIAGEM, JÁ TEMOS OS ARRAYS COM TODOS OS DOSSIÊS (objectDosPrev para dossiês normais e objectDosPrev2 para super dossiês)
 
 
-
+                    let totalDossieNormal = objectDosPrev
+                    let totalDossieSuper = objectDosPrev2
                    
                     
                   
@@ -329,10 +334,22 @@ export class GetInformationFromSapienForSamirUseCase {
     
                                     const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
     
-    
-    
-                                    
-                                    console.log(await cadUnico.execute(paginaDossieSocialFormatada))
+
+                                    // VERIFICAR GASTO COM MEDICAMENTOS
+                                    const medicamentos = await cadUnico.execute(paginaDossieSocialFormatada)
+                                    console.log(medicamentos)
+
+                                    if (medicamentos === '0.00') {
+                                        gastoComMedicamentos = false
+                                    } else {
+                                        gastoComMedicamentos = true
+                                    }
+
+                                     // GERAR ARRAY DE CPFS ENVOLVIDOS
+
+                                    grupoFamiliarCpfs = await cadUnico.grupoFamiliar(paginaDossieSocialFormatada, cpfCapa)
+                                    console.log('CPF ENVOLVIDOS: ')
+                                    console.log(grupoFamiliarCpfs)
     
     
                                     impedDossie = await getInformationDossieForPicaPau.impeditivoLoas(parginaDosPrevFormatada);
@@ -391,10 +408,21 @@ export class GetInformationFromSapienForSamirUseCase {
                                         const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
         
                                         const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
-        
-                                        console.log("passouuuuuuuuuuu")
-                                        console.log(await cadUnico.execute(paginaDossieSocialFormatada));
-                                        console.log("acima")
+
+                                        const medicamentos = await cadUnico.execute(paginaDossieSocialFormatada)
+                                        console.log(medicamentos)
+
+                                        if (medicamentos === '0.00') {
+                                            gastoComMedicamentos = false
+                                        } else {
+                                            gastoComMedicamentos = true
+                                        }
+                                        console.log(gastoComMedicamentos)
+
+                                        grupoFamiliarCpfs = await cadUnico.grupoFamiliar(paginaDossieSocialFormatada, cpfCapa)
+                                        console.log('CPF FAMILIARES: ')
+                                        console.log(grupoFamiliarCpfs)
+    
         
         
                                         impedDossie = await superDossie.impeditivosLoas(parginaDosPrevFormatada, parginaDosPrev);
@@ -518,29 +546,89 @@ export class GetInformationFromSapienForSamirUseCase {
                     console.log("----TOTAL IMPEDITIVOS")
                     console.log(totalImpeditivos)
 
+                    
+
                     // CADÚNICO
                     const impeditivos = [' LOAS ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO FRAUDE ' ]
 
+                    // VERIFICA SE O PROCESSO ESTÁ LIMPO ATÉ ESSE MOMENTO
                     const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
                     console.log(possuiImpeditivo)
+
+                    // ARRAY PARA GUARDAR O DOSSIÊ DE CADA MEMBRO DA FAMÍLIA
+                    let arrayDossieEnvolvidos = [];
 
                     if (superDosprevExist && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
                         const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
-                        console.log('---YEAH BUDDY')
+                        console.log('---YEAH BUDDY SUPER')
                         console.log(objectRequerente)
 
-                        const valoresRequerente = getValueCalcDossieSuper(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
+                        // INCOMPLETO: PEGAR A REMUNERAÇÃO DO REQUERENTE
+                        const valoresRequerente = await getValueCalcDossieSuper(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
                         console.log(valoresRequerente)
 
-                        // DATACALC DOS ENVOLVIDOS
+                        // DATACALC DOS ENVOLVIDOS USANDO verificarDossieMaisAtual PARA ENCONTRAR O DOSSIÊ DE CADA CPF.
+
+                        // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
+                        for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
+                            // CONDICIONA SE EXISTE DOSSIÊ NORMAL NA PESQUISA, SE SIM DOSSIÊ MAIS ATUAL RECEBE OS 2 ARRAYS COMO PARÂMETRO
+                            if (dossieNormal) {
+                                const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
+
+                                if (dossieIsvalid instanceof Error || !dossieIsvalid) {
+                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                                }else{
+                                    if(dossieIsvalid[1] == 0){
+                                        dossieNormal = true;
+                                        superDosprevExist = false;
+                                    }else if(dossieIsvalid[1] == 1){
+                                        dossieNormal = false;
+                                        superDosprevExist = true;
+                                    }
+                                   
+                                     arrayDossieEnvolvidos.push(dossieIsvalid[0])
+                                }
+
+
+                            } else {
+                                const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, null, totalDossieSuper);
+                        
+                        
+                                if(dossieIsvalid instanceof Error){
+                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                                }else{
+                                    arrayDossieEnvolvidos.push(dossieIsvalid[0])
+                                }
+                            }
+                        }
 
 
                     } else if (dossieNormal && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+                        const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
+                        console.log('---YEAH BUDDY NORMAL')
+                        console.log(objectRequerente)
 
-                        // DATACALC DOS ENVOLVIDOS
+                        const valoresRequerente = await getValueCalcDossieNormal(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
+                        console.log(valoresRequerente)
+
+
+                        for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
+                            const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, null);
+                        
+                        
+                            if(dossieIsvalid instanceof Error){
+                                console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                            }else{
+                                arrayDossieEnvolvidos.push(dossieIsvalid[0])
+                            }
+                        }
+
                     }
+
+                    console.log('---RESULTS: ')
+                    console.log(arrayDossieEnvolvidos)
 
                     
                     
