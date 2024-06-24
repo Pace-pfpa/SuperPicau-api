@@ -548,15 +548,15 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
 
-                    // CADÚNICO
-                    const impeditivos = [' LOAS ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO FRAUDE ' ]
+                    const impeditivos = [' CADÚNICO ', ' LOAS ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO FRAUDE ' ]
 
                     // VERIFICA SE O PROCESSO ESTÁ LIMPO ATÉ ESSE MOMENTO
                     const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
                     console.log(possuiImpeditivo)
 
                     // ARRAY PARA GUARDAR O DOSSIÊ DE CADA MEMBRO DA FAMÍLIA
-                    let arrayDossieEnvolvidos = [];
+                    let arrayDossieEnvolvidosNormal = [];
+                    let arrayDossieEnvolvidosSuper = [];
 
                     if (superDosprevExist && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
@@ -570,40 +570,6 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         // DATACALC DOS ENVOLVIDOS USANDO verificarDossieMaisAtual PARA ENCONTRAR O DOSSIÊ DE CADA CPF.
 
-                        // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
-                        for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
-                            // CONDICIONA SE EXISTE DOSSIÊ NORMAL NA PESQUISA, SE SIM DOSSIÊ MAIS ATUAL RECEBE OS 2 ARRAYS COMO PARÂMETRO
-                            if (dossieNormal) {
-                                const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
-
-                                if (dossieIsvalid instanceof Error || !dossieIsvalid) {
-                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
-                                }else{
-                                    if(dossieIsvalid[1] == 0){
-                                        dossieNormal = true;
-                                        superDosprevExist = false;
-                                    }else if(dossieIsvalid[1] == 1){
-                                        dossieNormal = false;
-                                        superDosprevExist = true;
-                                    }
-                                   
-                                     arrayDossieEnvolvidos.push(dossieIsvalid[0])
-                                }
-
-
-                            } else {
-                                const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, null, totalDossieSuper);
-                        
-                        
-                                if(dossieIsvalid instanceof Error){
-                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
-                                }else{
-                                    arrayDossieEnvolvidos.push(dossieIsvalid[0])
-                                }
-                            }
-                        }
-
-
                     } else if (dossieNormal && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
                         const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
@@ -613,22 +579,47 @@ export class GetInformationFromSapienForSamirUseCase {
                         const valoresRequerente = await getValueCalcDossieNormal(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
                         console.log(valoresRequerente)
 
-
-                        for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
-                            const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, null);
-                        
-                        
-                            if(dossieIsvalid instanceof Error){
-                                console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
-                            }else{
-                                arrayDossieEnvolvidos.push(dossieIsvalid[0])
-                            }
-                        }
-
                     }
 
-                    console.log('---RESULTS: ')
-                    console.log(arrayDossieEnvolvidos)
+                    let isNormal: boolean;
+
+                    // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
+                    for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
+                        console.log('---LAÇO DE CPFS: ')
+                        console.log(grupoFamiliarCpfs[i])
+
+                        // CONDICIONA SE EXISTE DOSSIÊ NORMAL NA PESQUISA, SE SIM DOSSIÊ MAIS ATUAL RECEBE OS 2 ARRAYS COMO PARÂMETRO
+
+                        const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
+
+                        if (dossieIsvalid instanceof Error || !dossieIsvalid) {
+                            console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                        } else {
+
+                            if(dossieIsvalid[1] == 0){
+                                isNormal = true
+                            }else if(dossieIsvalid[1] == 1){
+                                isNormal = false
+                            }
+
+                            console.log('--VERIFICAR SE É NORMAL: ')
+                            console.log(isNormal)
+
+                            if (isNormal) {
+                                arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
+                            } else {
+                                arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
+                            }
+
+
+                        }
+                        
+                    }
+
+                    console.log('---RESULTS NORMAL: ')
+                    console.log(arrayDossieEnvolvidosNormal)
+                    console.log('---RESULTS SUPER: ')
+                    console.log(arrayDossieEnvolvidosSuper)
 
                     
                     
