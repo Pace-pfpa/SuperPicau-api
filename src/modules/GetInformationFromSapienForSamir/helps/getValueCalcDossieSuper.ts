@@ -3,6 +3,7 @@ import { getDocumentoUseCase } from "../../GetDocumento";
 import { parseDate } from "./parseDate";
 import { isDateInRange } from "./dataIsInRange";
 import { getRemuneracaoAjuizamentoSuper } from "./getRemuneracaoAjuizamentoSuper";
+import { removeDayFromDate } from "./removeDayFromDate";
 const { JSDOM } = require('jsdom');
 
 export async function getValueCalcDossieSuper(cookie:string, superDossie: any, dataAjuizamento: string, dataRequerimento: string) {
@@ -66,23 +67,41 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
             const dateAjuizamento = parseDate(dataAjuizamento)
             const dateRequerimento = parseDate(dataRequerimento)
 
+            const ajzFormatado = removeDayFromDate(dataAjuizamento)
+            const reqFormatado = removeDayFromDate(dataRequerimento)
+
             const seqIntervaloAjuizamento = isDateInRange(relacoesEncontradas, dateAjuizamento)
             const seqIntervaloRequerimento = isDateInRange(relacoesEncontradas, dateRequerimento)
 
-            console.log('---SEQ AJUIZAMENTO')
+            console.log('---SEQ INTERVALO AJUIZAMENTO')
             console.log(seqIntervaloAjuizamento)
-            console.log('---SEQ REQUERIMENTO')
+
+            console.log('---SEQ INTERVALO REQUERIMENTO')
             console.log(seqIntervaloRequerimento)
+
 
             if (seqIntervaloAjuizamento && seqIntervaloRequerimento) {
                 // ACHANDO AS RELAÇÕES PARA AS DUAS DATAS, É POSSÍVEL COLETAR AS REMUNERAÇÕES
-                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper)
-                console.log(remuneracaoAjuizamento)
+                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
+                
+                const remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieSuper, reqFormatado)
+
+                return {
+                    remuneracaoAjz: remuneracaoAjuizamento,
+                    remuneracaoReq: remuneracaoRequerimento
+                }
+
+            } else {
+                return {
+                    remuneracaoAjz: 0,
+                    remuneracaoReq: 0
+                }
             }
 
 
+
         } catch (error) {
-            
+            console.error(error)
         }
 
 
@@ -91,6 +110,6 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
 
 
     } catch (error) {
-        
+        console.log(error)
     }
 }

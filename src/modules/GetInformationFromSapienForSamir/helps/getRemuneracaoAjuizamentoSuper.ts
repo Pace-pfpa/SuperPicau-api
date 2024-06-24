@@ -1,6 +1,8 @@
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { findDatesInString } from "./findDatesInString";
+import { convertCurrencyStringsToNumbers } from "./findValuesAndConvert";
 
-export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: string) {
+export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: string, data: string) {
     try {
         // /html/body/div/div[9]/div/table/tbody/tr/td[1]
 
@@ -30,6 +32,45 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                     // ENCONTROU A DIV CORRESPONDENTE
                     if (DivFormatadaCompetencia.indexOf('Empregado') !== -1) {
                         // VÍNCULO DE EMPREGADO (ACHAR REMUNERAÇÃO)
+
+                        let tamanhoRowsRemuneracoes = 0;
+                        let verificarWhileRows = true;
+
+                        while (verificarWhileRows) {
+                            if (typeof (getXPathText(dosprev, `${xpathDivCompetencia}/table[3]/tbody/tr[${tamanhoRowsRemuneracoes + 1}]`)) !== 'string') {
+                                verificarWhileRows = false
+                                break
+                            }
+                            tamanhoRowsRemuneracoes++
+                        }
+
+                        console.log('NATURAL MYSTIC')
+                        console.log(tamanhoRowsRemuneracoes)
+
+
+                        for (let r = 0; r <= tamanhoRowsRemuneracoes; r++) {
+                            if (typeof (getXPathText(dosprev, `${xpathDivCompetencia}/table[3]/tbody/tr[${r}]`)) === 'string') {
+                                const xpathRowRemuneracao = `${xpathDivCompetencia}/table[3]/tbody/tr[${r}]`
+                                const rowFormatadaRemuneracao: string = getXPathText(dosprev, xpathRowRemuneracao)
+                                if (rowFormatadaRemuneracao.indexOf(`${data}`) !== -1) {
+
+                                    const arrayDatas = findDatesInString(rowFormatadaRemuneracao)
+                                    console.log(arrayDatas)
+
+                                    const arrayValues = convertCurrencyStringsToNumbers(rowFormatadaRemuneracao)
+                                    console.log(arrayValues)
+
+                                    if (arrayDatas[0] === data) {
+                                        return arrayValues[0]
+                                    } else if (arrayDatas[1] === data) {
+                                        return arrayValues[1]
+                                    }
+
+                                }
+                            }
+                        }
+
+
                     } else {
                         // VÍNCULO DE RECOLHIMENTO (ACHAR SALÁRIO CONTRIBUIÇÃO)
                     }

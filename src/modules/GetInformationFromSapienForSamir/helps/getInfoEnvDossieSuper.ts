@@ -5,10 +5,10 @@ import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { correçaoDoErroDeFormatoDoSapiens } from "../../../helps/CorreçaoDoErroDeFormatoDoSapiens";
 import { convertToDate } from "./createFormatDate";
-import { getDERorDCBSuper } from "./getDERorDCBSuper";
 import { getValueCalcDossieSuper } from "./getValueCalcDossieSuper";
 
-export async function getInfoReqDossieSuper (cookie:string, superDossie: any) {
+export async function getInfoEnvDossieSuper (cookie:string, superDossie: any, dataReq: string) {
+
 
     try {
 
@@ -40,8 +40,6 @@ export async function getInfoReqDossieSuper (cookie:string, superDossie: any) {
 
         // DATA DER OU DCB 
 
-        const dataReq = await getDERorDCBSuper(paginaDosPrevFormatadaDossieSuper, dateAjuizamento)
-
         const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamento, dataReq)
 
         const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
@@ -53,7 +51,4 @@ export async function getInfoReqDossieSuper (cookie:string, superDossie: any) {
         console.error(error.message)
     }
 
-    
-
-    return 
 }

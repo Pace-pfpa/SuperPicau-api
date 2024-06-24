@@ -6,6 +6,7 @@ import { getDocumentoUseCase } from "../../GetDocumento";
 import { correçaoDoErroDeFormatoDoSapiens } from "../../../helps/CorreçaoDoErroDeFormatoDoSapiens";
 import { convertToDate } from "./createFormatDate";
 import { getDERorDCBNormal } from "./getDERorDCBNormal";
+import { getValueCalcDossieNormal } from "./getValueCalcDossieNormal";
 
 export async function getInfoReqDossieNormal (cookie:string, normalDossie: any) {
 
@@ -43,7 +44,9 @@ export async function getInfoReqDossieNormal (cookie:string, normalDossie: any) 
 
         const dataReq = await getDERorDCBNormal(paginaDosPrevFormatadaDossie, dateAjuizamento)
 
-        const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq }
+        const valoresCalcule = await getValueCalcDossieNormal(cookie, normalDossie, dateAjuizamento, dataReq)
+
+        const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
 
 
         return objeto

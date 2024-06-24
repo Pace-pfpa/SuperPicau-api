@@ -29,6 +29,9 @@ import { normalize } from 'path';
 import { getValueCalcDossieSuper } from './helps/getValueCalcDossieSuper';
 import { getInfoReqDossieNormal } from './helps/getInfoReqDossieNormal';
 import { getValueCalcDossieNormal } from './helps/getValueCalcDossieNormal';
+import { getInfoEnvDossieNormal } from './helps/getInfoEnvDossieNormal';
+import { calcularMediaAjuizamento } from './helps/calcularMediaAjuizamento';
+import { calcularMediaRequerimento } from './helps/calcularMediaRequerimento';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -557,27 +560,26 @@ export class GetInformationFromSapienForSamirUseCase {
                     // ARRAY PARA GUARDAR O DOSSIÊ DE CADA MEMBRO DA FAMÍLIA
                     let arrayDossieEnvolvidosNormal = [];
                     let arrayDossieEnvolvidosSuper = [];
+                    let infoRequerente;
 
                     if (superDosprevExist && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
                         const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
+                        infoRequerente = objectRequerente;
                         console.log('---YEAH BUDDY SUPER')
                         console.log(objectRequerente)
-
-                        // INCOMPLETO: PEGAR A REMUNERAÇÃO DO REQUERENTE
-                        const valoresRequerente = await getValueCalcDossieSuper(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
-                        console.log(valoresRequerente)
 
                         // DATACALC DOS ENVOLVIDOS USANDO verificarDossieMaisAtual PARA ENCONTRAR O DOSSIÊ DE CADA CPF.
 
                     } else if (dossieNormal && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
                         const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
+                        infoRequerente = objectRequerente
                         console.log('---YEAH BUDDY NORMAL')
                         console.log(objectRequerente)
 
-                        const valoresRequerente = await getValueCalcDossieNormal(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
-                        console.log(valoresRequerente)
+                        // const valoresRequerente = await getValueCalcDossieNormal(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
+                        // console.log(valoresRequerente)
 
                     }
 
@@ -585,8 +587,6 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
                     for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
-                        console.log('---LAÇO DE CPFS: ')
-                        console.log(grupoFamiliarCpfs[i])
 
                         // CONDICIONA SE EXISTE DOSSIÊ NORMAL NA PESQUISA, SE SIM DOSSIÊ MAIS ATUAL RECEBE OS 2 ARRAYS COMO PARÂMETRO
 
@@ -602,9 +602,6 @@ export class GetInformationFromSapienForSamirUseCase {
                                 isNormal = false
                             }
 
-                            console.log('--VERIFICAR SE É NORMAL: ')
-                            console.log(isNormal)
-
                             if (isNormal) {
                                 arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
                             } else {
@@ -616,10 +613,47 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                     }
 
-                    console.log('---RESULTS NORMAL: ')
-                    console.log(arrayDossieEnvolvidosNormal)
-                    console.log('---RESULTS SUPER: ')
-                    console.log(arrayDossieEnvolvidosSuper)
+
+                    let arrayObjetosEnvolvidos = [];
+
+                    if (arrayDossieEnvolvidosNormal.length > 0) {
+                        for (let i = 0; i < arrayDossieEnvolvidosNormal.length; i++) {
+                            const objectEnvolvido = await getInfoEnvDossieNormal(cookie, arrayDossieEnvolvidosNormal[i], infoRequerente.dataRequerimento)
+                            
+                            if (objectEnvolvido) {
+                                arrayObjetosEnvolvidos.push(objectEnvolvido)
+                            }
+                        } 
+                    }
+
+                    if (arrayDossieEnvolvidosSuper.length > 0) {
+                        for (let i = 0; i < arrayDossieEnvolvidosSuper.length; i++) {
+                            
+                        }
+                    }
+
+
+                    arrayObjetosEnvolvidos.push(infoRequerente)
+
+
+                    // FORMADO O OBJETO DE TODOS OS QUE POSSUEM DOSSIÊ PREVIDENCIÁRIO
+
+                    console.log('--OBJETOS DOS ENVOLVIDOS')
+                    console.log(arrayObjetosEnvolvidos)
+
+
+                    // CALCULAR A RENDA MÉDIA DA FAMÍLIA
+
+                    console.log(grupoFamiliarCpfs.length + 1)
+
+                    const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
+                    console.log(mediaAjuizamento)
+
+                    const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
+                    console.log(mediaRequerimento)
+
+
+
 
                     
                     

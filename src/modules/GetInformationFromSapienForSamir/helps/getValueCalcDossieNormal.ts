@@ -2,7 +2,8 @@ import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { parseDate } from "./parseDate";
 import { isDateInRange } from "./dataIsInRange";
-import { getRemuneracaoAjuizamentoSuper } from "./getRemuneracaoAjuizamentoSuper";
+import { getRemuneracaoAjuizamentoNormal } from "./getRemuneracaoAjuizamentoNormal";
+import { removeDayFromDate } from "./removeDayFromDate";
 const { JSDOM } = require('jsdom');
 
 export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any, dataAjuizamento: string, dataRequerimento: string) {
@@ -15,7 +16,7 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
 
 
         // RELAÇÕES PREVIDENCIÁRIAS
-
+        
         try {
             // /html/body/div/div[4]/table/tbody/tr[2]
             let tamanhoColunasRelacoes = 2;
@@ -66,25 +67,36 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
             const dateAjuizamento = parseDate(dataAjuizamento)
             const dateRequerimento = parseDate(dataRequerimento)
 
+            const ajzFormatado = removeDayFromDate(dataAjuizamento)
+            const reqFormatado = removeDayFromDate(dataRequerimento)
+
             const seqIntervaloAjuizamento = isDateInRange(relacoesEncontradas, dateAjuizamento)
             const seqIntervaloRequerimento = isDateInRange(relacoesEncontradas, dateRequerimento)
 
-            console.log('---SEQ AJUIZAMENTO')
-            console.log(seqIntervaloAjuizamento)
-            console.log('---SEQ REQUERIMENTO')
-            console.log(seqIntervaloRequerimento)
 
             if (seqIntervaloAjuizamento && seqIntervaloRequerimento) {
                 // ACHANDO AS RELAÇÕES PARA AS DUAS DATAS, É POSSÍVEL COLETAR AS REMUNERAÇÕES
-                /*
-                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper)
-                console.log(remuneracaoAjuizamento)
-                */
+                
+                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoNormal(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieNormal, ajzFormatado)
+
+                const remuneracaoRequerimento = await getRemuneracaoAjuizamentoNormal(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieNormal, reqFormatado)
+
+
+                return {
+                    remuneracaoAjz: remuneracaoAjuizamento,
+                    remuneracaoReq: remuneracaoRequerimento
+                }
+
+            } else {
+                return {
+                    remuneracaoAjz: 0,
+                    remuneracaoReq: 0
+                }
             }
 
 
         } catch (error) {
-            
+            console.error(error)
         }
 
 
@@ -93,6 +105,6 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
 
 
     } catch (error) {
-        
+        console.error(error)
     }
 }

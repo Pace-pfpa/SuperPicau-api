@@ -3,5 +3,7 @@ export interface IPicaPauCalculeDTO {
     dataAjuizamento: string,
     cpf: string,
     dataNascimento: string,
-    dataRequerimento: string
+    dataRequerimento: string,
+    remuneracaoAjuizamento: number,
+    remuneracaoRequerimento: number
 }

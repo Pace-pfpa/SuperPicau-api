@@ -61,11 +61,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
                  
                 
                  let objetoDosprevSuper = (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!superDossie[i].documentoJuntado.componentesDigitais[0].id)
-     
-                 
-                console.log('NESTA')
-                console.log(objetoDosprevNormal)
-                console.log(objetoDosprevSuper)
 
                  if(objetoDosprevNormal && !objetoDosprevSuper){
 
@@ -89,7 +84,7 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
 
 
                  } else {
-                    console.log('NESTA 2')
+
 
                     if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
                         console.log('AQUI?')
