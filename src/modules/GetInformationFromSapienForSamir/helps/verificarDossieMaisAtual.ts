@@ -31,8 +31,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
              try{
 
                  const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
-                 console.log('----CPF DOSPREV: ')
-                 console.log(cpfDosprev)
                  
                  if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
                     
@@ -48,12 +46,10 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
      }
      
      if(normalDossie && superDossie){
-        console.log("23213213")
-        //console.log(normalDossie[0].documentoJuntado)
-        //console.log(superDossie[0].documentoJuntado)
+
         console.log(normalDossie.length)
         console.log(superDossie.length)
-        console.log("23213213")
+
          if(normalDossie.length >= superDossie.length){
              for(let i=0; i < superDossie.length; i++){
                 
@@ -87,12 +83,9 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
 
 
                     if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
-                        console.log('AQUI?')
-                        console.log(normalDossie[i].numeracaoSequencial)
-                        console.log(superDossie[i].numeracaoSequencial)
                         try {
                             const cpfDosprev = await getCPFDosPrevNormal(normalDossie[i], cookie)
-                            console.log(cpfDosprev)
+
                             if(!cpfDosprev) throw new Error("cpf com falha na pesquisa dosprev")
         
                             if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()) {
@@ -113,7 +106,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
                         }
         
                     }else{
-                        console.log('OU AQUI?')
                         
                         try {
                             const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
@@ -170,21 +162,23 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
 
              for(let i=0; i < normalDossie.length; i++){
                 
+                
                  let objetoDosprevNormal =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
 
                  if(objetoDosprevNormal){
+                    
+                     return new Error("DOSPREV COM FALHA NA PESQUISA")
+                 }
+     
+                 
+                 let objetoDosprevSuper = (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id)
+     
+                 if(objetoDosprevSuper){
                     console.log('-----CAIU AQUI? 2')
                      return new Error("DOSPREV COM FALHA NA PESQUISA")
                  }
      
-                
-                 let objetoDosprevSuper = (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id)
-     
-                 if(objetoDosprevSuper){
-                     return new Error("DOSPREV COM FALHA NA PESQUISA")
-                 }
-     
-     
+                 
                  if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
 
                      const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
@@ -198,35 +192,65 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
      
                  }else{
 
-                    const cpfDosprevSuper = getCPFDosPrevSuper(superDossie[i], cookie)
+                    const cpfDosprevSuper = await getCPFDosPrevSuper(superDossie[i], cookie)
 
                     if(!cpfDosprevSuper) return new Error("cpf com falha na pesquisa dosprev")
 
-                    if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprevSuper).trim())){
+                        console.log('--ONE MORE TIME 0')
+                        console.log(cpf.trim())
+                        console.log(CorrigirCpfComZeros((cpfDosprevSuper).trim()))
+
+                    if(cpf.trim() == CorrigirCpfComZeros(cpfDosprevSuper).trim()){
                         
                         return [superDossie[i], 1]
 
                     } else {
                         
                         // INZAGHI: inverte e pega o CPF do DOSPREV mais antigo (garantido de ser o do requerente).
-                        const cpfDosprev = getCPFDosPrevSuper(superDossieSorted[i], cookie)
+                        const cpfDosprev = await getCPFDosPrevSuper(superDossieSorted[i], cookie)
 
                         if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
+
+                        console.log('--ONE MORE TIME 1')
+                        console.log(cpf.trim())
+                        console.log(CorrigirCpfComZeros((cpfDosprev).trim()))
                         
-                        if (cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())) {
+                        if (cpf.trim() == CorrigirCpfComZeros(( cpfDosprev).trim())) {
                             return [superDossieSorted[i], 1]
                         }    
                     }
+
                      
                     // SHEVCHENKO: se não retornar pelo if de cima é um SHEVCHENKO.
-                    const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
+                    const cpfDosprev = await getCPFDosPrevNormal(normalDossie[i], cookie)
     
                     if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
+
+                        console.log('--ONE MORE TIME 2')
+                        console.log(cpf.trim())
+                        console.log(CorrigirCpfComZeros((cpfDosprev).trim()))
     
-                    if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
+                    if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()){
                         return [normalDossie[i], 0]
                     }
 
+                    console.log('ONE TIME 3')
+
+
+                    // SITUAÇÃO EM QUE NÃO É O PRIMEIRO
+                    console.log(superDossieSorted[superDossieSorted.length - 1])
+
+                    const cpfDosprevOutro = await getCPFDosPrevSuper(superDossieSorted[superDossieSorted.length - 1], cookie)
+
+                        if(!cpfDosprevOutro) return new Error("cpf com falha na pesquisa dosprev")
+
+                        console.log('--ONE MORE TIME 1')
+                        console.log(cpf.trim())
+                        console.log(CorrigirCpfComZeros((cpfDosprevOutro).trim()))
+                        
+                        if (cpf.trim() == CorrigirCpfComZeros((cpfDosprevOutro).trim())) {
+                            return [superDossieSorted[superDossieSorted.length - 1], 1]
+                        }  
 
                  }
      

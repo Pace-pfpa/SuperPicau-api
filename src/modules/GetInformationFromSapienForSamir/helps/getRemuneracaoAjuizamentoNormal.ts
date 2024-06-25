@@ -45,9 +45,6 @@ export async function getRemuneracaoAjuizamentoNormal (seq: string, dosprev: str
                             tamanhoRowsRemuneracoes++
                         }
 
-                        console.log('NATURAL MYSTIC')
-                        console.log(tamanhoRowsRemuneracoes)
-
                         // ACHOU O NÚMERO DE LINHAS DAS REMUNERAÇÕES E ITERA SOBRE TODAS
 
                         for (let r = 0; r <= tamanhoRowsRemuneracoes; r++) {

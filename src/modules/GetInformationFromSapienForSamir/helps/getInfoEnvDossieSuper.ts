@@ -40,9 +40,13 @@ export async function getInfoEnvDossieSuper (cookie:string, superDossie: any, da
 
         // DATA DER OU DCB 
 
+        console.log('--RAFAELA')
+
         const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamento, dataReq)
 
         const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
+
+        console.log(objeto)
 
 
         return objeto

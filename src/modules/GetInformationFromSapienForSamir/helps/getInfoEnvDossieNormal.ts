@@ -40,8 +40,6 @@ export async function getInfoEnvDossieNormal (cookie:string, normalDossie: any, 
         if(!(typeof(convertToDate(dateNascimento.trim())) == typeof(new Date()))) throw new Error("Pegou xpath errado do nascimento");
 
         const valoresCalcule = await getValueCalcDossieNormal(cookie, normalDossie, dateAjuizamento, dataReq)
-        console.log('----VALORES CALCULE')
-        console.log(valoresCalcule)
 
         const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
 

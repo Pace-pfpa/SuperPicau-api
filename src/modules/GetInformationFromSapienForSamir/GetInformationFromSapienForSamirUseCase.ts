@@ -32,6 +32,11 @@ import { getValueCalcDossieNormal } from './helps/getValueCalcDossieNormal';
 import { getInfoEnvDossieNormal } from './helps/getInfoEnvDossieNormal';
 import { calcularMediaAjuizamento } from './helps/calcularMediaAjuizamento';
 import { calcularMediaRequerimento } from './helps/calcularMediaRequerimento';
+import { getSalarioMinimo } from './loas/Business/Help/getSalarioMinimo';
+import { removeDayMonthFromDate } from './helps/removeDayMonthFromDate';
+import { removeDayYearFromDate } from './helps/removeDayYearFromDate';
+import { compararPrioridade } from './loas/Business/Help/compareRenda';
+import { getInfoEnvDossieSuper } from './helps/getInfoEnvDossieSuper';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -260,8 +265,6 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
                     }else{
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, objectDosPrev2);
-                        console.log('---DOSSIE IS VALID?')
-                        console.log(dossieIsvalid)
                         
                         if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                             (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
@@ -289,15 +292,9 @@ export class GetInformationFromSapienForSamirUseCase {
                     // AQUI JÁ FOI ACHADO O DOSSIÊ DO REQUERENTE, QUE PASSARÁ PELA ETIQUETAGEM
 
 
-                    console.log('---CHECK RETURN')
-                    console.log(objectDosPrev)
-
-
-
-
                     const informationcapa = await getInformationCapa.ImpedimentosCapa(capa);
                     if(!informationcapa){
-                        response= response + " ADVOGADO FRAUDE -"
+                        response= response + " ADVOGADO -"
                     }
                 
 
@@ -551,7 +548,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
 
-                    const impeditivos = [' CADÚNICO ', ' LOAS ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO FRAUDE ' ]
+                    const impeditivos = [' CADÚNICO ', ' BPC ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO ' ]
 
                     // VERIFICA SE O PROCESSO ESTÁ LIMPO ATÉ ESSE MOMENTO
                     const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
@@ -566,45 +563,31 @@ export class GetInformationFromSapienForSamirUseCase {
                         // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
                         const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
                         infoRequerente = objectRequerente;
-                        console.log('---YEAH BUDDY SUPER')
-                        console.log(objectRequerente)
 
-                        // DATACALC DOS ENVOLVIDOS USANDO verificarDossieMaisAtual PARA ENCONTRAR O DOSSIÊ DE CADA CPF.
 
                     } else if (dossieNormal && !possuiImpeditivo) {
                         // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
                         const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
                         infoRequerente = objectRequerente
-                        console.log('---YEAH BUDDY NORMAL')
-                        console.log(objectRequerente)
-
-                        // const valoresRequerente = await getValueCalcDossieNormal(cookie, objectDosPrev, objectRequerente.dataAjuizamento, objectRequerente.dataRequerimento)
-                        // console.log(valoresRequerente)
 
                     }
 
-                    let isNormal: boolean;
 
                     // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
                     for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
 
-                        // CONDICIONA SE EXISTE DOSSIÊ NORMAL NA PESQUISA, SE SIM DOSSIÊ MAIS ATUAL RECEBE OS 2 ARRAYS COMO PARÂMETRO
-
                         const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
+
+                        console.log('--ITERA')
+                        console.log(dossieIsvalid)
 
                         if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                             console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
                         } else {
 
                             if(dossieIsvalid[1] == 0){
-                                isNormal = true
-                            }else if(dossieIsvalid[1] == 1){
-                                isNormal = false
-                            }
-
-                            if (isNormal) {
                                 arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
-                            } else {
+                            }else if(dossieIsvalid[1] == 1){
                                 arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
                             }
 
@@ -628,7 +611,11 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     if (arrayDossieEnvolvidosSuper.length > 0) {
                         for (let i = 0; i < arrayDossieEnvolvidosSuper.length; i++) {
-                            
+                            const objectEnvolvido = await getInfoEnvDossieSuper(cookie, arrayDossieEnvolvidosSuper[i], infoRequerente.dataRequerimento)
+
+                            if (objectEnvolvido) {
+                                arrayObjetosEnvolvidos.push(objectEnvolvido)
+                            }
                         }
                     }
 
@@ -653,9 +640,112 @@ export class GetInformationFromSapienForSamirUseCase {
                     console.log(mediaRequerimento)
 
 
+                    // PEGAR SALARIO MINIMO DE ACORDO COM O ANO
+                    const anoAjuizamento = removeDayMonthFromDate(infoRequerente.dataAjuizamento)
+                    console.log(anoAjuizamento)
+
+                    const anoRequerimento = removeDayMonthFromDate(infoRequerente.dataRequerimento)
+                    console.log(anoRequerimento)
+
+                    const arraySalarioMinimoAjuizamento = await getSalarioMinimo(anoAjuizamento);
+                    console.log(arraySalarioMinimoAjuizamento)
+
+                    const arraySalarioMinimoRequerimento = await getSalarioMinimo(anoRequerimento)
+                    console.log(arraySalarioMinimoRequerimento)
+
+                    let salarioMinimoAjz;
+                    let salarioMinimoReq;
+
+
+                    salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
+                    salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
+
+
+                    if (anoAjuizamento === "2023") {
+                        const mesAjuizamento = removeDayYearFromDate(infoRequerente.dataAjuizamento)
+                        console.log(mesAjuizamento)
+
+                        if (mesAjuizamento === '01' || mesAjuizamento === '02' || mesAjuizamento === '03' || mesAjuizamento === '04') {
+                            salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
+                        } else {
+                            salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[1].valor)
+                        }
+
+                    }
+                    
+                    if (anoRequerimento === "2023") {
+                        const mesRequerimento = removeDayYearFromDate(infoRequerente.dataRequerimento)
+                        console.log(mesRequerimento)
+
+                        if (mesRequerimento === '01' || mesRequerimento === '02' || mesRequerimento === '03' || mesRequerimento === '04') {
+                            salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
+                        } else {
+                            salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[1].valor)
+                        }
+
+                    }
 
 
                     
+
+                    // ETIQUETAGEM DE RENDA
+
+                    console.log(salarioMinimoAjz)
+                    console.log(salarioMinimoReq)
+                    
+                    // AJUIZAMENTO
+
+                    let flagAjuizamento;
+
+                    const salarioMinimoAjz1_4 = salarioMinimoAjz / 4
+                    const salarioMinimoAjz1_2 = salarioMinimoAjz / 2
+
+                    if (mediaAjuizamento > salarioMinimoAjz1_2 && mediaAjuizamento <= salarioMinimoAjz) {
+                        flagAjuizamento = 'ALTA'
+                    } else if (mediaAjuizamento >= salarioMinimoAjz) {
+                        flagAjuizamento = 'ELEVADA'
+                    } else if (mediaAjuizamento > salarioMinimoAjz1_4 && mediaAjuizamento <= salarioMinimoAjz1_2 && !gastoComMedicamentos) {
+                        flagAjuizamento = 'MEDIA'
+                    } else {
+                        flagAjuizamento = 'BAIXA'
+                    }
+
+
+                    // REQUERIMENTO
+
+                    let flagRequerimento;
+
+                    const salarioMinimoReq1_4 = salarioMinimoReq / 4
+                    const salarioMinimoReq1_2 = salarioMinimoReq / 2
+
+                    if (mediaRequerimento > salarioMinimoReq1_2 && mediaRequerimento <= salarioMinimoReq) {
+                        flagRequerimento = 'ALTA'
+                    } else if (mediaRequerimento >= salarioMinimoReq) {
+                        flagRequerimento = 'ELEVADA'
+                    } else if (mediaRequerimento > salarioMinimoReq1_4 && mediaRequerimento <= salarioMinimoReq1_2 && !gastoComMedicamentos) {
+                        flagRequerimento = 'MEDIA'
+                    } else {
+                        flagRequerimento = 'BAIXA'
+                    }
+
+
+
+                    // COMPARAÇÃO
+
+                    const resultadoRenda = compararPrioridade(flagAjuizamento, flagRequerimento)
+                    console.log(resultadoRenda)
+
+                    if (resultadoRenda === 'ELEVADA') {
+                        response += ' RENDA ELEVADA -'
+                    } else if (resultadoRenda === 'ALTA') {
+                        response += ' RENDA ALTA -'
+                    } else if (resultadoRenda === 'MEDIA') {
+                        response += ' RENDA MEDIA -'
+                    }
+
+
+
+                    console.log("---ONE MORE RESPONSE: " + response)
                     
 
                     if (response.length == 0) {
