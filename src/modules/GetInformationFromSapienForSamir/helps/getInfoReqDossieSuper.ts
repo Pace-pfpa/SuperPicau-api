@@ -42,12 +42,24 @@ export async function getInfoReqDossieSuper (cookie:string, superDossie: any) {
 
         const dataReq = await getDERorDCBSuper(paginaDosPrevFormatadaDossieSuper, dateAjuizamento)
 
+        console.log('--REQ DATE')
+        console.log(dataReq)
+
         const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamento, dataReq)
 
-        const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
+        if (valoresCalcule instanceof Error) {
+
+            const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: 0, remuneracaoRequerimento: 0 }
+
+            return objeto
+        } else {
+            const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
+
+            return objeto
+        }
 
 
-        return objeto
+
 
     } catch (error) {
         console.error(error.message)

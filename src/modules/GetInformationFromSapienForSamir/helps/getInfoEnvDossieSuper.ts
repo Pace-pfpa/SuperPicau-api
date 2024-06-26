@@ -40,16 +40,19 @@ export async function getInfoEnvDossieSuper (cookie:string, superDossie: any, da
 
         // DATA DER OU DCB 
 
-        console.log('--RAFAELA')
-
         const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamento, dataReq)
 
-        const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
+        if (valoresCalcule instanceof Error) {
+            
+            const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: 0, remuneracaoRequerimento: 0 }
 
-        console.log(objeto)
+            return objeto
+        } else {
+            const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
 
+            return objeto
+        }
 
-        return objeto
 
     } catch (error) {
         console.error(error.message)

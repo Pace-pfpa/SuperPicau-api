@@ -42,24 +42,31 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
                         const identificarSeq = xpathCoulaFormatadoRelacoes.match(regexSeq)
                         const getDatas: string[] | null = xpathCoulaFormatadoRelacoes.match(regexData);
 
+                        if (!getDatas) {
+                            return new Error('NÃO FOI POSSÍVEL COLETAR AS DATAS NO DOSPREV')
+                        } else {
 
-                        const dates = getDatas.map(dateString => parseDate(dateString))
-
-                        const relacao = {
-                            seq: identificarSeq[0],
-                            dataInicio: dates[0],
-                            dataFim: dates[1] || null
+                            const dates = getDatas.map(dateString => parseDate(dateString))
+    
+    
+                            const relacao = {
+                                seq: identificarSeq[0],
+                                dataInicio: dates[0],
+                                dataFim: dates[1] || null
+                            }
+    
+                            if (relacao.dataFim !== null) {
+                                relacoesEncontradas.push(relacao)
+                            }
+    
                         }
 
 
-
-                        relacoesEncontradas.push(relacao)
 
 
                     } 
                 }
             }
-
 
 
             // ENCONTRAR A RELAÇÃO PREVIDENCIARIA QUE POSSUI O INTERVALO
@@ -85,6 +92,19 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
                 const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
                 
                 const remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieSuper, reqFormatado)
+
+                console.log('--REMUNERACAO AJUIZAMENTO')
+                console.log(remuneracaoAjuizamento)
+
+                console.log('--REMUNERACAO REQUERIMENTO')
+                console.log(remuneracaoRequerimento)
+
+                if (!remuneracaoRequerimento) {
+                    return {
+                        remuneracaoAjz: remuneracaoAjuizamento,
+                        remuneracaoReq: 0
+                    }
+                }
 
                 return {
                     remuneracaoAjz: remuneracaoAjuizamento,

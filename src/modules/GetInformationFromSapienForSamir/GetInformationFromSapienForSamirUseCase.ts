@@ -546,202 +546,215 @@ export class GetInformationFromSapienForSamirUseCase {
                     console.log("----TOTAL IMPEDITIVOS")
                     console.log(totalImpeditivos)
 
-                    
 
+                    
+                    const beneficios = [ ' *LOAS* ' ]
                     const impeditivos = [' CADÚNICO ', ' BPC ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO ' ]
 
-                    // VERIFICA SE O PROCESSO ESTÁ LIMPO ATÉ ESSE MOMENTO
-                    const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
-                    console.log(possuiImpeditivo)
 
-                    // ARRAY PARA GUARDAR O DOSSIÊ DE CADA MEMBRO DA FAMÍLIA
-                    let arrayDossieEnvolvidosNormal = [];
-                    let arrayDossieEnvolvidosSuper = [];
-                    let infoRequerente;
+                    const isLoas = beneficios.some(loas => totalImpeditivos.includes(loas))
+                    console.log('---É UM LOAS?')
+                    console.log(isLoas)
 
-                    if (superDosprevExist && !possuiImpeditivo) {
-                        // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
-                        const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
-                        infoRequerente = objectRequerente;
+                    if (isLoas) {
 
+                        // VERIFICA SE O PROCESSO ESTÁ LIMPO ATÉ ESSE MOMENTO
+                        const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
+                        console.log(possuiImpeditivo)
+    
+                        // ARRAY PARA GUARDAR O DOSSIÊ DE CADA MEMBRO DA FAMÍLIA
+                        let arrayDossieEnvolvidosNormal = [];
+                        let arrayDossieEnvolvidosSuper = [];
+                        let infoRequerente;
+    
+                        if (superDosprevExist && !possuiImpeditivo) {
+                            // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+                            const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
+                            infoRequerente = objectRequerente;
+    
+    
+                        } else if (dossieNormal && !possuiImpeditivo) {
+                            // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+                            const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
+                            infoRequerente = objectRequerente
+    
+                        }
 
-                    } else if (dossieNormal && !possuiImpeditivo) {
-                        // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
-                        const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
-                        infoRequerente = objectRequerente
-
-                    }
-
-
-                    // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
-                    for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
-
-                        const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
-
-                        console.log('--ITERA')
-                        console.log(dossieIsvalid)
-
-                        if (dossieIsvalid instanceof Error || !dossieIsvalid) {
-                            console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
-                        } else {
-
-                            if(dossieIsvalid[1] == 0){
-                                arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
-                            }else if(dossieIsvalid[1] == 1){
-                                arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
+    
+                        // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
+                        for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
+    
+                            const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
+    
+                            console.log('--ITERA')
+                            console.log(dossieIsvalid)
+    
+                            if (dossieIsvalid instanceof Error || !dossieIsvalid) {
+                                console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                            } else {
+    
+                                if(dossieIsvalid[1] == 0){
+                                    arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
+                                }else if(dossieIsvalid[1] == 1){
+                                    arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
+                                }
+    
+    
                             }
+                            
+                        }
 
-
+                        console.log('---ARRAY ENV SUPER')
+                        console.log(arrayDossieEnvolvidosSuper)
+    
+    
+                        let arrayObjetosEnvolvidos = [];
+    
+                        if (arrayDossieEnvolvidosNormal.length > 0) {
+                            for (let i = 0; i < arrayDossieEnvolvidosNormal.length; i++) {
+                                const objectEnvolvido = await getInfoEnvDossieNormal(cookie, arrayDossieEnvolvidosNormal[i], infoRequerente.dataRequerimento)
+                                
+                                if (objectEnvolvido) {
+                                    arrayObjetosEnvolvidos.push(objectEnvolvido)
+                                }
+                            } 
+                        }
+    
+                        if (arrayDossieEnvolvidosSuper.length > 0) {
+                            for (let i = 0; i < arrayDossieEnvolvidosSuper.length; i++) {
+                                const objectEnvolvido = await getInfoEnvDossieSuper(cookie, arrayDossieEnvolvidosSuper[i], infoRequerente.dataRequerimento)
+    
+                                if (objectEnvolvido) {
+                                    arrayObjetosEnvolvidos.push(objectEnvolvido)
+                                }
+                            }
+                        }
+    
+    
+                        arrayObjetosEnvolvidos.push(infoRequerente)
+    
+    
+                        // FORMADO O OBJETO DE TODOS OS QUE POSSUEM DOSSIÊ PREVIDENCIÁRIO
+    
+                        console.log('--OBJETOS DOS ENVOLVIDOS')
+                        console.log(arrayObjetosEnvolvidos)
+    
+    
+                        // CALCULAR A RENDA MÉDIA DA FAMÍLIA
+    
+                        console.log(grupoFamiliarCpfs.length + 1)
+    
+                        const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
+                        console.log(mediaAjuizamento)
+    
+                        const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
+                        console.log(mediaRequerimento)
+    
+    
+                        // PEGAR SALARIO MINIMO DE ACORDO COM O ANO
+                        const anoAjuizamento = removeDayMonthFromDate(infoRequerente.dataAjuizamento)
+                        console.log(anoAjuizamento)
+    
+                        const anoRequerimento = removeDayMonthFromDate(infoRequerente.dataRequerimento)
+                        console.log(anoRequerimento)
+    
+                        const arraySalarioMinimoAjuizamento = await getSalarioMinimo(anoAjuizamento);
+                        console.log(arraySalarioMinimoAjuizamento)
+    
+                        const arraySalarioMinimoRequerimento = await getSalarioMinimo(anoRequerimento)
+                        console.log(arraySalarioMinimoRequerimento)
+    
+                        let salarioMinimoAjz;
+                        let salarioMinimoReq;
+    
+    
+                        salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
+                        salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
+    
+    
+                        if (anoAjuizamento === "2023") {
+                            const mesAjuizamento = removeDayYearFromDate(infoRequerente.dataAjuizamento)
+                            console.log(mesAjuizamento)
+    
+                            if (mesAjuizamento === '01' || mesAjuizamento === '02' || mesAjuizamento === '03' || mesAjuizamento === '04') {
+                                salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
+                            } else {
+                                salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[1].valor)
+                            }
+    
                         }
                         
-                    }
-
-
-                    let arrayObjetosEnvolvidos = [];
-
-                    if (arrayDossieEnvolvidosNormal.length > 0) {
-                        for (let i = 0; i < arrayDossieEnvolvidosNormal.length; i++) {
-                            const objectEnvolvido = await getInfoEnvDossieNormal(cookie, arrayDossieEnvolvidosNormal[i], infoRequerente.dataRequerimento)
-                            
-                            if (objectEnvolvido) {
-                                arrayObjetosEnvolvidos.push(objectEnvolvido)
+                        if (anoRequerimento === "2023") {
+                            const mesRequerimento = removeDayYearFromDate(infoRequerente.dataRequerimento)
+                            console.log(mesRequerimento)
+    
+                            if (mesRequerimento === '01' || mesRequerimento === '02' || mesRequerimento === '03' || mesRequerimento === '04') {
+                                salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
+                            } else {
+                                salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[1].valor)
                             }
-                        } 
-                    }
-
-                    if (arrayDossieEnvolvidosSuper.length > 0) {
-                        for (let i = 0; i < arrayDossieEnvolvidosSuper.length; i++) {
-                            const objectEnvolvido = await getInfoEnvDossieSuper(cookie, arrayDossieEnvolvidosSuper[i], infoRequerente.dataRequerimento)
-
-                            if (objectEnvolvido) {
-                                arrayObjetosEnvolvidos.push(objectEnvolvido)
-                            }
+    
                         }
-                    }
-
-
-                    arrayObjetosEnvolvidos.push(infoRequerente)
-
-
-                    // FORMADO O OBJETO DE TODOS OS QUE POSSUEM DOSSIÊ PREVIDENCIÁRIO
-
-                    console.log('--OBJETOS DOS ENVOLVIDOS')
-                    console.log(arrayObjetosEnvolvidos)
-
-
-                    // CALCULAR A RENDA MÉDIA DA FAMÍLIA
-
-                    console.log(grupoFamiliarCpfs.length + 1)
-
-                    const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
-                    console.log(mediaAjuizamento)
-
-                    const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
-                    console.log(mediaRequerimento)
-
-
-                    // PEGAR SALARIO MINIMO DE ACORDO COM O ANO
-                    const anoAjuizamento = removeDayMonthFromDate(infoRequerente.dataAjuizamento)
-                    console.log(anoAjuizamento)
-
-                    const anoRequerimento = removeDayMonthFromDate(infoRequerente.dataRequerimento)
-                    console.log(anoRequerimento)
-
-                    const arraySalarioMinimoAjuizamento = await getSalarioMinimo(anoAjuizamento);
-                    console.log(arraySalarioMinimoAjuizamento)
-
-                    const arraySalarioMinimoRequerimento = await getSalarioMinimo(anoRequerimento)
-                    console.log(arraySalarioMinimoRequerimento)
-
-                    let salarioMinimoAjz;
-                    let salarioMinimoReq;
-
-
-                    salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
-                    salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
-
-
-                    if (anoAjuizamento === "2023") {
-                        const mesAjuizamento = removeDayYearFromDate(infoRequerente.dataAjuizamento)
-                        console.log(mesAjuizamento)
-
-                        if (mesAjuizamento === '01' || mesAjuizamento === '02' || mesAjuizamento === '03' || mesAjuizamento === '04') {
-                            salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
+    
+    
+                        
+    
+                        // ETIQUETAGEM DE RENDA
+    
+                        console.log(salarioMinimoAjz)
+                        console.log(salarioMinimoReq)
+                        
+                        // AJUIZAMENTO
+    
+                        let flagAjuizamento;
+    
+                        const salarioMinimoAjz1_4 = salarioMinimoAjz / 4
+                        const salarioMinimoAjz1_2 = salarioMinimoAjz / 2
+    
+                        if (mediaAjuizamento > salarioMinimoAjz1_2 && mediaAjuizamento <= salarioMinimoAjz) {
+                            flagAjuizamento = 'ALTA'
+                        } else if (mediaAjuizamento >= salarioMinimoAjz) {
+                            flagAjuizamento = 'ELEVADA'
+                        } else if (mediaAjuizamento > salarioMinimoAjz1_4 && mediaAjuizamento <= salarioMinimoAjz1_2 && !gastoComMedicamentos) {
+                            flagAjuizamento = 'MEDIA'
                         } else {
-                            salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[1].valor)
+                            flagAjuizamento = 'BAIXA'
                         }
-
-                    }
-                    
-                    if (anoRequerimento === "2023") {
-                        const mesRequerimento = removeDayYearFromDate(infoRequerente.dataRequerimento)
-                        console.log(mesRequerimento)
-
-                        if (mesRequerimento === '01' || mesRequerimento === '02' || mesRequerimento === '03' || mesRequerimento === '04') {
-                            salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
+    
+    
+                        // REQUERIMENTO
+    
+                        let flagRequerimento;
+    
+                        const salarioMinimoReq1_4 = salarioMinimoReq / 4
+                        const salarioMinimoReq1_2 = salarioMinimoReq / 2
+    
+                        if (mediaRequerimento > salarioMinimoReq1_2 && mediaRequerimento <= salarioMinimoReq) {
+                            flagRequerimento = 'ALTA'
+                        } else if (mediaRequerimento >= salarioMinimoReq) {
+                            flagRequerimento = 'ELEVADA'
+                        } else if (mediaRequerimento > salarioMinimoReq1_4 && mediaRequerimento <= salarioMinimoReq1_2 && !gastoComMedicamentos) {
+                            flagRequerimento = 'MEDIA'
                         } else {
-                            salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[1].valor)
+                            flagRequerimento = 'BAIXA'
                         }
-
+    
+    
+    
+                        // COMPARAÇÃO
+    
+                        const resultadoRenda = compararPrioridade(flagAjuizamento, flagRequerimento)
+                        console.log(resultadoRenda)
+    
+                        if (resultadoRenda === 'ELEVADA') {
+                            response += ' RENDA ELEVADA -'
+                        } else if (resultadoRenda === 'ALTA') {
+                            response += ' RENDA ALTA -'
+                        } else if (resultadoRenda === 'MEDIA') {
+                            response += ' RENDA MEDIA -'
+                        }
                     }
 
-
-                    
-
-                    // ETIQUETAGEM DE RENDA
-
-                    console.log(salarioMinimoAjz)
-                    console.log(salarioMinimoReq)
-                    
-                    // AJUIZAMENTO
-
-                    let flagAjuizamento;
-
-                    const salarioMinimoAjz1_4 = salarioMinimoAjz / 4
-                    const salarioMinimoAjz1_2 = salarioMinimoAjz / 2
-
-                    if (mediaAjuizamento > salarioMinimoAjz1_2 && mediaAjuizamento <= salarioMinimoAjz) {
-                        flagAjuizamento = 'ALTA'
-                    } else if (mediaAjuizamento >= salarioMinimoAjz) {
-                        flagAjuizamento = 'ELEVADA'
-                    } else if (mediaAjuizamento > salarioMinimoAjz1_4 && mediaAjuizamento <= salarioMinimoAjz1_2 && !gastoComMedicamentos) {
-                        flagAjuizamento = 'MEDIA'
-                    } else {
-                        flagAjuizamento = 'BAIXA'
-                    }
-
-
-                    // REQUERIMENTO
-
-                    let flagRequerimento;
-
-                    const salarioMinimoReq1_4 = salarioMinimoReq / 4
-                    const salarioMinimoReq1_2 = salarioMinimoReq / 2
-
-                    if (mediaRequerimento > salarioMinimoReq1_2 && mediaRequerimento <= salarioMinimoReq) {
-                        flagRequerimento = 'ALTA'
-                    } else if (mediaRequerimento >= salarioMinimoReq) {
-                        flagRequerimento = 'ELEVADA'
-                    } else if (mediaRequerimento > salarioMinimoReq1_4 && mediaRequerimento <= salarioMinimoReq1_2 && !gastoComMedicamentos) {
-                        flagRequerimento = 'MEDIA'
-                    } else {
-                        flagRequerimento = 'BAIXA'
-                    }
-
-
-
-                    // COMPARAÇÃO
-
-                    const resultadoRenda = compararPrioridade(flagAjuizamento, flagRequerimento)
-                    console.log(resultadoRenda)
-
-                    if (resultadoRenda === 'ELEVADA') {
-                        response += ' RENDA ELEVADA -'
-                    } else if (resultadoRenda === 'ALTA') {
-                        response += ' RENDA ALTA -'
-                    } else if (resultadoRenda === 'MEDIA') {
-                        response += ' RENDA MEDIA -'
-                    }
 
 
 

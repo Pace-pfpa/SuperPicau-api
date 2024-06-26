@@ -65,10 +65,12 @@ export async function getDERorDCBSuper (paginaDosPrevFormatada: any, dataAjuizam
 
             // Existem cessados/suspensos e o mais atual tem menos de 5 anos, independente do indeferido = Restabelecimento
             if (tempoCesSus < 5) {
+                return dataCessado
+
 
             } else {
-                // const req = EncontrarDataMaisAtual(objetosEncontradosParaVerificar)
-                
+                const req = formatDate(EncontrarDataMaisAtual(objetosEncontradosParaVerificar))
+                return req
                 
             }
 
