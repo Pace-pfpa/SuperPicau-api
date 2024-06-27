@@ -586,9 +586,6 @@ export class GetInformationFromSapienForSamirUseCase {
     
                             const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
     
-                            console.log('--ITERA')
-                            console.log(dossieIsvalid)
-    
                             if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                                 console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
                             } else {

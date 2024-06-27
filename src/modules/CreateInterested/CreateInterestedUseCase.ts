@@ -19,6 +19,7 @@ import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { error } from "console";
+import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 
 export class CreateInterestedUseCase{
 
@@ -125,6 +126,9 @@ export class CreateInterestedUseCase{
 
 
                             if(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()) !== cpfCapa.trim() && !cpfExistente.length){
+                                let envolvidoGhost = await GetEnvolvidoGhost(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
+                                console.log(envolvidoGhost)
+
                                 const pessoa_id =  await GetPessoa_id(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
                                 console.log('-----PESSOA ID NO LAÇO: ')
                                 console.log(pessoa_id)
