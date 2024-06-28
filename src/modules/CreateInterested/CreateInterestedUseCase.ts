@@ -20,6 +20,7 @@ import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { error } from "console";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
+import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
 
 export class CreateInterestedUseCase{
 
@@ -127,7 +128,12 @@ export class CreateInterestedUseCase{
 
                             if(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()) !== cpfCapa.trim() && !cpfExistente.length){
                                 let envolvidoGhost = await GetEnvolvidoGhost(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
+                                console.log('--GHOST DE FORA')
                                 console.log(envolvidoGhost)
+
+                                let pessoaFisica = await GetPessoaFisica(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
+                                console.log('--PESSOA FISICA')
+                                console.log(pessoaFisica)
 
                                 const pessoa_id =  await GetPessoa_id(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
                                 console.log('-----PESSOA ID NO LAÇO: ')
