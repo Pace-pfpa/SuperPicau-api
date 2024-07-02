@@ -3,6 +3,7 @@ import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
 export async function getVeiculos(paginaSislabra: string): Promise<Array<any>> {
     ///html/body/div/main/div/div[11]/table/tbody/tr[2]/td[5]
     ///html/body/div/main/div/div[11]/table/tbody/tr[2]/td[5]
+
     const veiculosEncontrados = [];
     let valueWhile = true;
     let contadorPaxh = 2;

@@ -18,7 +18,6 @@ import { buscarTableCpf } from "../GetInformationFromSapienForSamir/helps/procur
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
-import { error } from "console";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
 
@@ -46,10 +45,17 @@ export class CreateInterestedUseCase{
                 const tarefaId = tarefas[i].id
                 const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
                 arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
+
+                //console.log(arrayDeDocumentos[47])
         
         
         
-                const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
+                const dossieSocial = arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
+
+                // BUSCAR DOSSIÊ SOCIAL COMO OUTROS
+
+
+                console.log(dossieSocial)
             
                 const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
                 const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });

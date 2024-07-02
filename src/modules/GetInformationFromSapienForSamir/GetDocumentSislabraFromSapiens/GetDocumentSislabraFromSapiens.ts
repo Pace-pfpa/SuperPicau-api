@@ -1,6 +1,6 @@
 import { getEmpregoSislabra } from "./SislabraBusiness/GetEmpregoSislabra";
 import { getImoveisRurais } from "./SislabraBusiness/GetImoveisRuraisSislabra";
-import { getImoveis } from "./SislabraBusiness/GetImoveisSp";
+import { getImoveisSP } from "./SislabraBusiness/GetImoveisSp";
 import { getVeiculos } from "./SislabraBusiness/GetVeiculosSislabra";
 import { getEmpresa } from "./SislabraBusiness/GetEmpresaSislabra";
 

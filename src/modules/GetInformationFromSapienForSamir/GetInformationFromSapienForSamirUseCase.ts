@@ -16,7 +16,7 @@ import { verificarCapaTrue } from './helps/verificarCapaTrue';
 import { buscarTableCpf } from './helps/procurarTableCpf';
 import { superDossie } from './DossieSuperSapiens';
 import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPicaPau';
-import { getDocumentSislabraFromSapiens } from './GetDocumentSislabraFromSapiens';
+import { getDocumentSislabraFromSapiens, getDocumentSislabraFromSapiensLoas } from './GetDocumentSislabraFromSapiens';
 import { getInformationCapa } from './GetInformationCapa';
 import { compararNup } from "./helps/ComparaNUP";
 import { LoasDossieUseCase } from './loas/LoasDossieUseCase';
@@ -566,46 +566,51 @@ export class GetInformationFromSapienForSamirUseCase {
                         let arrayDossieEnvolvidosNormal = [];
                         let arrayDossieEnvolvidosSuper = [];
                         let infoRequerente;
-    
-                        if (superDosprevExist && !possuiImpeditivo) {
-                            // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
-                            const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
-                            infoRequerente = objectRequerente;
-    
-    
-                        } else if (dossieNormal && !possuiImpeditivo) {
-                            // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
-                            const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
-                            infoRequerente = objectRequerente
-    
-                        }
 
-    
-                        // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
-                        for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
-    
-                            const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
-    
-                            if (dossieIsvalid instanceof Error || !dossieIsvalid) {
-                                console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
-                            } else {
-    
-                                if(dossieIsvalid[1] == 0){
-                                    arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
-                                }else if(dossieIsvalid[1] == 1){
-                                    arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
-                                }
-    
-    
+                        if (!possuiImpeditivo) {
+
+                            if (superDosprevExist) {
+                                // DOSSIÊ DO REQUERENTE É SUPER E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+                                const objectRequerente = await getInfoReqDossieSuper(cookie, objectDosPrev)
+                                infoRequerente = objectRequerente;
+        
+        
+                            } else if (dossieNormal) {
+                                // DOSSIÊ DO REQUERENTE É NORMAL E ESTÁ LIMPO, INFORMAÇÕES DO REQUERENTE
+                                const objectRequerente = await getInfoReqDossieNormal(cookie, objectDosPrev)
+                                infoRequerente = objectRequerente
+        
                             }
-                            
+    
+        
+                            // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
+                            for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
+        
+                                const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
+        
+                                if (dossieIsvalid instanceof Error || !dossieIsvalid) {
+                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                                } else {
+        
+                                    if(dossieIsvalid[1] == 0){
+                                        arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
+                                    }else if(dossieIsvalid[1] == 1){
+                                        arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
+                                    }
+        
+        
+                                }
+                                
+                            }
                         }
+    
 
                         console.log('---ARRAY ENV SUPER')
-                        console.log(arrayDossieEnvolvidosSuper)
+                        //console.log(arrayDossieEnvolvidosSuper)
     
-    
-                        let arrayObjetosEnvolvidos = [];
+                        if (infoRequerente) {
+
+                            let arrayObjetosEnvolvidos = [];
     
                         if (arrayDossieEnvolvidosNormal.length > 0) {
                             for (let i = 0; i < arrayDossieEnvolvidosNormal.length; i++) {
@@ -750,6 +755,299 @@ export class GetInformationFromSapienForSamirUseCase {
                         } else if (resultadoRenda === 'MEDIA') {
                             response += ' RENDA MEDIA -'
                         }
+                        }
+
+
+
+
+
+                        // VIEIRA: SISLABRA LOAS
+
+                        // ENCONTRA TODOS OS LABRA COM A STRING "POLO ATIVO"
+                        const labrasPoloAtivo = arrayDeDocumentos.filter((Documento) => {
+                            const nomeMovimentacao = Documento.movimento;
+                            const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
+                            if (name != -1) {
+                                return true
+                            }
+                            return false
+                        })
+
+
+                        console.log('---VIEIRA: SISLABRAS POLO ATIVO')
+                        console.log(labrasPoloAtivo)
+
+                        if (labrasPoloAtivo.length > 0) {
+                            // VERIFICAR CADA DOCUMENTO POLO ATIVO IDENTIFICANDO IMPEDITIVOS
+                            for (let i = 0; i < labrasPoloAtivo.length; i++) {
+                                const idSislabraParaPesquisaAutor = labrasPoloAtivo[i].documentoJuntado.componentesDigitais[0].id;
+                                const parginaSislabraPoloAtivo = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
+        
+                                const paginaSislabraFormatadaPoloAtivo = new JSDOM(parginaSislabraPoloAtivo);
+        
+                                const sislabraPoloAtivo = await getDocumentSislabraFromSapiensLoas.execute(paginaSislabraFormatadaPoloAtivo, true)
+                                response = response + sislabraPoloAtivo
+                            }
+
+                        } else {
+                            console.log("-----SISLABRA NÃO ENCONTRADO")
+                            response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+                        }
+
+
+                        // ENCONTRA OS OUTROS LABRA (GRUPO FAMILIAR)
+
+                        const labrasGrupoFamiliar = arrayDeDocumentos.filter((Documento) => {
+                            if (Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla) {
+                                const nomeMovimentacao = Documento.movimento;       
+                                const name = nomeMovimentacao.indexOf("SISLABRA - GF");
+                                const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF');
+                                
+                                if (name != -1 && siglaSlabra != -1) {
+                                    const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim();
+                                    if (typeDpcumento == "html") {
+                                        return true; 
+                                    }
+                                }
+                            }
+                            return false;
+                        });
+
+
+                        console.log('---VIEIRA: SISLABRAS GRUPO FAMILIAR')
+                        console.log(labrasGrupoFamiliar)
+
+
+                        if (labrasGrupoFamiliar.length > 0) {
+                            // VERIFICAR CADA DOCUMENTO DO GF IDENTIFICANDO IMPEDITIVOS
+
+                            for (let i = 0; i < labrasGrupoFamiliar.length; i++) {
+                                const idSislabraParaPesquisaGF = labrasGrupoFamiliar[i].documentoJuntado.componentesDigitais[0].id;
+                                const parginaSislabraGF = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaGF });
+        
+                                const paginaSislabraFormatadaGF = new JSDOM(parginaSislabraGF);
+        
+                                const sislabraGF = await getDocumentSislabraFromSapiensLoas.execute(paginaSislabraFormatadaGF, false)
+                                response = response + sislabraGF
+                            }
+
+                        } else {
+                            console.log("---SEM LABRA FAMILIAR")
+                        }
+
+                        
+                        /*
+                        let movimentoPoloAtivo;
+                        const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
+                            const nomeMovimentacao = Documento.movimento;
+                            movimentoPoloAtivo = Documento.movimento;
+                            const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
+                            if(name != -1){
+                                return Documento
+                            }
+                        });
+                        
+
+                        console.log('---VIEIRA: SISLABRA POLO ATIVO')
+                        console.log(paginaSislabraPoloAtivo)
+                        console.log(movimentoPoloAtivo)
+                        
+    
+                        if (!paginaSislabraPoloAtivo) {
+    
+                            console.log("-----SISLABRA NÃO ENCONTRADO")
+                            response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+    
+                        } else {
+    
+                            let paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao =  arrayDeDocumentos.find((Documento) => {
+                                if(Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla){
+                                    const nomeMovimentacao = Documento.movimento;       
+                                    const name = nomeMovimentacao.indexOf("SISLABRA - GF");
+                                    const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF')
+                                    if(name != -1 && siglaSlabra != -1){
+                                        //console.log(Documento.documentoJuntado.tipoDocumento)
+                                        const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
+                                        if(typeDpcumento == "html"){
+                                            return Documento
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            
+                            let paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
+                                const nomeMovimentacao = Documento.movimento;       
+                                const name = nomeMovimentacao.indexOf("POSSÍVEL CÔNJUGE");
+                                if(name != -1){
+                                    const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
+                                    if(typeDpcumento == "html"){
+                                        return Documento
+                                    }
+                                }
+                            });
+        
+                           if(paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
+                                if(paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao.numeracaoSequencial > paginaSislabraConjuge.numeracaoSequencial){
+                                    paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
+                                }
+                           }else if(!paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
+                                paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
+                           }
+        
+                            let sislabraAutorESislabraConjugeNoExistem = false;
+        
+        
+                            if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
+                                const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                                const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
+        
+                                const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
+        
+                                const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
+                                response = response + sislabraAutor
+        
+        
+                                const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
+                                const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
+        
+                                const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
+        
+                                const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
+        
+                                response = response + sislabraConjuge
+        
+                            }else if(paginaSislabraPoloAtivo && !paginaSislabraConjuge){
+        
+                                const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                                const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
+        
+                                const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
+        
+                                const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
+                                response = response + sislabraAutor
+        
+                            }else if(!paginaSislabraPoloAtivo && paginaSislabraConjuge){
+                                const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
+                                const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
+        
+                                const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
+        
+                                const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
+        
+                                response = response + sislabraConjuge
+                            }else{
+                                 response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" 
+                                sislabraAutorESislabraConjugeNoExistem = true;
+                            }
+                        }
+
+
+                        */
+    
+                        
+                    } else {
+
+                        // SISLABRA NÃO LOAS
+                        
+                        const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
+                        const nomeMovimentacao = Documento.movimento;
+                        const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
+                        if(name != -1){
+                            return Documento
+                        }
+                    });
+
+                    if (!paginaSislabraPoloAtivo) {
+
+                        console.log("-----SISLABRA NÃO ENCONTRADO")
+                        response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+
+                    } else {
+
+                        let paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao =  arrayDeDocumentos.find((Documento) => {
+                            if(Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla){
+                                const nomeMovimentacao = Documento.movimento;       
+                                const name = nomeMovimentacao.indexOf("SISLABRA - GF");
+                                const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF')
+                                if(name != -1 && siglaSlabra != -1){
+                                    //console.log(Documento.documentoJuntado.tipoDocumento)
+                                    const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
+                                    if(typeDpcumento == "html"){
+                                        return Documento
+                                    }
+                                }
+                            }
+                        });
+                        
+                        
+                        let paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
+                            const nomeMovimentacao = Documento.movimento;       
+                            const name = nomeMovimentacao.indexOf("POSSÍVEL CÔNJUGE");
+                            if(name != -1){
+                                const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
+                                if(typeDpcumento == "html"){
+                                    return Documento
+                                }
+                            }
+                        });
+    
+                       if(paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
+                            if(paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao.numeracaoSequencial > paginaSislabraConjuge.numeracaoSequencial){
+                                paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
+                            }
+                       }else if(!paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
+                            paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
+                       }
+    
+                        let sislabraAutorESislabraConjugeNoExistem = false;
+    
+    
+                        if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
+                            const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                            const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
+    
+                            const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
+    
+                            const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
+                            response = response + sislabraAutor
+    
+    
+                            const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
+                            const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
+    
+                            const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
+    
+                            const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
+    
+                            response = response + sislabraConjuge
+    
+                        }else if(paginaSislabraPoloAtivo && !paginaSislabraConjuge){
+    
+                            const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+                            const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
+    
+                            const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
+    
+                            const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
+                            response = response + sislabraAutor
+    
+                        }else if(!paginaSislabraPoloAtivo && paginaSislabraConjuge){
+                            const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
+                            const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
+    
+                            const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
+    
+                            const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
+    
+                            response = response + sislabraConjuge
+                        }else{
+                             response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" 
+                            sislabraAutorESislabraConjugeNoExistem = true;
+                        }
+                    }
+
+                    
                     }
 
 
@@ -807,7 +1105,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         const newResponse = removeSubstring(response)
 
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `${tipo} IMPEDITIVOS:  ${newResponse}`, tarefaId })
+                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `${tipo} IMPEDITIVOS: ${newResponse}`, tarefaId })
                         console.log("RESPONSEEEE")
                         console.log(response)
                         return {impeditivos: true}  
