@@ -34,8 +34,6 @@ export function arrayInteressados(inputArray: InputArray): string[] {
         throw new Error("O caminho objeto.result.records não existe ou não é um array.");
     }
 
-    console.log(resultado)
-
     return resultado;
     
 }

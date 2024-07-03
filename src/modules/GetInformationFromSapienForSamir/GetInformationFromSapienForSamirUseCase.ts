@@ -37,6 +37,8 @@ import { removeDayMonthFromDate } from './helps/removeDayMonthFromDate';
 import { removeDayYearFromDate } from './helps/removeDayYearFromDate';
 import { compararPrioridade } from './loas/Business/Help/compareRenda';
 import { getInfoEnvDossieSuper } from './helps/getInfoEnvDossieSuper';
+import { GetInteressadosReq } from '../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq';
+import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
@@ -219,7 +221,7 @@ export class GetInformationFromSapienForSamirUseCase {
                 
                     console.log("CPF: ")
                     const cpfCapa = buscarTableCpf(novaCapa);
-                    console.log(cpfCapa)
+                    //console.log(cpfCapa)
                     if(!cpfCapa){
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
                         return {erro: ` CPF NÃO ENCONTRADO -`}
@@ -434,111 +436,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         }else{
                             
                         }
-                        
-
-                    
-                        
-                    // LÓGICA DO SISLABRA 
-
-                    /*
-                    const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
-                        const nomeMovimentacao = Documento.movimento;
-                        const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
-                        if(name != -1){
-                            return Documento
-                        }
-                    });
-
-                    if (!paginaSislabraPoloAtivo) {
-
-                        console.log("-----SISLABRA NÃO ENCONTRADO")
-                        response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
-
-                    } else {
-
-                        let paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao =  arrayDeDocumentos.find((Documento) => {
-                            if(Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla){
-                                const nomeMovimentacao = Documento.movimento;       
-                                const name = nomeMovimentacao.indexOf("SISLABRA - GF");
-                                const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF')
-                                if(name != -1 && siglaSlabra != -1){
-                                    //console.log(Documento.documentoJuntado.tipoDocumento)
-                                    const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
-                                    if(typeDpcumento == "html"){
-                                        return Documento
-                                    }
-                                }
-                            }
-                        });
-                        
-                        
-                        let paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
-                            const nomeMovimentacao = Documento.movimento;       
-                            const name = nomeMovimentacao.indexOf("POSSÍVEL CÔNJUGE");
-                            if(name != -1){
-                                const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
-                                if(typeDpcumento == "html"){
-                                    return Documento
-                                }
-                            }
-                        });
     
-                       if(paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
-                            if(paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao.numeracaoSequencial > paginaSislabraConjuge.numeracaoSequencial){
-                                paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
-                            }
-                       }else if(!paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
-                            paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
-                       }
-    
-                        let sislabraAutorESislabraConjugeNoExistem = false;
-    
-    
-                        if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
-                            const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-                            const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
-    
-                            const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
-    
-                            const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
-                            response = response + sislabraAutor
-    
-    
-                            const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
-                            const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
-    
-                            const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
-    
-                            const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
-    
-                            response = response + sislabraConjuge
-    
-                        }else if(paginaSislabraPoloAtivo && !paginaSislabraConjuge){
-    
-                            const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-                            const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
-    
-                            const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
-    
-                            const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
-                            response = response + sislabraAutor
-    
-                        }else if(!paginaSislabraPoloAtivo && paginaSislabraConjuge){
-                            const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
-                            const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
-    
-                            const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
-    
-                            const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
-    
-                            response = response + sislabraConjuge
-                        }else{
-                            /* response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" 
-                            sislabraAutorESislabraConjugeNoExistem = true;
-                        }
-                    }
-
-                    */
                     
                   
                     console.log("---BEFORE RESPONSE: " + response)
@@ -567,6 +465,31 @@ export class GetInformationFromSapienForSamirUseCase {
                         let arrayDossieEnvolvidosSuper = [];
                         let infoRequerente;
 
+
+
+                        // ENCONTRAR CPFS DE TERCEIROS (INTERESSADOS)
+                        let InputArray = await GetInteressadosReq(tarefas[0].pasta_id, cookie)
+                        let ArrayEnvolvidos = arrayInteressados(InputArray)
+                        console.log('---ARRAY ENVOLVIDOS DE ROSSI')
+                        console.log(ArrayEnvolvidos)
+                        console.log('---CPF POLO ATIVO: ')
+                        console.log(cpfCapa)
+
+
+                        // FAZ O MERGE DOS CPFS DE TERCEIROS COM OS DO GRUPO FAMILIAR
+                        const filtered_cpfs = ArrayEnvolvidos.filter(cpf => {
+                            return cpf !== '0000000000-' &&
+                                   cpf !== cpfCapa &&
+                                   cpf.length <= 11 &&
+                                   !grupoFamiliarCpfs.includes(cpf); 
+                        })
+
+
+                        const updated_cpf_dos_familiares = [...grupoFamiliarCpfs, ...filtered_cpfs];
+                        console.log('---GRUPO FAMILIAR COMPLETO DE ROSSI')
+                        console.log(updated_cpf_dos_familiares)
+
+
                         if (!possuiImpeditivo) {
 
                             if (superDosprevExist) {
@@ -584,12 +507,12 @@ export class GetInformationFromSapienForSamirUseCase {
     
         
                             // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
-                            for (let i = 0; i < grupoFamiliarCpfs.length; i++) {
+                            for (let i = 0; i < updated_cpf_dos_familiares.length; i++) {
         
-                                const dossieIsvalid = await verificarDossieMaisAtual(grupoFamiliarCpfs[i], cookie, totalDossieNormal, totalDossieSuper)
+                                const dossieIsvalid = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, totalDossieNormal, totalDossieSuper)
         
                                 if (dossieIsvalid instanceof Error || !dossieIsvalid) {
-                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${grupoFamiliarCpfs[i]}`)
+                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${updated_cpf_dos_familiares[i]}`)
                                 } else {
         
                                     if(dossieIsvalid[1] == 0){
@@ -607,6 +530,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         console.log('---ARRAY ENV SUPER')
                         //console.log(arrayDossieEnvolvidosSuper)
+
     
                         if (infoRequerente) {
 
@@ -644,12 +568,12 @@ export class GetInformationFromSapienForSamirUseCase {
     
                         // CALCULAR A RENDA MÉDIA DA FAMÍLIA
     
-                        console.log(grupoFamiliarCpfs.length + 1)
+                        console.log(updated_cpf_dos_familiares.length + 1)
     
-                        const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
+                        const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, updated_cpf_dos_familiares.length + 1)
                         console.log(mediaAjuizamento)
     
-                        const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, grupoFamiliarCpfs.length + 1)
+                        const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, updated_cpf_dos_familiares.length + 1)
                         console.log(mediaRequerimento)
     
     
@@ -836,114 +760,6 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
 
                         
-                        /*
-                        let movimentoPoloAtivo;
-                        const paginaSislabraPoloAtivo = arrayDeDocumentos.find((Documento) => {
-                            const nomeMovimentacao = Documento.movimento;
-                            movimentoPoloAtivo = Documento.movimento;
-                            const name = nomeMovimentacao.indexOf("PÓLO ATIVO");
-                            if(name != -1){
-                                return Documento
-                            }
-                        });
-                        
-
-                        console.log('---VIEIRA: SISLABRA POLO ATIVO')
-                        console.log(paginaSislabraPoloAtivo)
-                        console.log(movimentoPoloAtivo)
-                        
-    
-                        if (!paginaSislabraPoloAtivo) {
-    
-                            console.log("-----SISLABRA NÃO ENCONTRADO")
-                            response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
-    
-                        } else {
-    
-                            let paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao =  arrayDeDocumentos.find((Documento) => {
-                                if(Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla){
-                                    const nomeMovimentacao = Documento.movimento;       
-                                    const name = nomeMovimentacao.indexOf("SISLABRA - GF");
-                                    const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('SITCADCPF')
-                                    if(name != -1 && siglaSlabra != -1){
-                                        //console.log(Documento.documentoJuntado.tipoDocumento)
-                                        const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
-                                        if(typeDpcumento == "html"){
-                                            return Documento
-                                        }
-                                    }
-                                }
-                            });
-                            
-                            
-                            let paginaSislabraConjuge =  arrayDeDocumentos.find((Documento) => {
-                                const nomeMovimentacao = Documento.movimento;       
-                                const name = nomeMovimentacao.indexOf("POSSÍVEL CÔNJUGE");
-                                if(name != -1){
-                                    const typeDpcumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim()
-                                    if(typeDpcumento == "html"){
-                                        return Documento
-                                    }
-                                }
-                            });
-        
-                           if(paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
-                                if(paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao.numeracaoSequencial > paginaSislabraConjuge.numeracaoSequencial){
-                                    paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
-                                }
-                           }else if(!paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
-                                paginaSislabraConjuge = paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao;
-                           }
-        
-                            let sislabraAutorESislabraConjugeNoExistem = false;
-        
-        
-                            if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
-                                const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-                                const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
-        
-                                const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
-        
-                                const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
-                                response = response + sislabraAutor
-        
-        
-                                const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
-                                const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
-        
-                                const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
-        
-                                const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
-        
-                                response = response + sislabraConjuge
-        
-                            }else if(paginaSislabraPoloAtivo && !paginaSislabraConjuge){
-        
-                                const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-                                const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
-        
-                                const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
-        
-                                const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
-                                response = response + sislabraAutor
-        
-                            }else if(!paginaSislabraPoloAtivo && paginaSislabraConjuge){
-                                const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
-                                const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
-        
-                                const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
-        
-                                const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
-        
-                                response = response + sislabraConjuge
-                            }else{
-                                 response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" 
-                                sislabraAutorESislabraConjugeNoExistem = true;
-                            }
-                        }
-
-
-                        */
     
                         
                     } else {
