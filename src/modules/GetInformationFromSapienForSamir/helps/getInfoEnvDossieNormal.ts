@@ -41,9 +41,19 @@ export async function getInfoEnvDossieNormal (cookie:string, normalDossie: any, 
 
         const valoresCalcule = await getValueCalcDossieNormal(cookie, normalDossie, dateAjuizamento, dataReq)
 
-        const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
+        if (valoresCalcule instanceof Error) {
 
-        return objeto
+            const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: 0, remuneracaoRequerimento: 0 }
+
+            return objeto
+
+        } else {
+
+            const objeto: IPicaPauCalculeDTO = { nome: nomeDosPrev, dataAjuizamento: dateAjuizamento, dataNascimento: dateNascimento, cpf: cpfFormatado, dataRequerimento: dataReq, remuneracaoAjuizamento: valoresCalcule.remuneracaoAjz, remuneracaoRequerimento: valoresCalcule.remuneracaoReq }
+    
+            return objeto
+        }
+
 
     } catch (error) {
         console.error(error.message)

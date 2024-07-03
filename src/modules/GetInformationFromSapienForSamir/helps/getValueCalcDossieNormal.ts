@@ -4,6 +4,7 @@ import { parseDate } from "./parseDate";
 import { isDateInRange } from "./dataIsInRange";
 import { getRemuneracaoAjuizamentoNormal } from "./getRemuneracaoAjuizamentoNormal";
 import { removeDayFromDate } from "./removeDayFromDate";
+import { parseDateToString } from "./parseDateToString";
 const { JSDOM } = require('jsdom');
 
 export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any, dataAjuizamento: string, dataRequerimento: string) {
@@ -43,21 +44,64 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
                         const getDatas: string[] | null = xpathCoulaFormatadoRelacoes.match(regexData);
 
 
-                        const dates = getDatas.map(dateString => parseDate(dateString))
+                        if (!getDatas) {
 
-                        const relacao = {
-                            seq: identificarSeq[0],
-                            dataInicio: dates[0],
-                            dataFim: dates[1] || null
+                            return new Error('NÃO FOI POSSÍVEL COLETAR AS DATAS NO DOSPREV')
+                            
+                        } else {
+
+                            const dates = getDatas.map(dateString => parseDate(dateString))
+        
+                            const relacao = {
+                                seq: identificarSeq[0],
+                                dataInicio: dates[0],
+                                dataFim: dates[1] || null,
+                                originalString: xpathCoulaFormatadoRelacoes
+                            }
+
+                            if (relacao.dataFim !== null) {
+                                relacoesEncontradas.push(relacao)
+                            }
+        
+
                         }
-
-
-
-                        relacoesEncontradas.push(relacao)
-
-
+                        
+                        
                     } 
                 }
+            }
+
+
+
+            // VERIFICAR SE A DATA MAIS ATUAL É UM VÍNCULO DE SERVIÇO PÚBLICO
+            let mostRecentDataFim = null;
+            let containsPRPPS = false;
+            let mostRecentSeq = null;
+            let mostRecentDataString;
+            let mostRecentDataFormatada; 
+
+            relacoesEncontradas.forEach(relacao => {
+                if (relacao.dataFim) {
+                    if (!mostRecentDataFim || relacao.dataFim > mostRecentDataFim.dataFim) {
+                        mostRecentDataFim = relacao
+                        containsPRPPS = relacao.originalString.includes('PRPPS')
+                        mostRecentSeq = relacao.seq;
+                    }
+                }
+            })
+
+            if (mostRecentDataFim) {
+                console.log('Most recent dataFim:', mostRecentDataFim.dataFim);
+                console.log('Contains PRPPS:', containsPRPPS);
+                console.log('SEQ of the most recent dataFim:', mostRecentSeq);
+
+                mostRecentDataString = parseDateToString(mostRecentDataFim.dataFim)
+                mostRecentDataFormatada = removeDayFromDate(mostRecentDataString)
+
+                console.log(mostRecentDataFormatada)
+
+            } else {
+                console.log('No dataFim found.');
             }
 
 
@@ -73,6 +117,12 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
             const seqIntervaloAjuizamento = isDateInRange(relacoesEncontradas, dateAjuizamento)
             const seqIntervaloRequerimento = isDateInRange(relacoesEncontradas, dateRequerimento)
 
+            console.log('---SEQ INTERVALO AJUIZAMENTO')
+            console.log(seqIntervaloAjuizamento)
+
+            console.log('---SEQ INTERVALO REQUERIMENTO')
+            console.log(seqIntervaloRequerimento)
+
 
             if (seqIntervaloAjuizamento && seqIntervaloRequerimento) {
                 // ACHANDO AS RELAÇÕES PARA AS DUAS DATAS, É POSSÍVEL COLETAR AS REMUNERAÇÕES
@@ -81,12 +131,45 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
 
                 const remuneracaoRequerimento = await getRemuneracaoAjuizamentoNormal(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieNormal, reqFormatado)
 
+                console.log('--REMUNERACAO AJUIZAMENTO')
+                console.log(remuneracaoAjuizamento)
+
+                console.log('--REMUNERACAO REQUERIMENTO')
+                console.log(remuneracaoRequerimento)
 
                 return {
                     remuneracaoAjz: remuneracaoAjuizamento,
                     remuneracaoReq: remuneracaoRequerimento
                 }
 
+            } else if (seqIntervaloAjuizamento && !seqIntervaloRequerimento) {
+
+                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoNormal(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieNormal, ajzFormatado)
+
+                let remuneracaoRequerimentoServidor = 0;
+                if (mostRecentDataFim && containsPRPPS) {
+                    remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
+                }
+
+                return {
+                    remuneracaoAjz: remuneracaoAjuizamento,
+                    remuneracaoReq: remuneracaoRequerimentoServidor
+                }
+
+            } else if (!seqIntervaloAjuizamento && seqIntervaloRequerimento) {
+
+                const remuneracaoRequerimento = await getRemuneracaoAjuizamentoNormal(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieNormal, reqFormatado)
+
+
+                let remuneracaoAjuizamentoServidor = 0;
+                if (mostRecentDataFim && containsPRPPS) {
+                    remuneracaoAjuizamentoServidor = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
+                }
+
+                return {
+                    remuneracaoAjz: remuneracaoAjuizamentoServidor,
+                    remuneracaoReq: remuneracaoRequerimento
+                }
             } else {
                 return {
                     remuneracaoAjz: 0,

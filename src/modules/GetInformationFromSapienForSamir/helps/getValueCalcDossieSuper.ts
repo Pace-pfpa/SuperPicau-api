@@ -4,6 +4,7 @@ import { parseDate } from "./parseDate";
 import { isDateInRange } from "./dataIsInRange";
 import { getRemuneracaoAjuizamentoSuper } from "./getRemuneracaoAjuizamentoSuper";
 import { removeDayFromDate } from "./removeDayFromDate";
+import { parseDateToString } from "./parseDateToString";
 const { JSDOM } = require('jsdom');
 
 export async function getValueCalcDossieSuper(cookie:string, superDossie: any, dataAjuizamento: string, dataRequerimento: string) {
@@ -52,7 +53,8 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
                             const relacao = {
                                 seq: identificarSeq[0],
                                 dataInicio: dates[0],
-                                dataFim: dates[1] || null
+                                dataFim: dates[1] || null,
+                                originalString: xpathCoulaFormatadoRelacoes
                             }
     
                             if (relacao.dataFim !== null) {
@@ -69,6 +71,42 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
             }
 
 
+
+
+            let mostRecentDataFim = null;
+            let containsPRPPS = false;
+            let mostRecentSeq = null;
+            let mostRecentDataString;
+            let mostRecentDataFormatada; 
+
+            relacoesEncontradas.forEach(relacao => {
+                if (relacao.dataFim) {
+                    if (!mostRecentDataFim || relacao.dataFim > mostRecentDataFim.dataFim) {
+                        mostRecentDataFim = relacao
+                        containsPRPPS = relacao.originalString.includes('PRPPS')
+                        mostRecentSeq = relacao.seq;
+                    }
+                }
+            })
+
+            if (mostRecentDataFim) {
+                console.log('Most recent dataFim:', mostRecentDataFim.dataFim);
+                console.log('Contains PRPPS:', containsPRPPS);
+                console.log('SEQ of the most recent dataFim:', mostRecentSeq);
+
+                mostRecentDataString = parseDateToString(mostRecentDataFim.dataFim)
+                mostRecentDataFormatada = removeDayFromDate(mostRecentDataString)
+
+                console.log(mostRecentDataFormatada)
+
+            } else {
+                console.log('No dataFim found.');
+            }
+
+
+
+
+
             // ENCONTRAR A RELAÇÃO PREVIDENCIARIA QUE POSSUI O INTERVALO
 
             const dateAjuizamento = parseDate(dataAjuizamento)
@@ -80,10 +118,10 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
             const seqIntervaloAjuizamento = isDateInRange(relacoesEncontradas, dateAjuizamento)
             const seqIntervaloRequerimento = isDateInRange(relacoesEncontradas, dateRequerimento)
 
-            console.log('---SEQ INTERVALO AJUIZAMENTO')
+            console.log('---SEQ INTERVALO AJUIZAMENTO SUPER')
             console.log(seqIntervaloAjuizamento)
 
-            console.log('---SEQ INTERVALO REQUERIMENTO')
+            console.log('---SEQ INTERVALO REQUERIMENTO SUPER')
             console.log(seqIntervaloRequerimento)
 
 
@@ -98,17 +136,39 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
 
                 console.log('--REMUNERACAO REQUERIMENTO')
                 console.log(remuneracaoRequerimento)
-
-                if (!remuneracaoRequerimento) {
-                    return {
-                        remuneracaoAjz: remuneracaoAjuizamento,
-                        remuneracaoReq: 0
-                    }
-                }
+                
 
                 return {
                     remuneracaoAjz: remuneracaoAjuizamento,
                     remuneracaoReq: remuneracaoRequerimento
+                }
+
+            } else if (!seqIntervaloAjuizamento && seqIntervaloRequerimento) {
+
+                const remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieSuper, reqFormatado)
+
+                let remuneracaoAjuizamentoServidor = 0;
+                if (mostRecentDataFim && containsPRPPS) {
+                    remuneracaoAjuizamentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada) 
+                }
+
+                return {
+                    remuneracaoAjz: remuneracaoAjuizamentoServidor,
+                    remuneracaoReq: remuneracaoRequerimento
+                }
+
+            } else if (seqIntervaloAjuizamento && !seqIntervaloRequerimento) {
+
+                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
+
+                let remuneracaoRequerimentoServidor = 0;
+                if (mostRecentDataFim && containsPRPPS) {
+                    remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
+                }
+
+                return {
+                    remuneracaoAjz: remuneracaoAjuizamento,
+                    remuneracaoReq: remuneracaoRequerimentoServidor
                 }
 
             } else {
