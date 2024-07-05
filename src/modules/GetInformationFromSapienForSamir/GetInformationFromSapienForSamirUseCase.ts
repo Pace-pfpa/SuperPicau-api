@@ -5,12 +5,10 @@ import { getTarefaUseCase } from '../GetTarefa';
 import { IGetInformationsFromSapiensDTO } from '../../DTO/GetInformationsFromSapiensDTO';
 import { IGetArvoreDocumentoDTO } from '../../DTO/GetArvoreDocumentoDTO';
 import { getArvoreDocumentoUseCase } from '../GetArvoreDocumento/index';
-import { IInformationsForCalculeDTO } from '../../DTO/InformationsForCalcule';
 import { getDocumentoUseCase } from '../GetDocumento';
 import { updateEtiquetaUseCase } from '../UpdateEtiqueta';
 import { getXPathText } from "../../helps/GetTextoPorXPATH";
 import { ResponseArvoreDeDocumento } from '../../sapiensOperations/response/ResponseArvoreDeDocumento';
-import { isValidInformationsForCalculeDTO } from './helps/validadorDeInformationsForCalculeDTO';
 import { getCapaDoPassivaUseCase } from '../GetCapaDoPassiva';
 import { verificarCapaTrue } from './helps/verificarCapaTrue';
 import { buscarTableCpf } from './helps/procurarTableCpf';
@@ -25,10 +23,7 @@ import { loasDossieUseCase, loasSuperDossieUseCase } from './loas';
 import { verificarDossieMaisAtual } from './helps/verificarDossieMaisAtual';
 import { cadUnico } from './loas/CadUnico';
 import { getInfoReqDossieSuper } from './helps/getInfoReqDossieSuper';
-import { normalize } from 'path';
-import { getValueCalcDossieSuper } from './helps/getValueCalcDossieSuper';
 import { getInfoReqDossieNormal } from './helps/getInfoReqDossieNormal';
-import { getValueCalcDossieNormal } from './helps/getValueCalcDossieNormal';
 import { getInfoEnvDossieNormal } from './helps/getInfoEnvDossieNormal';
 import { calcularMediaAjuizamento } from './helps/calcularMediaAjuizamento';
 import { calcularMediaRequerimento } from './helps/calcularMediaRequerimento';
@@ -39,6 +34,8 @@ import { compararPrioridade } from './loas/Business/Help/compareRenda';
 import { getInfoEnvDossieSuper } from './helps/getInfoEnvDossieSuper';
 import { GetInteressadosReq } from '../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq';
 import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
+import { uploadDocumentForAttachmentUseCase } from '../../upload';
+
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
