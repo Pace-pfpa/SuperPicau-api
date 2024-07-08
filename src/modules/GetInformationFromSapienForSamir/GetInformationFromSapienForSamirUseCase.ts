@@ -34,6 +34,7 @@ import { compararPrioridade } from './loas/Business/Help/compareRenda';
 import { getInfoEnvDossieSuper } from './helps/getInfoEnvDossieSuper';
 import { GetInteressadosReq } from '../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq';
 import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
+// QUANDO TIVER O PROCESSO, IMPLEMENTAR O UPLOAD.
 import { uploadDocumentForAttachmentUseCase } from '../../upload';
 
 export class GetInformationFromSapienForSamirUseCase {
@@ -505,17 +506,25 @@ export class GetInformationFromSapienForSamirUseCase {
         
                             // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
                             for (let i = 0; i < updated_cpf_dos_familiares.length; i++) {
+                                let dossieIsvalid2;
         
-                                const dossieIsvalid = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, totalDossieNormal, totalDossieSuper)
+                                if (totalDossieNormal.length === 0) {
+                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, null, totalDossieSuper)
+                                } else if (totalDossieSuper.length === 0) {
+                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, totalDossieNormal, null)
+                                } else {
+                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, totalDossieNormal, totalDossieSuper)
+                                }
+                                
         
-                                if (dossieIsvalid instanceof Error || !dossieIsvalid) {
+                                if (dossieIsvalid2 instanceof Error || !dossieIsvalid2) {
                                     console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${updated_cpf_dos_familiares[i]}`)
                                 } else {
         
-                                    if(dossieIsvalid[1] == 0){
-                                        arrayDossieEnvolvidosNormal.push(dossieIsvalid[0])
-                                    }else if(dossieIsvalid[1] == 1){
-                                        arrayDossieEnvolvidosSuper.push(dossieIsvalid[0])
+                                    if(dossieIsvalid2[1] == 0){
+                                        arrayDossieEnvolvidosNormal.push(dossieIsvalid2[0])
+                                    }else if(dossieIsvalid2[1] == 1){
+                                        arrayDossieEnvolvidosSuper.push(dossieIsvalid2[0])
                                     }
         
         
@@ -696,7 +705,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                         console.log('---VIEIRA: SISLABRAS POLO ATIVO')
-                        console.log(labrasPoloAtivo)
+                        //console.log(labrasPoloAtivo)
 
                         if (labrasPoloAtivo.length > 0) {
                             // VERIFICAR CADA DOCUMENTO POLO ATIVO IDENTIFICANDO IMPEDITIVOS
