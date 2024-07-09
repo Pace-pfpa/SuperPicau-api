@@ -725,7 +725,9 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
 
 
-                        // ENCONTRA OS OUTROS LABRA (GRUPO FAMILIAR)
+                        // ENCONTRA OS OUTROS LABRA
+
+                        // MÉTODO 1 - SISLABRA GF
 
                         const labrasGrupoFamiliar = arrayDeDocumentos.filter((Documento) => {
                             if (Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla) {
@@ -743,16 +745,38 @@ export class GetInformationFromSapienForSamirUseCase {
                             return false;
                         });
 
+                        // MÉTODO 2 - SISLABRA ENVOLVIDO
 
-                        console.log('---VIEIRA: SISLABRAS GRUPO FAMILIAR')
-                        console.log(labrasGrupoFamiliar)
+                        const labrasEnvolvidos = arrayDeDocumentos.filter((Documento) => {
+                            if (Documento.movimento && Documento.documentoJuntado && Documento.documentoJuntado.tipoDocumento && Documento.documentoJuntado.tipoDocumento.sigla) {
+                                const nomeMovimentacao = Documento.movimento;
+                                const name = nomeMovimentacao.indexOf("SISLABRA - ENVOLVIDO");
+                                const siglaSlabra = Documento.documentoJuntado.tipoDocumento.sigla.indexOf('PESBEN');
+
+                                if (name != -1 && siglaSlabra != -1) {
+                                    const typeDocumento = Documento.documentoJuntado.componentesDigitais[0].mimetype.split("/")[1].trim();
+                                    if (typeDocumento == "html") {
+                                        return true;
+                                    }
+                                }
+                            }
+                        })
 
 
-                        if (labrasGrupoFamiliar.length > 0) {
+                        //console.log(labrasGrupoFamiliar)
+                        //console.log(labrasEnvolvidos)
+
+                        const labrasTotal = [...labrasGrupoFamiliar, ...labrasEnvolvidos]
+
+                        console.log('---UNIÃO DOS LABRAS')
+                        //console.log(labrasTotal)
+
+
+                        if (labrasTotal.length > 0) {
                             // VERIFICAR CADA DOCUMENTO DO GF IDENTIFICANDO IMPEDITIVOS
 
-                            for (let i = 0; i < labrasGrupoFamiliar.length; i++) {
-                                const idSislabraParaPesquisaGF = labrasGrupoFamiliar[i].documentoJuntado.componentesDigitais[0].id;
+                            for (let i = 0; i < labrasTotal.length; i++) {
+                                const idSislabraParaPesquisaGF = labrasTotal[i].documentoJuntado.componentesDigitais[0].id;
                                 const parginaSislabraGF = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaGF });
         
                                 const paginaSislabraFormatadaGF = new JSDOM(parginaSislabraGF);
