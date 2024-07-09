@@ -16,7 +16,7 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                 verificarWhileCompetencias = false; 
                 break;
             }
-            //console.log(getXPathText(dosprev, `/html/body/div/div[${supostoxpath}]/div[${tamanhoDivsCompetencias + 1}]`))
+
             tamanhoDivsCompetencias++;
         }
 
@@ -29,7 +29,7 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                     verificarWhileCompetencias = false; 
                     break;
                 }
-                //console.log(getXPathText(dosprev, `/html/body/div/div[${supostoxpath}]/div[${tamanhoDivsCompetencias + 1}]`))
+
                 tamanhoDivsCompetencias++;
             }
         }
@@ -46,6 +46,7 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                 const xpathDivCompetencia = `/html/body/div/div[${supostoxpath}]/div[${t + 1}]`
                 const DivFormatadaCompetencia: string = getXPathText(dosprev, xpathDivCompetencia)
                 const SeqDiv = DivFormatadaCompetencia.match(regexSeq)
+
 
                 if (SeqDiv[0] === seq) {
                     // ENCONTROU A DIV CORRESPONDENTE
@@ -92,8 +93,50 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                         }
 
 
-                    } else {
+                    } else if (DivFormatadaCompetencia.indexOf('RECOLHIMENTO') !== -1) {
                         // VÍNCULO DE RECOLHIMENTO (ACHAR SALÁRIO CONTRIBUIÇÃO)
+                        ///html/body/div/div[10]/div[12]/table[2]/tbody/tr[1]
+                        
+
+                        let tamanhoRowsContribuicoes = 0;
+                        let verificarWhileRows = true;
+
+                        while (verificarWhileRows) {
+                            if (typeof (getXPathText(dosprev, `${xpathDivCompetencia}/table[2]/tbody/tr[${tamanhoRowsContribuicoes + 1}]`)) !== 'string') {
+                                verificarWhileRows = false
+                                break
+                            }
+                            tamanhoRowsContribuicoes++
+                        }
+
+                        console.log('SUN IS SHINING')
+                        console.log(tamanhoRowsContribuicoes)
+
+
+                        for (let r = 0; r <= tamanhoRowsContribuicoes; r++) {
+                            if (typeof (getXPathText(dosprev, `${xpathDivCompetencia}/table[2]/tbody/tr[${r}]`)) === 'string') {
+                                const xpathRowRemuneracao = `${xpathDivCompetencia}/table[2]/tbody/tr[${r}]`
+                                const rowFormatadaRemuneracao: string = getXPathText(dosprev, xpathRowRemuneracao)
+                                if (rowFormatadaRemuneracao.indexOf(`${data}`) !== -1) {
+                                    //console.log(rowFormatadaRemuneracao)
+
+                                    const arrayDatas = findDatesInString(rowFormatadaRemuneracao)
+                                    console.log(arrayDatas)
+
+                                    console.log('--VALORES ACHADOS')
+                                    const arrayValues = convertCurrencyStringsToNumbers(rowFormatadaRemuneracao)
+                                    console.log(arrayValues)
+
+                                    if (arrayDatas[0] === data) {
+                                        return arrayValues[2]
+                                    } else if (arrayDatas[2] === data) {
+                                        return arrayValues[5]
+                                    }
+
+                                }
+                            }
+                        }
+
                     }
                 }
             }
@@ -125,7 +168,7 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                             tamanhoRowsRemuneracoes++
                         }
 
-                        console.log('NATURAL MYSTIC')
+                        console.log('NATURAL MYSTIC 2')
                         console.log(tamanhoRowsRemuneracoes)
 
 
@@ -152,8 +195,50 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                         }
 
 
-                    } else {
+                    } else if (DivFormatadaCompetencia.indexOf('RECOLHIMENTO') !== -1) {
                         // VÍNCULO DE RECOLHIMENTO (ACHAR SALÁRIO CONTRIBUIÇÃO)
+                        ///html/body/div/div[10]/div[12]/table[2]/tbody/tr[1]
+                        
+
+                        let tamanhoRowsContribuicoes = 0;
+                        let verificarWhileRows = true;
+
+                        while (verificarWhileRows) {
+                            if (typeof (getXPathText(dosprev, `${xpathDivCompetencia}/table[2]/tbody/tr[${tamanhoRowsContribuicoes + 1}]`)) !== 'string') {
+                                verificarWhileRows = false
+                                break
+                            }
+                            tamanhoRowsContribuicoes++
+                        }
+
+                        console.log('SUN IS SHINING')
+                        console.log(tamanhoRowsContribuicoes)
+
+
+                        for (let r = 0; r <= tamanhoRowsContribuicoes; r++) {
+                            if (typeof (getXPathText(dosprev, `${xpathDivCompetencia}/table[2]/tbody/tr[${r}]`)) === 'string') {
+                                const xpathRowRemuneracao = `${xpathDivCompetencia}/table[2]/tbody/tr[${r}]`
+                                const rowFormatadaRemuneracao: string = getXPathText(dosprev, xpathRowRemuneracao)
+                                if (rowFormatadaRemuneracao.indexOf(`${data}`) !== -1) {
+                                    //console.log(rowFormatadaRemuneracao)
+
+                                    const arrayDatas = findDatesInString(rowFormatadaRemuneracao)
+                                    console.log(arrayDatas)
+
+                                    console.log('--VALORES ACHADOS')
+                                    const arrayValues = convertCurrencyStringsToNumbers(rowFormatadaRemuneracao)
+                                    console.log(arrayValues)
+
+                                    if (arrayDatas[0] === data) {
+                                        return arrayValues[2]
+                                    } else if (arrayDatas[2] === data) {
+                                        return arrayValues[5]
+                                    }
+
+                                }
+                            }
+                        }
+
                     }
                 }
             }
