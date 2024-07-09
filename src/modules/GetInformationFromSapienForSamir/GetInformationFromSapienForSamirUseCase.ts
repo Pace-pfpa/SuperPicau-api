@@ -445,10 +445,12 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
                     const beneficios = [ ' *LOAS* ' ]
+                    const impedCadunico = [' CADÚNICO ']
                     const impeditivos = [' CADÚNICO ', ' BPC ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO ' ]
 
 
                     const isLoas = beneficios.some(loas => totalImpeditivos.includes(loas))
+                    const isCadunico = impedCadunico.some(cadunico => totalImpeditivos.includes(cadunico))
                     console.log('---É UM LOAS?')
                     console.log(isLoas)
 
@@ -475,17 +477,25 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                         // FAZ O MERGE DOS CPFS DE TERCEIROS COM OS DO GRUPO FAMILIAR
-                        const filtered_cpfs = ArrayEnvolvidos.filter(cpf => {
-                            return cpf !== '0000000000-' &&
-                                   cpf !== cpfCapa &&
-                                   cpf.length <= 11 &&
-                                   !grupoFamiliarCpfs.includes(cpf); 
-                        })
+                        let filtered_cpfs = [];
+                        let updated_cpf_dos_familiares2 = [];
+
+                        if (!isCadunico) {
+                            filtered_cpfs = ArrayEnvolvidos.filter(cpf => {
+                                return cpf !== '0000000000-' &&
+                                       cpf !== cpfCapa &&
+                                       cpf.length <= 11 &&
+                                       !grupoFamiliarCpfs.includes(cpf); 
+                            })
+
+                            updated_cpf_dos_familiares2 = [...grupoFamiliarCpfs, ...filtered_cpfs];
+                        }
 
 
-                        const updated_cpf_dos_familiares = [...grupoFamiliarCpfs, ...filtered_cpfs];
+
+                        //const updated_cpf_dos_familiares = [...grupoFamiliarCpfs, ...filtered_cpfs];
                         console.log('---GRUPO FAMILIAR COMPLETO DE ROSSI')
-                        console.log(updated_cpf_dos_familiares)
+                        console.log(updated_cpf_dos_familiares2)
 
 
                         if (!possuiImpeditivo) {
@@ -505,20 +515,20 @@ export class GetInformationFromSapienForSamirUseCase {
     
         
                             // ITERA SOBRE CADA CPF ENCONTRADO DO GRUPO FAMILIAR
-                            for (let i = 0; i < updated_cpf_dos_familiares.length; i++) {
+                            for (let i = 0; i < updated_cpf_dos_familiares2.length; i++) {
                                 let dossieIsvalid2;
         
                                 if (totalDossieNormal.length === 0) {
-                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, null, totalDossieSuper)
+                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares2[i], cookie, null, totalDossieSuper)
                                 } else if (totalDossieSuper.length === 0) {
-                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, totalDossieNormal, null)
+                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares2[i], cookie, totalDossieNormal, null)
                                 } else {
-                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares[i], cookie, totalDossieNormal, totalDossieSuper)
+                                    dossieIsvalid2 = await verificarDossieMaisAtual(updated_cpf_dos_familiares2[i], cookie, totalDossieNormal, totalDossieSuper)
                                 }
                                 
         
                                 if (dossieIsvalid2 instanceof Error || !dossieIsvalid2) {
-                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${updated_cpf_dos_familiares[i]}`)
+                                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${updated_cpf_dos_familiares2[i]}`)
                                 } else {
         
                                     if(dossieIsvalid2[1] == 0){
@@ -574,12 +584,12 @@ export class GetInformationFromSapienForSamirUseCase {
     
                         // CALCULAR A RENDA MÉDIA DA FAMÍLIA
     
-                        console.log(updated_cpf_dos_familiares.length + 1)
+                        console.log(updated_cpf_dos_familiares2.length + 1)
     
-                        const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, updated_cpf_dos_familiares.length + 1)
+                        const mediaAjuizamento = calcularMediaAjuizamento(arrayObjetosEnvolvidos, updated_cpf_dos_familiares2.length + 1)
                         console.log(mediaAjuizamento)
     
-                        const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, updated_cpf_dos_familiares.length + 1)
+                        const mediaRequerimento = calcularMediaRequerimento(arrayObjetosEnvolvidos, updated_cpf_dos_familiares2.length + 1)
                         console.log(mediaRequerimento)
     
     
@@ -721,7 +731,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         } else {
                             console.log("-----SISLABRA NÃO ENCONTRADO")
-                            response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+                            response += " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
                         }
 
 
