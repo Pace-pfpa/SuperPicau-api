@@ -145,13 +145,16 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
 
             } else if (!seqIntervaloAjuizamento && seqIntervaloRequerimento) {
 
-                const remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieSuper, reqFormatado)
+                let remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieSuper, reqFormatado)
 
-                let remuneracaoAjuizamentoServidor = 0;
-                if (mostRecentDataFim && containsPRPPS) {
-                    remuneracaoAjuizamentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada) 
+                if (remuneracaoRequerimento === undefined) {
+                    remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
                 }
 
+                let remuneracaoAjuizamentoServidor = 0;
+                //if (mostRecentDataFim && containsPRPPS)
+                remuneracaoAjuizamentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada) 
+                
                 return {
                     remuneracaoAjz: remuneracaoAjuizamentoServidor,
                     remuneracaoReq: remuneracaoRequerimento
@@ -159,13 +162,16 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
 
             } else if (seqIntervaloAjuizamento && !seqIntervaloRequerimento) {
 
-                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
+                let remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
 
-                let remuneracaoRequerimentoServidor = 0;
-                if (mostRecentDataFim && containsPRPPS) {
-                    remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
+                if (remuneracaoAjuizamento === undefined) {
+                    remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
                 }
 
+                let remuneracaoRequerimentoServidor = 0;
+                //if (mostRecentDataFim && containsPRPPS) 
+                remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
+                
                 return {
                     remuneracaoAjz: remuneracaoAjuizamento,
                     remuneracaoReq: remuneracaoRequerimentoServidor

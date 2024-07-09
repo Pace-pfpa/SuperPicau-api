@@ -144,13 +144,16 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
 
             } else if (seqIntervaloAjuizamento && !seqIntervaloRequerimento) {
 
-                const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoNormal(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieNormal, ajzFormatado)
+                let remuneracaoAjuizamento = await getRemuneracaoAjuizamentoNormal(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieNormal, ajzFormatado)
 
-                let remuneracaoRequerimentoServidor = 0;
-                if (mostRecentDataFim && containsPRPPS) {
-                    remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
+                if (remuneracaoAjuizamento === undefined) {
+                    remuneracaoAjuizamento = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
                 }
 
+                let remuneracaoRequerimentoServidor = 0;
+                //if (mostRecentDataFim && containsPRPPS) 
+                remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
+                
                 return {
                     remuneracaoAjz: remuneracaoAjuizamento,
                     remuneracaoReq: remuneracaoRequerimentoServidor
@@ -158,18 +161,21 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
 
             } else if (!seqIntervaloAjuizamento && seqIntervaloRequerimento) {
 
-                const remuneracaoRequerimento = await getRemuneracaoAjuizamentoNormal(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieNormal, reqFormatado)
+                let remuneracaoRequerimento = await getRemuneracaoAjuizamentoNormal(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieNormal, reqFormatado)
 
-
-                let remuneracaoAjuizamentoServidor = 0;
-                if (mostRecentDataFim && containsPRPPS) {
-                    remuneracaoAjuizamentoServidor = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
+                if (remuneracaoRequerimento === undefined) {
+                    remuneracaoRequerimento = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
                 }
 
+                let remuneracaoAjuizamentoServidor = 0;
+                //if (mostRecentDataFim && containsPRPPS)
+                remuneracaoAjuizamentoServidor = await getRemuneracaoAjuizamentoNormal(mostRecentSeq, paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada) 
+                
                 return {
                     remuneracaoAjz: remuneracaoAjuizamentoServidor,
                     remuneracaoReq: remuneracaoRequerimento
                 }
+
             } else {
                 return {
                     remuneracaoAjz: 0,
