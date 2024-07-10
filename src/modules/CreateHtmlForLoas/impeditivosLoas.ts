@@ -3,6 +3,17 @@ import { HtmlIImpeditivosLoasDTO } from "../../DTO/HtmlImpeditivosLoasDTO";
 // HTML COM RESUMO DE IMPEDITIVOS - LOAS E SISLABRA LOAS
 export class ImpeditivosHtmlLoas {
     async execute(data: HtmlIImpeditivosLoasDTO): Promise<string>{
+        const getStatus = (value: boolean | null): string => {
+            if (value === true) {
+                return '<span style="color: red;">IMPEDITIVO</span>';
+            } else if (value === false) {
+                return '<span style="color: green;">LIMPO</span>';
+            } else {
+                return '<span style="color: gray;">SEM INFORMAÇÃO</span>';
+            }
+        }
+
+
         const html = `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -55,28 +66,28 @@ export class ImpeditivosHtmlLoas {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>ADVOGADO: ${data.advogado}</td>
+                        <td>ADVOGADO: ${getStatus(data.advogado)}</td>
                     </tr>   
                     <tr>
-                        <td>CADÚNICO: ${data.cadunico}</td>
+                        <td>CADÚNICO: ${getStatus(data.cadunico)}</td>
                     </tr>
                     <tr>
-                        <td>LITISPENDÊNCIA: ${data.litispendencia}</td>
+                        <td>LITISPENDÊNCIA: ${getStatus(data.litispendencia)}</td>
                     </tr>    
                     <tr>
-                        <td>BPC ATIVO: ${data.bpc}</td>
+                        <td>BPC ATIVO: ${getStatus(data.bpc)}</td>
                     </tr>
                     <tr>
-                        <td>BENEFÍCIO ATIVO: ${data.beneficio}</td>
+                        <td>BENEFÍCIO ATIVO: ${getStatus(data.beneficio)}</td>
                     </tr>
                     <tr>
-                        <td>IDADE: ${data.idade}</td>
+                        <td>IDADE: ${getStatus(data.idade)}</td>
                     </tr>
                     <tr>
-                        <td>REQUERIMENTO: ${data.requerimento}</td>
+                        <td>REQUERIMENTO: ${getStatus(data.requerimento)}</td>
                     </tr>
                     <tr>
-                        <td>RENDA: ${data.renda}</td>
+                        <td>RENDA: ${getStatus(data.renda)}</td>
                     </tr>
                 </tbody>
             </table>
@@ -93,25 +104,25 @@ export class ImpeditivosHtmlLoas {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>EMPRESA: ${data.empresaAutor}</td>
+                        <td>EMPRESA: ${getStatus(data.empresaAutor)}</td>
                     </tr>   
                     <tr>
-                        <td>BENS TSE: ${data.bensAutor}</td>
+                        <td>BENS TSE: ${getStatus(data.bensAutor)}</td>
                     </tr>
                     <tr>
-                        <td>VEÍCULOS: ${data.veiculoAutor}</td>
+                        <td>VEÍCULOS: ${getStatus(data.veiculoAutor)}</td>
                     </tr>    
                     <tr>
-                        <td>IMÓVEL SP: ${data.imovelspAutor}</td>
+                        <td>IMÓVEL SP: ${getStatus(data.imovelspAutor)}</td>
                     </tr>
                     <tr>
-                        <td>IMÓVEL RURAL: ${data.imovelruralAutor}</td>
+                        <td>IMÓVEL RURAL: ${getStatus(data.imovelruralAutor)}</td>
                     </tr>
                     <tr>
-                        <td>EMBARCAÇÃO: ${data.embarcacaoAutor}</td>
+                        <td>EMBARCAÇÃO: ${getStatus(data.embarcacaoAutor)}</td>
                     </tr>
                     <tr>
-                        <td>AERONAVE: ${data.aeronaveAutor}</td>
+                        <td>AERONAVE: ${getStatus(data.aeronaveAutor)}</td>
                     </tr>
                 </tbody>
             </table>
@@ -129,25 +140,25 @@ export class ImpeditivosHtmlLoas {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>EMPRESA: ${data.empresaGF}</td>
+                        <td>EMPRESA: ${getStatus(data.empresaGF)}</td>
                     </tr>   
                     <tr>
-                        <td>BENS TSE: ${data.bensGF}</td>
+                        <td>BENS TSE: ${getStatus(data.bensGF)}</td>
                     </tr>
                     <tr>
-                        <td>VEÍCULOS: ${data.veiculoGF}</td>
+                        <td>VEÍCULOS: ${getStatus(data.veiculoGF)}</td>
                     </tr>    
                     <tr>
-                        <td>IMÓVEL SP: ${data.imovelspGF}</td>
+                        <td>IMÓVEL SP: ${getStatus(data.imovelspGF)}</td>
                     </tr>
                     <tr>
-                        <td>IMÓVEL RURAL: ${data.imovelruralGF}</td>
+                        <td>IMÓVEL RURAL: ${getStatus(data.imovelruralGF)}</td>
                     </tr>
                     <tr>
-                        <td>EMBARCAÇÃO: ${data.embarcacaoGF}</td>
+                        <td>EMBARCAÇÃO: ${getStatus(data.embarcacaoGF)}</td>
                     </tr>
                     <tr>
-                        <td>AERONAVE: ${data.aeronaveGF}</td>
+                        <td>AERONAVE: ${getStatus(data.aeronaveGF)}</td>
                     </tr>
                 </tbody>
             </table>

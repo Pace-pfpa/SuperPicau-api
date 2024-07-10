@@ -38,6 +38,7 @@ import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
 import { uploadDocumentForAttachmentUseCase } from '../../upload';
 import { verificarImpedimentos } from './helps/verificarImpedimentos';
 import { gerarObjetoUpload } from './helps/gerarObjetoUpload';
+import { impeditivosHtml } from '../CreateHtmlForLoas';
 
 export class GetInformationFromSapienForSamirUseCase {
     
@@ -977,7 +978,23 @@ export class GetInformationFromSapienForSamirUseCase {
     
                             const objForHTML = gerarObjetoUpload(impeditivosPresentes)
                             console.log("---BOOLEAN OBJECT")
-                            console.log(objForHTML)
+                            //console.log(objForHTML)
+
+                            // PARTE QUE DE FATO FAZ O UPLOAD, CUIDADO AO USAR
+
+                            const htmlUpload = await impeditivosHtml.execute(objForHTML)
+                            //console.log(htmlUpload)
+
+                            const tipo_documento = "35"
+                            const min = 1;
+                            const max = 999999;
+                            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+                            const ticket_upload = `${usuario_id}_20230504${randomNumber}`
+                            const pasta_id = `${tarefas[0].pasta.id}`;
+
+                            //const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
+                            //console.log(uploadTheFato)
+
                         }
 
 

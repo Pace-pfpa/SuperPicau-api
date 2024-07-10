@@ -7,12 +7,12 @@ export function gerarObjetoUpload (impeditivos: string[]) {
     // Cria um objeto com os atributos dependentes dos impeditivos encontrados
     const objeto = {
         advogado: impeditivos.includes("ADVOGADO"),
-        cadUnico: impeditivos.includes("CADÚNICO"),
+        cadunico: impeditivos.includes("CADÚNICO"),
         litispendencia: impeditivos.includes("LITISPENDÊNCIA"),
         bpc: impeditivos.includes("BPC ATIVO"),
         beneficio: impeditivos.includes("BENEFÍCIO ATIVO"),
         idade: impeditivos.includes("IDADE"),
-        ausenciaRequerimento: impeditivos.includes("AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO"),
+        requerimento: impeditivos.includes("AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO"),
         renda: impeditivos.includes("RENDA MEDIA") || impeditivos.includes("RENDA ALTA") || impeditivos.includes("RENDA ELEVADA"),
         empresaAutor: sislabraAutorPresente ? null : impeditivos.includes("EMPRESA"),
         bensAutor: sislabraAutorPresente ? null : impeditivos.includes("BENS TSE"),
