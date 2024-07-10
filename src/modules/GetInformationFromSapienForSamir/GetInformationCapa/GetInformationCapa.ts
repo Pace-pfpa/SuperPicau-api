@@ -35,7 +35,9 @@ export class GetInformationCapa{
         "GEORGE STHEFANE PIMENTA DA SILVA",
         "CAROLINE RODRIGUES MOREIRA",
         "DALTON HUGOLINO ARRUDA",
-        "DIOGO ARRUDA DE SOUSA"];
+        "DIOGO ARRUDA DE SOUSA",
+        "RONICLEITON PINHEIRO MARTINS DE JESUS",
+        "MARIA LUIZA MELO"];
         for(let i=0; i<arrayAdvogadosPilantra.length; i++){
             //console.log(arrayAdvogadosPilantra[i])
             if((capaHTML.indexOf(arrayAdvogadosPilantra[i])) !== -1){

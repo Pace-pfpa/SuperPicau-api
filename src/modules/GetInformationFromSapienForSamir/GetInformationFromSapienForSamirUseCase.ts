@@ -36,6 +36,8 @@ import { GetInteressadosReq } from '../CreateInterested/RequisicaoAxiosTarefas/G
 import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
 // QUANDO TIVER O PROCESSO, IMPLEMENTAR O UPLOAD.
 import { uploadDocumentForAttachmentUseCase } from '../../upload';
+import { verificarImpedimentos } from './helps/verificarImpedimentos';
+import { gerarObjetoUpload } from './helps/gerarObjetoUpload';
 
 export class GetInformationFromSapienForSamirUseCase {
     
@@ -76,8 +78,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
                         let comparaNup = compararNup(nupInicio,data.tarefa.pasta.NUP)
-                        
-///                        
+                                      
                     } catch (error) {
                         console.log("Erro ao aplicar getArvoreDocumentoUseCase!!!!");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
@@ -731,7 +732,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         } else {
                             console.log("-----SISLABRA NÃO ENCONTRADO")
-                            response += " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+                            response += " SISLABRA AUTOR NÃO EXISTE -"
                         }
 
 
@@ -797,6 +798,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         } else {
                             console.log("---SEM LABRA FAMILIAR")
+                            response += " SISLABRA GF NÃO EXISTE -"
                         }
 
                         
@@ -817,7 +819,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     if (!paginaSislabraPoloAtivo) {
 
                         console.log("-----SISLABRA NÃO ENCONTRADO")
-                        response = " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"
+                        response += " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE -"
 
                     } else {
 
@@ -898,7 +900,7 @@ export class GetInformationFromSapienForSamirUseCase {
     
                             response = response + sislabraConjuge
                         }else{
-                             response = response + " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE" 
+                             response = response + " SISLABRA GF NÃO EXISTE" 
                             sislabraAutorESislabraConjugeNoExistem = true;
                         }
                     }
@@ -963,7 +965,23 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `${tipo} IMPEDITIVOS: ${newResponse}`, tarefaId })
                         console.log("RESPONSEEEE")
-                        console.log(response)
+                        console.log(newResponse)
+
+
+                        // IMPLEMENTAR O UPLOAD DO HTML QUANDO TIVER IMPEDIMENTOS (LOAS)
+
+                        if (isLoas) {
+                            const impeditivosPresentes = verificarImpedimentos(newResponse);
+                            console.log('--TOTAL DE IMPEDITIVOS 2')
+                            console.log(impeditivosPresentes)
+    
+                            const objForHTML = gerarObjetoUpload(impeditivosPresentes)
+                            console.log("---BOOLEAN OBJECT")
+                            console.log(objForHTML)
+                        }
+
+
+
                         return {impeditivos: true}  
                     }
                     
