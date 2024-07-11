@@ -910,8 +910,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     }
 
 
-
-
+ 
                     console.log("---ONE MORE RESPONSE: " + response)
                     
 
@@ -930,7 +929,10 @@ export class GetInformationFromSapienForSamirUseCase {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
                     } else {
-                        if(response == " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE") {
+                        if(response == " *RURAL*  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE -") {
+                            await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
+                            return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
+                        } else if (response == " *MATERNIDADE*  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE -") {
                             await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
                             return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
                         }
