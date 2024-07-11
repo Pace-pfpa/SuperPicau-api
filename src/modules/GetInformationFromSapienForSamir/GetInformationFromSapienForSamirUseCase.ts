@@ -992,8 +992,8 @@ export class GetInformationFromSapienForSamirUseCase {
                             const ticket_upload = `${usuario_id}_20230504${randomNumber}`
                             const pasta_id = `${tarefas[0].pasta.id}`;
 
-                            //const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
-                            //console.log(uploadTheFato)
+                            const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
+                            console.log(uploadTheFato)
 
                         }
 

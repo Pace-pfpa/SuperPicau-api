@@ -5,11 +5,11 @@ export class ImpeditivosHtmlLoas {
     async execute(data: HtmlIImpeditivosLoasDTO): Promise<string>{
         const getStatus = (value: boolean | null): string => {
             if (value === true) {
-                return '<span style="color: red;">IMPEDITIVO</span>';
+                return '<span style="color: red; font-weight: bold;">IMPEDITIVO</span>';
             } else if (value === false) {
-                return '<span style="color: green;">LIMPO</span>';
+                return '<span style="color: green; font-weight: bold;">LIMPO</span>';
             } else {
-                return '<span style="color: gray;">SEM INFORMAÇÃO</span>';
+                return ' <span style="color: gray; font-weight: bold;">SEM INFORMAÇÃO</span>';
             }
         }
 
