@@ -30,7 +30,7 @@ export class RestabelecimentoRequerimentos{
             }
             tamanhoColunasRequerimentos++;
         }
-        console.log("TAMANHO")
+
         //console.log(tamanhoColunasRequerimentos)
         // /html/body/div/div[3]/table/tbody/tr
             const objetosEncontradosParaVerificar = []

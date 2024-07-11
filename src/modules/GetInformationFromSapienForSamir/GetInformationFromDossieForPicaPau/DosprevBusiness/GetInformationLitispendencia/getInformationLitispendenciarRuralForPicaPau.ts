@@ -19,8 +19,7 @@ export class LitispedenciaRural{
                 }
                 tamanhoColunasRequerimentos++;
             }
-            console.log("TAMANHO")
-            console.log(tamanhoColunasRequerimentos)
+
                 const objetosEncontradosParaVerificar = []
                 for(let t=2; t<tamanhoColunasRequerimentos; t++){
                     if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[3]/table/tbody/tr[${t}]`)) === 'string'){

@@ -19,7 +19,7 @@ export class GetInformationDossieForPicaPau {
     let ArrayImpedimentos: string = '';
 
     
-
+      console.log('-> CAPDEVILA MATERNIDADE')
  
 
     try {
@@ -122,6 +122,7 @@ export class GetInformationDossieForPicaPau {
 
     let ArrayImpedimentos: string = '';
 
+    console.log('-> CAPDEVILA RURAL')
 
     try {
 
@@ -203,18 +204,18 @@ export class GetInformationDossieForPicaPau {
   async impeditivoLoas(paginaDosprevFormatada: any){
     let impeditivos = "";
 
+    console.log('-> CAPDEVILA LOAS')
+
     try{
 
 
       const restabelecimentoRequerimento = await restabelecimentoRequerimentosDossie.handle(paginaDosprevFormatada)
-      console.log('----RESTAB: ' + restabelecimentoRequerimento)
 
 
 
       if(restabelecimentoRequerimento instanceof Error){
         impeditivos = impeditivos + " erro estabelecimento -"
       }else if(restabelecimentoRequerimento.valorBooleano){
-        console.log("IMPEDITIVO: " + restabelecimentoRequerimento.impeditivo)
         impeditivos = impeditivos + restabelecimentoRequerimento.impeditivo
       }
 

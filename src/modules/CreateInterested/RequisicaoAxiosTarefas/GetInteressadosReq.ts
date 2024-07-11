@@ -5,7 +5,7 @@ import { RequestHeaders } from "../../../sapiensOperations/resquest/RequestHeade
 export async function GetInteressadosReq(pasta_id: number, cookie: string){
 
 
-    console.log("chamou")
+    console.log("-> DE ROSSI")
 
     const requestGetInteressadosNup = new RequestGetInteressadosNup
     const requestHeaders = new RequestHeaders

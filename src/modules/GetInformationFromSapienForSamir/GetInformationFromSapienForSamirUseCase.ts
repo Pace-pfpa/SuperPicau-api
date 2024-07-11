@@ -219,7 +219,6 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                     
                 
-                    console.log("CPF: ")
                     const cpfCapa = buscarTableCpf(novaCapa);
                     //console.log(cpfCapa)
                     if(!cpfCapa){
@@ -307,7 +306,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                         
                         if(!superDosprevExist){
-                            console.log("passou")
+                            console.log("-> PIQUÉ")
                             //vericacao para saber se foi gerado o super dossie
                             
                             const idDosprevParaPesquisa = objectDosPrev.documentoJuntado.componentesDigitais[0].id;
@@ -320,7 +319,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             }else if(data.readDosprevAge == 1){
                                 impedDossie = await getInformationDossieForPicaPau.impedimentosMaternidade(parginaDosPrevFormatada, parginaDosPrev);
                             }else if(data.readDosprevAge == 2){
-                                console.log("entrou")
+                                console.log("+ PIQUÉ BARCELONA")
 
                                 const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
 
@@ -362,7 +361,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             response = response + impedDossie
 
                             }else{
-
+                                console.log('-> PUYOL')
 
 
 
@@ -398,6 +397,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }else if(data.readDosprevAge == 1){
                                     impedDossie = await superDossie.impedimentosMaternidade(parginaDosPrevFormatada, parginaDosPrev);
                                 }else if(data.readDosprevAge == 2){
+                                    console.log('-> PUYOL BARCELONA')
                                     
                                     const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla == "DOSOC");
 
@@ -439,7 +439,6 @@ export class GetInformationFromSapienForSamirUseCase {
     
                     
                   
-                    console.log("---BEFORE RESPONSE: " + response)
                     const totalImpeditivos = response.split("-")
                     console.log("----TOTAL IMPEDITIVOS")
                     console.log(totalImpeditivos)
@@ -453,14 +452,13 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     const isLoas = beneficios.some(loas => totalImpeditivos.includes(loas))
                     const isCadunico = impedCadunico.some(cadunico => totalImpeditivos.includes(cadunico))
-                    console.log('---É UM LOAS?')
-                    console.log(isLoas)
 
                     if (isLoas) {
+                        console.log("-> IT'S A LOAS")
 
                         // VERIFICA SE O PROCESSO ESTÁ LIMPO ATÉ ESSE MOMENTO
                         const possuiImpeditivo = impeditivos.some(impeditivo => totalImpeditivos.includes(impeditivo))
-                        console.log(possuiImpeditivo)
+                        console.log('--- POSSUI IMPEDITIVO? ' + possuiImpeditivo)
     
                         // ARRAY PARA GUARDAR O DOSSIÊ DE CADA MEMBRO DA FAMÍLIA
                         let arrayDossieEnvolvidosNormal = [];
@@ -546,8 +544,6 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
     
 
-                        console.log('---ARRAY ENV SUPER')
-                        //console.log(arrayDossieEnvolvidosSuper)
 
     
                         if (infoRequerente) {
@@ -580,7 +576,7 @@ export class GetInformationFromSapienForSamirUseCase {
     
                         // FORMADO O OBJETO DE TODOS OS QUE POSSUEM DOSSIÊ PREVIDENCIÁRIO
     
-                        console.log('--OBJETOS DOS ENVOLVIDOS')
+                        console.log('--POLO ATIVO E FAMILIARES')
                         console.log(arrayObjetosEnvolvidos)
     
     
@@ -597,16 +593,12 @@ export class GetInformationFromSapienForSamirUseCase {
     
                         // PEGAR SALARIO MINIMO DE ACORDO COM O ANO
                         const anoAjuizamento = removeDayMonthFromDate(infoRequerente.dataAjuizamento)
-                        console.log(anoAjuizamento)
     
                         const anoRequerimento = removeDayMonthFromDate(infoRequerente.dataRequerimento)
-                        console.log(anoRequerimento)
     
                         const arraySalarioMinimoAjuizamento = await getSalarioMinimo(anoAjuizamento);
-                        console.log(arraySalarioMinimoAjuizamento)
     
                         const arraySalarioMinimoRequerimento = await getSalarioMinimo(anoRequerimento)
-                        console.log(arraySalarioMinimoRequerimento)
     
                         let salarioMinimoAjz;
                         let salarioMinimoReq;
@@ -618,7 +610,6 @@ export class GetInformationFromSapienForSamirUseCase {
     
                         if (anoAjuizamento === "2023") {
                             const mesAjuizamento = removeDayYearFromDate(infoRequerente.dataAjuizamento)
-                            console.log(mesAjuizamento)
     
                             if (mesAjuizamento === '01' || mesAjuizamento === '02' || mesAjuizamento === '03' || mesAjuizamento === '04') {
                                 salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor)
@@ -630,7 +621,6 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                         if (anoRequerimento === "2023") {
                             const mesRequerimento = removeDayYearFromDate(infoRequerente.dataRequerimento)
-                            console.log(mesRequerimento)
     
                             if (mesRequerimento === '01' || mesRequerimento === '02' || mesRequerimento === '03' || mesRequerimento === '04') {
                                 salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor)
@@ -644,9 +634,8 @@ export class GetInformationFromSapienForSamirUseCase {
                         
     
                         // ETIQUETAGEM DE RENDA
-    
-                        console.log(salarioMinimoAjz)
-                        console.log(salarioMinimoReq)
+                        console.log(`Salário mínimo de ${anoAjuizamento}: ${salarioMinimoAjz}`)
+                        console.log(`Salário mínimo de ${anoRequerimento}: ${salarioMinimoReq}`)
                         
                         // AJUIZAMENTO
     
@@ -716,7 +705,6 @@ export class GetInformationFromSapienForSamirUseCase {
                         })
 
 
-                        console.log('---VIEIRA: SISLABRAS POLO ATIVO')
                         //console.log(labrasPoloAtivo)
 
                         if (labrasPoloAtivo.length > 0) {
@@ -732,7 +720,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             }
 
                         } else {
-                            console.log("-----SISLABRA NÃO ENCONTRADO")
+                            console.log("-----SISLABRA NÃO ENCONTRADO (POLO ATIVO)")
                             response += " SISLABRA AUTOR NÃO EXISTE -"
                         }
 
@@ -780,7 +768,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         const labrasTotal = [...labrasGrupoFamiliar, ...labrasEnvolvidos]
 
-                        console.log('---UNIÃO DOS LABRAS')
+                        //console.log('---UNIÃO DOS LABRAS')
                         //console.log(labrasTotal)
 
 
@@ -819,7 +807,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     if (!paginaSislabraPoloAtivo) {
 
-                        console.log("-----SISLABRA NÃO ENCONTRADO")
+                        console.log("-----SISLABRA NÃO ENCONTRADO (POLO ATIVO N LOAS)")
                         response += " SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE -"
 
                     } else {
@@ -967,15 +955,13 @@ export class GetInformationFromSapienForSamirUseCase {
                         const newResponse = removeSubstring(response)
 
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `${tipo} IMPEDITIVOS: ${newResponse}`, tarefaId })
-                        console.log("RESPONSEEEE")
-                        console.log(newResponse)
 
 
                         // IMPLEMENTAR O UPLOAD DO HTML QUANDO TIVER IMPEDIMENTOS (LOAS)
 
                         if (isLoas) {
                             const impeditivosPresentes = verificarImpedimentos(newResponse);
-                            console.log('--TOTAL DE IMPEDITIVOS 2')
+                            console.log('--TOTAL DE IMPEDITIVOS APÓS SISLABRA')
                             console.log(impeditivosPresentes)
     
                             const objForHTML = gerarObjetoUpload(impeditivosPresentes)

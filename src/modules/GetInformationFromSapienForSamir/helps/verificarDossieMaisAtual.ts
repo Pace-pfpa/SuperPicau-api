@@ -6,6 +6,7 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
     
  try{
      if(normalDossie && !superDossie){
+        console.log("-> DOSPREV: CASILLAS")
 
          for(let i = 0; i < normalDossie.length; i++){
              let objetoDosprev =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
@@ -18,7 +19,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
              if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
      
              if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                 console.log("retornou")
                  return [normalDossie[i], 0]
              }    
          }
@@ -26,8 +26,8 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
      
      
      if(!normalDossie && superDossie){
+        console.log("-> DOSPREV: RAMOS")
          for(let i = 0; i < superDossie.length; i++){
-            console.log("exectou")
              try{
 
                  const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
@@ -46,11 +46,14 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
      }
      
      if(normalDossie && superDossie){
+        console.log('-> DOSPREV: ARBELOA')
 
+        console.log('---QUANTIDADE DE DOSPREV 1-NORMAL, 2-SUPER')
         console.log(normalDossie.length)
         console.log(superDossie.length)
 
          if(normalDossie.length >= superDossie.length){
+            console.log('+ ARBELOA REAL MADRID')
              for(let i=0; i < superDossie.length; i++){
                 
                  let objetoDosprevNormal =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
@@ -150,16 +153,13 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
      
      
          } else {
+            console.log('+ ARBELOA DEPORTIVO')
 
             const superDossieNaoSorted = superDossie.sort((a, b) => b.numeracaoSequencial - a.numeracaoSequencial)
 
-            console.log('---NORMAL: ')
-            //console.log(superDossieNaoSorted)
 
             const superDossieSorted = superDossie.sort((a, b) => a.numeracaoSequencial - b.numeracaoSequencial)
 
-            console.log('---SORTED: ')
-            //console.log(superDossieSorted)
             
 
              for(let i=0; i < normalDossie.length; i++){
@@ -176,7 +176,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
                  let objetoDosprevSuper = (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id)
      
                  if(objetoDosprevSuper){
-                    console.log('-----CAIU AQUI? 2')
                      return new Error("DOSPREV COM FALHA NA PESQUISA")
                  }
      
@@ -229,17 +228,13 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
                     // SITUAÇÃO EM QUE NÃO É O PRIMEIRO 1 (ITERAÇÃO)
 
                     for (let i = 0; i < superDossieNaoSorted.length; i++) {
+                        console.log('+ ARBELOA LIVERPOOL')
 
                         const cpfDosprevOutro = await getCPFDosPrevSuper(superDossieNaoSorted[i], cookie)
     
                         if(!cpfDosprevOutro) return new Error("cpf com falha na pesquisa dosprev")
-    
-                            console.log('--ONE MORE TIME 1')
-                            console.log(cpf.trim())
-                            console.log(CorrigirCpfComZeros((cpfDosprevOutro).trim()))
                             
                         if (cpf.trim() == CorrigirCpfComZeros((cpfDosprevOutro).trim())) {
-                            console.log('---CAI AQUI SORIN')
                             return [superDossieNaoSorted[i], 1]
                         }  
                     }

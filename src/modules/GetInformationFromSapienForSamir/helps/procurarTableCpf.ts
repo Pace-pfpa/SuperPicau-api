@@ -13,10 +13,10 @@ export function buscarTableCpf(capa: string){
                     if(poloAtivo){
                          let poloAtivoCpf = poloAtivo.indexOf("PÓLO ATIVO")
                          if(poloAtivoCpf != -1){
-                            console.log(`html/body/div/div[${i}]/table/tbody/tr[${j}]`)
+                            //console.log(`html/body/div/div[${i}]/table/tbody/tr[${j}]`)
                             let isCpf = (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
-                            console.log("CPF OU ADVOGADO: ")
-                            console.log(!/\D/.test(isCpf))
+                            //console.log("CPF OU ADVOGADO: ")
+                            //console.log(!/\D/.test(isCpf))
                             if (!/\D/.test(isCpf)) {
                                 return isCpf
                             } else {
@@ -30,10 +30,3 @@ export function buscarTableCpf(capa: string){
     }
     return undefined
 }
-///html/body/div/div[7]/table/tbody/tr[2]
-
-///html/body/div/div[6]/table/tbody/tr[2]
-
-// /html/body/div/div[6]/table/tbody/tr[5]/td[1]
-
-// html/body/div/div[6]/table/tbody/tr[5]
