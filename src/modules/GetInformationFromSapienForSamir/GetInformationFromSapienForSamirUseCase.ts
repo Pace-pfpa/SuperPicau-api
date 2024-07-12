@@ -451,7 +451,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
 
                     const isLoas = beneficios.some(loas => totalImpeditivos.includes(loas))
-                    const isCadunico = impedCadunico.some(cadunico => totalImpeditivos.includes(cadunico))
+                    const haveCadunico = impedCadunico.some(cadunico => totalImpeditivos.includes(cadunico))
 
                     if (isLoas) {
                         console.log("-> IT'S A LOAS")
@@ -480,7 +480,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         let filtered_cpfs = [];
                         let updated_cpf_dos_familiares2 = [];
 
-                        if (!isCadunico) {
+                        if (!haveCadunico) {
                             filtered_cpfs = ArrayEnvolvidos.filter(cpf => {
                                 return cpf !== '0000000000-' &&
                                        cpf !== cpfCapa &&
@@ -963,6 +963,7 @@ export class GetInformationFromSapienForSamirUseCase {
                             const impeditivosPresentes = verificarImpedimentos(newResponse);
                             console.log('--TOTAL DE IMPEDITIVOS APÓS SISLABRA')
                             console.log(impeditivosPresentes)
+
     
                             const objForHTML = gerarObjetoUpload(impeditivosPresentes)
                             console.log("---BOOLEAN OBJECT")
@@ -980,8 +981,8 @@ export class GetInformationFromSapienForSamirUseCase {
                             const ticket_upload = `${usuario_id}_20230504${randomNumber}`
                             const pasta_id = `${tarefas[0].pasta.id}`;
 
-                            const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
-                            console.log(uploadTheFato)
+                            //const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
+                            //console.log(uploadTheFato)
 
                         }
 

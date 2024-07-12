@@ -64,10 +64,7 @@ export class ImpeditivosHtmlLoas {
                         <th>DOSPREV AUTOR</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>ADVOGADO: ${getStatus(data.advogado)}</td>
-                    </tr>   
+                <tbody>  
                     <tr>
                         <td>CADÚNICO: ${getStatus(data.cadunico)}</td>
                     </tr>
