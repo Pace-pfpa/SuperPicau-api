@@ -71,24 +71,30 @@ export class InsertSapiensMinutasUseCase {
                     const createDocument = await createDocumentoUseCase.execute({ cookie, usuario_nome, usuario_setor, tarefa_id, pasta_id, tid })
                     let documento_id = createDocument[0].id;
                     // o 1344 é a intificação da memoria de calculo
-                    const tipo_documento = "1344"
+                    const tipo_documento = "35"
                     let nome = await processo.split(" ");
-                    const upload = await uploadDocumentUseCase.execute(cookie, `${nome[0]}${documento_id}MemoriaCalculo.html`, processoAfazer.conteudo, documento_id, tipo_documento);
+                    const upload = await uploadDocumentUseCase.execute(cookie, `${nome[0]}${documento_id}impeditivos.html`, processoAfazer.conteudo, documento_id);
                     await response.push({ createDocument: createDocument[0], upload });
-                    (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `MEMORIA ANEXADA - ${tarefas[i].postIt}`, tarefaId: parseInt(tarefa_id) }));
+                    
+                    //(await updateEtiquetaUseCase.execute({ cookie, etiqueta: `MEMORIA ANEXADA - ${tarefas[i].postIt}`, tarefaId: parseInt(tarefa_id) }));
+                    console.log("---CHEGA AQUI?")
                     //console.log(tarefas[i])
                     tidNumber++;
+
                 }
 
                 /* if (i == tarefas.length - 1) {
                     return response
                 } */
-
-                
+                    
 
                 
             }
         }
+
+        console.log('---ESKEETIT')
+        console.log(response)
+
         response.pop();
         
         return response

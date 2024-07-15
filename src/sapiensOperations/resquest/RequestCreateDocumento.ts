@@ -3,7 +3,7 @@ import { ICreateDocumentDTO } from "../../DTO/CreateDocumentDTO";
 export class RequestCreateDocumento {
     async execute(data: ICreateDocumentDTO): Promise<string> {
         if(data.tipoDocumento_id == null || data.tipoDocumento_id == ""){
-            data.tipoDocumento_id = "1344"
+            data.tipoDocumento_id = "35"
         }
         if(data.modelo_id == null || data.modelo_id == ""){
             data.modelo_id = ""

@@ -36,9 +36,14 @@ import { GetInteressadosReq } from '../CreateInterested/RequisicaoAxiosTarefas/G
 import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
 // QUANDO TIVER O PROCESSO, IMPLEMENTAR O UPLOAD.
 import { uploadDocumentForAttachmentUseCase } from '../../upload';
+import { uploadDocumentUseCase } from '../UploadDocument';
 import { verificarImpedimentos } from './helps/verificarImpedimentos';
 import { gerarObjetoUpload } from './helps/gerarObjetoUpload';
 import { impeditivosHtml } from '../CreateHtmlForLoas';
+import { insertSapiensMinutasUseCase } from '../InsertSapiensMinutas';
+import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
+import { ILoginDTO } from '../../DTO/LoginDTO';
+import { IMinutasDTO } from '../../DTO/MinutaDTO';
 
 export class GetInformationFromSapienForSamirUseCase {
     
@@ -908,7 +913,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         //console.log(response.split("-"))
                         const haveSislabraRural = semSislabraRural.some(sislabra => totalImpeditivos.includes(sislabra))
                         const haveSislabraMaternidade = semSislabraMaternidade.some(sislabra => totalImpeditivos.includes(sislabra))
-                        console.log(haveSislabraRural)
+                        //console.log(haveSislabraRural)
 
 
 
@@ -1007,6 +1012,28 @@ export class GetInformationFromSapienForSamirUseCase {
                             const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
                             const ticket_upload = `${usuario_id}_20230504${randomNumber}`
                             const pasta_id = `${tarefas[0].pasta.id}`;
+
+
+                            const minutas: IMinutasDTO[] = [
+                                {
+                                    numeroprocesso: tarefas[0].pasta.processoJudicial.numero,
+                                    conteudo: htmlUpload,
+                                    nup: data.tarefa.pasta.NUP
+                                }
+                            ]
+                            
+
+                            const inserirMemoriaMinuta: IInserirMemoriaCalculoDTO = {
+                                login: data.login,
+                                nup: data.tarefa.pasta.NUP,
+                                etiqueta: data.etiqueta,
+                                minutas: minutas
+                            }
+
+                            console.log(inserirMemoriaMinuta)
+
+                            const uploadTheFato = await insertSapiensMinutasUseCase.execute(inserirMemoriaMinuta)
+                            console.log(uploadTheFato)
 
                             //const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
                             //console.log(uploadTheFato)
