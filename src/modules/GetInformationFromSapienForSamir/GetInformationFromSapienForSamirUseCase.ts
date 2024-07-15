@@ -82,7 +82,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                       
                     } catch (error) {
                         console.log("Erro ao aplicar getArvoreDocumentoUseCase!!!!");
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
+                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "AVISO: DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
                         console.log('eroor1')
                         return {warning: "DOSPREV COM FALHA NA PESQUISA"}
                     }
@@ -190,7 +190,7 @@ export class GetInformationFromSapienForSamirUseCase {
 
                         } catch (error) {
                             console.log(error);
-                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "AVISO: DOSPREV COM FALHA NA GERAÇAO", tarefaId }));
                             return {warning: "DOSPREV COM FALHA NA GERAÇAO"}
                         }
                     }
@@ -222,7 +222,7 @@ export class GetInformationFromSapienForSamirUseCase {
                     const cpfCapa = buscarTableCpf(novaCapa);
                     //console.log(cpfCapa)
                     if(!cpfCapa){
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
+                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO: CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
                         return {erro: ` CPF NÃO ENCONTRADO -`}
                     }
 
@@ -242,7 +242,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         
 
                         if(dossieIsvalid instanceof Error){
-                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO: DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
                             console.log('eroor2')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
@@ -258,7 +258,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         
                         
                         if(dossieIsvalid instanceof Error){
-                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO: DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
                             
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
@@ -268,7 +268,7 @@ export class GetInformationFromSapienForSamirUseCase {
                         const dossieIsvalid = await verificarDossieMaisAtual(cpfCapa, cookie, objectDosPrev, objectDosPrev2);
                         
                         if (dossieIsvalid instanceof Error || !dossieIsvalid) {
-                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
+                            (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO: DOSPREV COM FALHA NA PESQUISA`, tarefaId }))
                             console.log('eroor4')
                             return {warning: `DOSPREV COM FALHA NA PESQUISA`}
                         }else{
@@ -375,7 +375,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 const verifarSeFoiGerado = (getXPathText(parginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
                                 console.log("verficarSeFoiGerado: "+verifarSeFoiGerado)
                                 if(verifarSeFoiGerado) {
-                                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: "Falha ao gerar Super DOSPREV ", tarefaId });
+                                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: "AVISO: FALHA AO GERAR SUPER DOSPREV ", tarefaId });
                                     //response = response + " Falha ao gerar Super DOSPREV ";
                                     return {warning: "Falha ao gerar Super DOSPREV"}
                                 }
@@ -384,7 +384,7 @@ export class GetInformationFromSapienForSamirUseCase {
     
                                 const NewDossiewithErro = (await getXPathText(parginaDosPrevFormatada, '/html/body/div')).trim() == 'Falha ao gerar dossiê. Será necessário solicitá-lo novamente.'
                                 if(NewDossiewithErro) {
-                                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `Falha ao gerar dossiê super sapiens`, tarefaId })
+                                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO: FALHA AO GERAR DOSSIE SUPER SAPIENS`, tarefaId })
                                     response = '';
                                     return {warning: `Falha ao gerar dossiê super sapiens`}
                                 }
@@ -446,11 +446,15 @@ export class GetInformationFromSapienForSamirUseCase {
 
                     
                     const beneficios = [ ' *LOAS* ' ]
+                    const beneficioRural = [ ' *RURAL* ' ]
+                    const beneficioMaterinidade = [ ' *MATERNIDADE* ' ]
                     const impedCadunico = [' CADÚNICO ']
                     const impeditivos = [' CADÚNICO ', ' BPC ATIVO ', ' BENEFÍCIO ATIVO ', ' IDADE ', ' AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO ', ' LITISPENDÊNCIA ', ' ADVOGADO ' ]
 
 
                     const isLoas = beneficios.some(loas => totalImpeditivos.includes(loas))
+                    const isRural = beneficioRural.some(rural => totalImpeditivos.includes(rural))
+                    const isMaternidade = beneficioMaterinidade.some(maternidade => totalImpeditivos.includes(maternidade))
                     const haveCadunico = impedCadunico.some(cadunico => totalImpeditivos.includes(cadunico))
 
                     if (isLoas) {
@@ -894,6 +898,44 @@ export class GetInformationFromSapienForSamirUseCase {
                         }
                     }
 
+
+                        const totalImpeditivos = response.split("-")
+                        console.log("--TOTAL IMPEDITIVOS W/ SISLABRA")
+                        console.log(totalImpeditivos)
+
+                        const semSislabraRural = [' *RURAL*  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE ']
+                        const semSislabraMaternidade = [' *MATERNIDADE*  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE ']
+                        //console.log(response.split("-"))
+                        const haveSislabraRural = semSislabraRural.some(sislabra => totalImpeditivos.includes(sislabra))
+                        const haveSislabraMaternidade = semSislabraMaternidade.some(sislabra => totalImpeditivos.includes(sislabra))
+                        console.log(haveSislabraRural)
+
+
+
+                        // ETIQUETA COMO PROCESSO LIMPO, OU AVISA SE FALTA ALGUM DOCUMENTO (RURAL E MATERNIDADE)
+                        if (isRural) {
+                            console.log("-> IT'S A RURAL")
+                            if (response == " *RURAL* ") {
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                                return {impeditivos: true} 
+                            } else if (haveSislabraRural) {
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
+                                return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
+                            }
+
+                        }
+
+                        if (isMaternidade) {
+                            console.log("-> IT'S A MATERNIDADE")
+                            if (response == " *MATERNIDADE* ") {
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
+                                return {impeditivos: true} 
+                            } else if (haveSislabraMaternidade) {
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
+                                return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
+                            }
+                        }
+
                     
                     }
 
@@ -905,25 +947,10 @@ export class GetInformationFromSapienForSamirUseCase {
                     if (response.length == 0) {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
-                    }
-                    else if (response == " *RURAL* ") {
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
-                        return {impeditivos: true} 
-                    }
-                    else if (response == " *MATERNIDADE* ") {
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
-                        return {impeditivos: true} 
                     } else if (response == " *LOAS* ") {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                         return {impeditivos: true} 
                     } else {
-                        if(response == " *RURAL*  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE -") {
-                            await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
-                            return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
-                        } else if (response == " *MATERNIDADE*  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE -") {
-                            await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO:  SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"`, tarefaId })
-                            return {warning: "SISLABRA (AUTOR) e (CONJUGE) NÃO EXISTE"}
-                        }
 
 
                         function findSubstring(str: string) {
