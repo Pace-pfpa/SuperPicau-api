@@ -44,15 +44,17 @@ import { insertSapiensMinutasUseCase } from '../InsertSapiensMinutas';
 import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
 import { ILoginDTO } from '../../DTO/LoginDTO';
 import { IMinutasDTO } from '../../DTO/MinutaDTO';
+import { createDocumentoUseCase } from '../CreateDocumento';
 
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
+        
         const cookie = await loginUseCase.execute(data.login);
         const usuario = (await getUsuarioUseCase.execute(cookie));
         let impedDossie: string  = '';
         
-        
+
         const usuario_id = `${usuario[0].id}`;
         let novaCapa: any = false; 
         var objectDosPrev
@@ -67,7 +69,8 @@ export class GetInformationFromSapienForSamirUseCase {
         
         try {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
-            
+            console.log("SÓ OS LOUCOS SABEM")
+            //console.log(tarefas)
             nupInicio = tarefas[0].pasta.NUP
 
             let VerificarSeAindExisteProcesso: boolean = true;
@@ -1003,40 +1006,67 @@ export class GetInformationFromSapienForSamirUseCase {
 
                             // PARTE QUE DE FATO FAZ O UPLOAD, CUIDADO AO USAR
 
-                            const htmlUpload = await impeditivosHtml.execute(objForHTML)
+                            const usuario_nome = `${usuario[0].nome}`;
+
+                            const htmlUpload = await impeditivosHtml.execute(objForHTML, usuario_nome)
                             //console.log(htmlUpload)
-
-                            const tipo_documento = "35"
-                            const min = 1;
-                            const max = 999999;
-                            const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-                            const ticket_upload = `${usuario_id}_20230504${randomNumber}`
-                            const pasta_id = `${tarefas[0].pasta.id}`;
-
-
+                            
                             const minutas: IMinutasDTO[] = [
                                 {
                                     numeroprocesso: tarefas[0].pasta.processoJudicial.numero,
                                     conteudo: htmlUpload,
-                                    nup: data.tarefa.pasta.NUP
+                                    nup: data.tarefa.pasta.NUP,
                                 }
                             ]
                             
 
                             const inserirMemoriaMinuta: IInserirMemoriaCalculoDTO = {
-                                login: data.login,
+                                cookie: cookie,
                                 nup: data.tarefa.pasta.NUP,
                                 etiqueta: data.etiqueta,
-                                minutas: minutas
+                                minutas: minutas,
                             }
 
-                            console.log(inserirMemoriaMinuta)
+                            //console.log(inserirMemoriaMinuta)
 
-                            const uploadTheFato = await insertSapiensMinutasUseCase.execute(inserirMemoriaMinuta)
-                            console.log(uploadTheFato)
 
-                            //const uploadTheFato = await uploadDocumentForAttachmentUseCase.execute(cookie, `impeditivos.html`, htmlUpload, tipo_documento, pasta_id, ticket_upload); 
-                            //console.log(uploadTheFato)
+                            let tidNumber = 3;
+                            const tarefa_id = `${tarefas[0].id}`;
+                            const pasta_id = `${tarefas[0].pasta.id}`;
+                            const usuario_setor = `${tarefas[0].setorResponsavel_id}`
+                            const tid = `${tidNumber}`;
+                            tarefas[0].tid = tidNumber;
+
+
+                            const createDocument = await createDocumentoUseCase.execute({ cookie, usuario_nome, usuario_setor, tarefa_id, pasta_id, tid })
+                            let documento_id = createDocument[0].id;
+
+                            let processo: string;
+
+
+                            for (let j = 0; j < tarefas[0].pasta.interessados.length ; j++) {
+                                if((tarefas[0].pasta.interessados[j].pessoa.nome !== "MINIST�RIO P�BLICO fEDERAL (PROCURADORIA)" && 
+                                tarefas[0].pasta.interessados[j].pessoa.nome !== "MINISTERIO PUBLICO FEDERAL (PROCURADORIA)" &&
+                                tarefas[0].pasta.interessados[j].pessoa.nome !== "CENTRAL DE ANÁLISE DE BENEFÍCIO - CEAB/INSS" &&
+                                        tarefas[0].pasta.interessados[j].pessoa.nome !== "INSTITUTO NACIONAL DO SEGURO SOCIAL-INSS" &&
+                                        tarefas[0].pasta.interessados[j].pessoa.nome !== "INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS")){
+                                            processo = tarefas[0].pasta.interessados[j].pessoa.nome
+                                            break;
+                                }
+                            }
+
+                            let nome = processo.split(" ");
+                           
+                            console.log(nome[0])
+                            console.log(cookie)
+                            console.log(`${nome[0]}${documento_id}impeditivos.html`)
+                            console.log(documento_id)
+                            //console.log(minutas[0].conteudo)
+                            const upload = await uploadDocumentUseCase.execute(cookie, `${nome[0]}${documento_id}impeditivos.html`, minutas[0].conteudo, documento_id);
+                            console.log(upload)
+
+                            tidNumber++;
+
 
                         }
 

@@ -2,7 +2,10 @@ import { HtmlIImpeditivosLoasDTO } from "../../DTO/HtmlImpeditivosLoasDTO";
 
 // HTML COM RESUMO DE IMPEDITIVOS - LOAS E SISLABRA LOAS
 export class ImpeditivosHtmlLoas {
-    async execute(data: HtmlIImpeditivosLoasDTO): Promise<string>{
+    async execute(data: HtmlIImpeditivosLoasDTO, nome: string): Promise<string>{
+
+        const currentDate = new Date().toLocaleString();
+
         const getStatus = (value: boolean | null): string => {
             if (value === true) {
                 return '<span style="color: red; font-weight: bold;">IMPEDITIVO</span>';
@@ -39,6 +42,12 @@ export class ImpeditivosHtmlLoas {
                     padding: 20px;
                     text-align: center;
                 }
+                
+                p {
+                    margin: 0;
+                    font-weight: bold;
+                    padding-left: 13rem;
+                }
         
                 th, td {
                     border: 1px solid black;
@@ -56,6 +65,10 @@ export class ImpeditivosHtmlLoas {
         </head>
         <body>
             <h1>RESUMO DE IMPEDITIVOS</h1>
+            <br>
+            <p>USUÁRIO: ${nome}</p>
+            <br>
+            <p>DATA: ${currentDate}</p>
             <br>
             <br>
             <table>
