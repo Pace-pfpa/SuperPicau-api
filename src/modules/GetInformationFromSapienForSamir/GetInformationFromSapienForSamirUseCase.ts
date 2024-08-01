@@ -45,7 +45,7 @@ import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
 import { ILoginDTO } from '../../DTO/LoginDTO';
 import { IMinutasDTO } from '../../DTO/MinutaDTO';
 import { createDocumentoUseCase } from '../CreateDocumento';
-
+ 
 export class GetInformationFromSapienForSamirUseCase {
     
     async execute(data: IGetInformationsFromSapiensDTO): Promise<any> {
