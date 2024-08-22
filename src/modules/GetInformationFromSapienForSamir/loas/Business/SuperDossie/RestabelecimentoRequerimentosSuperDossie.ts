@@ -98,10 +98,7 @@ export class RestabelecimentoRequerimentosSuperDossie{
                 }
 
             } else {
-                return {
-                    valorBooleano: true,
-                    impeditivo: " AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO -"
-                }   
+                return false
             }
                 
     }

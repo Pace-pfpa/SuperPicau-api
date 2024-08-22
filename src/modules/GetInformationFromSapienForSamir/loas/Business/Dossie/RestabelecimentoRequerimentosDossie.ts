@@ -71,12 +71,12 @@ export class RestabelecimentoRequerimentos{
                     }
                 }
             }
-            console.log(objetosEncontradosParaVerificar)
+            
             if(objetosEncontradosParaVerificar.length == 0) {
                 return {
                     valorBooleano: true,
                     impeditivo: " AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO -"
-                } 
+                }
             }
 
             if (arrayExisteCessadoOuSuspenso(objetosEncontradosParaVerificar)) {
@@ -101,13 +101,12 @@ export class RestabelecimentoRequerimentos{
                 }
 
             } else {
-                return {
-                    valorBooleano: true,
-                    impeditivo: " AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO -"
-                }   
+                return false
             }
+            
+            
     }
     
- }
+    }
 
     
