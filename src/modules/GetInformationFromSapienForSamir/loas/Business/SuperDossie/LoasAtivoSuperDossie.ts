@@ -18,8 +18,10 @@ export class LoasAtivoSuperDossie {
                 if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[6]/table/tbody/tr[${t}]`)) === 'string'){
                     const xpathColunaRequerimentos = `/html/body/div/div[6]/table/tbody/tr[${t}]`;
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
-                    if (xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1) {
+                    if (xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1 && xpathCoulaFormatadoRequerimentos.indexOf("226") === -1) {                       
+
                         if (xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("88 - ") !== -1) {
+                            
         
                             return {
                                 valorBooleano: true,

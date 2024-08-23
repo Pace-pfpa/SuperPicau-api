@@ -1,4 +1,4 @@
-export function EncontrarDataMaisAtual(datas: Array<any>){
+export function EncontrarDataMaisAtualNew(datas: Array<any>){
     
     let maiorData = datas[0]
     console.log(datas)
@@ -12,5 +12,5 @@ export function EncontrarDataMaisAtual(datas: Array<any>){
         }
     }
    
-    return maiorData.data
+    return maiorData
 }

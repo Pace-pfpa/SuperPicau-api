@@ -177,6 +177,7 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                                 const xpathRowRemuneracao = `${xpathDivCompetencia}/table[2]/tbody/tr[${r}]`
                                 const rowFormatadaRemuneracao: string = getXPathText(dosprev, xpathRowRemuneracao)
                                 if (rowFormatadaRemuneracao.indexOf(`${data}`) !== -1) {
+                                    
 
                                     const arrayDatas = findDatesInString(rowFormatadaRemuneracao)
                                     console.log(arrayDatas)
@@ -184,10 +185,18 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
                                     const arrayValues = convertCurrencyStringsToNumbers(rowFormatadaRemuneracao)
                                     console.log(arrayValues)
 
-                                    if (arrayDatas[0] === data) {
-                                        return arrayValues[0]
-                                    } else if (arrayDatas[1] === data) {
+                                    console.log(arrayDatas.length)
+                                    console.log(arrayValues.length)
+
+
+                                    if(arrayDatas.length === 1 && arrayValues.length === 2) {
                                         return arrayValues[1]
+                                    }
+
+                                    if (arrayDatas[0] === data) {
+                                        return arrayValues[1]
+                                    } else if (arrayDatas[1] === data) {
+                                        return arrayValues[3]
                                     }
 
                                 }

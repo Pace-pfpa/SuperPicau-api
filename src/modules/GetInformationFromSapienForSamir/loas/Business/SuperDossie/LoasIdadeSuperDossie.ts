@@ -48,7 +48,9 @@ export class LoasIdadeSuperDossie {
                 return true
             }
 
-            const dataAtual = EncontrarDataMaisAtual(objetosEncontradosParaVerificar).data
+            console.log(EncontrarDataMaisAtual(objetosEncontradosParaVerificar))
+
+            const dataAtual = EncontrarDataMaisAtual(objetosEncontradosParaVerificar)
 
             console.log("---DATA MAIS ATUAL: " + EncontrarDataMaisAtual(objetosEncontradosParaVerificar).data)
 

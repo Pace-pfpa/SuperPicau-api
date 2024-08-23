@@ -720,6 +720,8 @@ export class GetInformationFromSapienForSamirUseCase {
                         //console.log(labrasPoloAtivo)
 
                         if (labrasPoloAtivo.length > 0) {
+                            console.log('identificar')
+                            console.log(labrasPoloAtivo.length)
                             // VERIFICAR CADA DOCUMENTO POLO ATIVO IDENTIFICANDO IMPEDITIVOS
                             for (let i = 0; i < labrasPoloAtivo.length; i++) {
                                 const idSislabraParaPesquisaAutor = labrasPoloAtivo[i].documentoJuntado.componentesDigitais[0].id;
@@ -728,7 +730,10 @@ export class GetInformationFromSapienForSamirUseCase {
                                 const paginaSislabraFormatadaPoloAtivo = new JSDOM(parginaSislabraPoloAtivo);
         
                                 const sislabraPoloAtivo = await getDocumentSislabraFromSapiensLoas.execute(paginaSislabraFormatadaPoloAtivo, true)
-                                response = response + sislabraPoloAtivo
+                                if (!response.includes(sislabraPoloAtivo)) {
+                                    response += sislabraPoloAtivo;
+                                }
+                                
                             }
 
                         } else {

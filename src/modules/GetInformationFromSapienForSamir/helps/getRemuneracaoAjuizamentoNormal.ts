@@ -59,6 +59,13 @@ export async function getRemuneracaoAjuizamentoNormal (seq: string, dosprev: str
                                     const arrayValues = convertCurrencyStringsToNumbers(rowFormatadaRemuneracao)
                                     console.log(arrayValues)
 
+                                    console.log(arrayDatas.length)
+                                    console.log(arrayValues.length)
+
+                                    if(arrayDatas.length === 1 && arrayValues.length === 2) {
+                                        return arrayValues[1]
+                                    }
+
                                     if (arrayDatas[0] === data) {
                                         return arrayValues[0]
                                     } else if (arrayDatas[1] === data) {

@@ -177,6 +177,14 @@ export async function getValueCalcDossieNormal (cookie:string, dossieNormal: any
                 }
 
             } else {
+                console.log('OZZY OSBOURNE')
+                let remuneracaoAjuizamento = await getRemuneracaoAjuizamentoNormal(mostRecentSeq,  paginaDosPrevFormatadaDossieNormal, mostRecentDataFormatada)
+                if (remuneracaoAjuizamento){
+                    return {
+                        remuneracaoAjz: remuneracaoAjuizamento,
+                        remuneracaoReq: remuneracaoAjuizamento
+                    }  
+                } 
                 return {
                     remuneracaoAjz: 0,
                     remuneracaoReq: 0

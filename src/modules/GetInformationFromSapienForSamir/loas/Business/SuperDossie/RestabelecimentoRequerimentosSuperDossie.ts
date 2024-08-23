@@ -6,6 +6,7 @@ import { buscardatasLoas } from "../Help/BuscarDatas";
 import { calcularIdadeIdoso } from "../Help/CalcularIdadeIdoso";
 import { EncontrarDataCesSusMaisAtual } from "../Help/EncontrarCesSusMaisAtual";
 import { EncontrarDataMaisAtual } from "../Help/EncontrarDataMaisAtual";
+import { EncontrarDataMaisAtualNew } from "../Help/EncontrarDataMaisAtualNew";
 import { formatDate } from "../Help/FormatarDataLoas";
 
 export class RestabelecimentoRequerimentosSuperDossie{
@@ -88,7 +89,7 @@ export class RestabelecimentoRequerimentosSuperDossie{
                         impeditivo: " RESTABELECIMENTO -"
                     }
                 } else {
-                    if(EncontrarDataMaisAtual(objetosEncontradosParaVerificar).beneficio == "indeferido") {
+                    if(EncontrarDataMaisAtualNew(objetosEncontradosParaVerificar).beneficio == "indeferido") {
                         return false
                     }
                     return {

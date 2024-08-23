@@ -5,6 +5,7 @@ import { isDateInRange } from "./dataIsInRange";
 import { getRemuneracaoAjuizamentoSuper } from "./getRemuneracaoAjuizamentoSuper";
 import { removeDayFromDate } from "./removeDayFromDate";
 import { parseDateToString } from "./parseDateToString";
+import { Console } from "console";
 const { JSDOM } = require('jsdom');
 
 export async function getValueCalcDossieSuper(cookie:string, superDossie: any, dataAjuizamento: string, dataRequerimento: string) {
@@ -178,6 +179,15 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
                 }
 
             } else {
+                console.log('OZZY OSBOURNE')
+                let remuneracaoRequerimentoServidor = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
+                console.log(remuneracaoRequerimentoServidor)
+                if (remuneracaoRequerimentoServidor){
+                    return {
+                        remuneracaoAjz: remuneracaoRequerimentoServidor,
+                        remuneracaoReq: remuneracaoRequerimentoServidor
+                    }  
+                } 
                 return {
                     remuneracaoAjz: 0,
                     remuneracaoReq: 0
