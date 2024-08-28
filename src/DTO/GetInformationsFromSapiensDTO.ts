@@ -3,7 +3,9 @@ import { ILoginDTO } from "./LoginDTO";
 export interface IGetInformationsFromSapiensDTO {
     login: ILoginDTO;
     etiqueta: string;
-    readDosprevAge: boolean;
+    tarefa: any
+    readDosprevAge: Number;
+    loas: boolean
 }
 
 

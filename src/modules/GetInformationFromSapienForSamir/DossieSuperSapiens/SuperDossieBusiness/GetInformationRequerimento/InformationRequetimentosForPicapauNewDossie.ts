@@ -5,7 +5,7 @@ import { SubtrairAnoMaisAtual } from "../../../../../helps/subtrairAnoAtual";
 
 
 export class DatasRequerimentoNewDossie{
-    async dataRequerimento(parginaDosPrevFormatada: any):Promise<Date[]>{
+    async dataRequerimento(parginaDosPrevFormatada: any, dataSubtrair: number):Promise<Date[]>{
         //Estrutura para identificar a maior data, e fazer a subtração dela
         let tamanhoColunasRequerimentos = 1;
         const arrayDatas: Array<Date> = [];
@@ -35,8 +35,6 @@ export class DatasRequerimentoNewDossie{
             }
             const dataAtual = encontrarDataMaisAtual(arrayDatas);
             const dataMenosdezesseis = SubtrairAnoMaisAtual(dataAtual, -16);
-            console.log("Data Atual: " + dataAtual)
-            console.log("Data Menos 16: " + dataMenosdezesseis);
             return [dataAtual, dataMenosdezesseis]
     }
     

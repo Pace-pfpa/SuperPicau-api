@@ -3,6 +3,7 @@ import { getInformationFromSapienForSamirController } from "../modules/GetInform
 import { atualizacaoDossiePrevidenciarioController } from "../modules/AtualizacaoDossiePrevidenciario";
 import { verificadorValidadeDossiePrevidenciarioController } from '../modules/VerificadorValidadeDossiePrevidenciario/index';
 import { verificadorDeDupliciadeController } from "../modules/VerificadorDeDupliciade";
+import { createInterestedController } from "../modules/CreateInterested";
 
 //const sessao = request.session();
 
@@ -129,3 +130,16 @@ routerGetInformationsForSamir.post("/verificadorValidadeDossiePrevidenciario", a
 routerGetInformationsForSamir.post("/verificadorDeDupliciade", async (req, res) => {
     return verificadorDeDupliciadeController.handle(req, res);
 })
+
+
+
+
+routerGetInformationsForSamir.post("/createInteressados", async (req, res) => {
+    console.log(req.body)
+    return createInterestedController.handle(req, res);
+})
+
+
+
+
+

@@ -1,6 +1,6 @@
 import { getEmpregoSislabra } from "./SislabraBusiness/GetEmpregoSislabra";
 import { getImoveisRurais } from "./SislabraBusiness/GetImoveisRuraisSislabra";
-import { getImoveis } from "./SislabraBusiness/GetImoveisSp";
+import { getImoveisSP } from "./SislabraBusiness/GetImoveisSp";
 import { getVeiculos } from "./SislabraBusiness/GetVeiculosSislabra";
 import { getEmpresa } from "./SislabraBusiness/GetEmpresaSislabra";
 
@@ -11,10 +11,14 @@ export class GetDocumentSislabraFromSapiens{
         let response = "";
 
         const GetVeiculosSislabra = await getVeiculos(paginaformatada)
-        if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'AUTOR'){
-            response = response + " VEICULO AUTOR -"
-        }else if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'CONJUGE'){
-            response = response + " VEICULO CONJUGE -"
+        if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].tipo == "MOTOCICLETA" || 
+        GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA"
+        )){
+            if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'AUTOR'){
+                response = response + " VEICULO AUTOR -"
+            }else if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'CONJUGE'){
+                response = response + " VEICULO CONJUGE -"
+            }
         }
         
         const GetEmpregoSislabra = await getEmpregoSislabra(paginaformatada);
@@ -44,8 +48,8 @@ export class GetDocumentSislabraFromSapiens{
 
 
        }catch(e){
-            console.log ("ERRO AO LE O SISLABRA AUTOR")
-         return `ERRO AO LE O SISLABRA AUTOR`
+            console.log ("ERRO AO LER O SISLABRA AUTOR")
+         return `ERRO AO LER O SISLABRA AUTOR`
        }
         
     }

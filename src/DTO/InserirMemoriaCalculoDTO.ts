@@ -2,7 +2,7 @@ import { ILoginDTO } from "./LoginDTO";
 import { IMinutasDTO } from "./MinutaDTO";
 
 export interface IInserirMemoriaCalculoDTO {
-    login: ILoginDTO;
+    cookie: string;
     nup: string;
     etiqueta: string;
     minutas: Array<IMinutasDTO>;

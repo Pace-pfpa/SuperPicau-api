@@ -12,4 +12,5 @@ export async function getImoveisRurais(paginaSislabra: string){
         }else{
             return false
         }
-    }        
+    }
+

@@ -9,7 +9,8 @@ import { ordenarDatas } from "../../../../../helps/BuscarDatasEmString";
 ///html/body/div/div[7]/table/tbody/tr[2]
 export class DataPrevidenciariasNewDossie{
     async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<boolean>{
-        let tamanhoColunaPrevidenciarias = 1;
+    
+    let tamanhoColunaPrevidenciarias = 1;
     let verificarWhilePrevidenciarias = true;
     while(verificarWhilePrevidenciarias){
         if(typeof (getXPathText(parginaDosPrevFormatada, `html/body/div/div[7]/table/tbody/tr[${tamanhoColunaPrevidenciarias}]`)) == 'object'){
@@ -18,6 +19,8 @@ export class DataPrevidenciariasNewDossie{
         }
         tamanhoColunaPrevidenciarias++;
     }
+
+    
                             
     for(let p=1; p<tamanhoColunaPrevidenciarias; p++){
         if(typeof (getXPathText(parginaDosPrevFormatada,`html/body/div/div[7]/table/tbody/tr[${p}]`)) === 'string'){

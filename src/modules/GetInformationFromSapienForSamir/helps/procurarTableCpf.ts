@@ -7,13 +7,21 @@ export function buscarTableCpf(capa: string){
         if(tableIsTrue){  
             let verificarLinhaPoloAtivo = tableIsTrue.indexOf("PÓLO ATIVO")
             if(verificarLinhaPoloAtivo != -1){
-                 for(let j=0; j<=6;j++){ 
+                 for(let j=0; j<=6;j++){
                     let xpathCpf = `html/body/div/div[${i}]/table/tbody/tr[${j}]`
                     let poloAtivo = getXPathText(capa, xpathCpf)                    
                     if(poloAtivo){
                          let poloAtivoCpf = poloAtivo.indexOf("PÓLO ATIVO")
                          if(poloAtivoCpf != -1){
-                            return (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
+                            //console.log(`html/body/div/div[${i}]/table/tbody/tr[${j}]`)
+                            let isCpf = (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
+                            //console.log("CPF OU ADVOGADO: ")
+                            //console.log(!/\D/.test(isCpf))
+                            if (!/\D/.test(isCpf)) {
+                                return isCpf
+                            } else {
+                                return undefined
+                            }
                          }
                     }
                  }
@@ -22,6 +30,3 @@ export function buscarTableCpf(capa: string){
     }
     return undefined
 }
-///html/body/div/div[7]/table/tbody/tr[2]
-
-///html/body/div/div[6]/table/tbody/tr[2]

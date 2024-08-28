@@ -5,7 +5,7 @@ import { SubtrairAnoMaisAtual } from "../../../../../helps/subtrairAnoAtual";
 
 
 export class DatasRequerimento{
-    async dataRequerimento(parginaDosPrevFormatada: any):Promise<Date[]>{
+    async dataRequerimento(parginaDosPrevFormatada: any, dataSubtrair: number):Promise<Date[]>{
         //Estrutura para identificar a maior data, e fazer a subtração dela
         let tamanhoColunasRequerimentos = 2;
         const arrayDatas: Array<Date> = [];
@@ -17,12 +17,7 @@ export class DatasRequerimento{
             }
             tamanhoColunasRequerimentos++;
         }
-        //console.log("Tamanho Coluna: " + tamanhoColunasRequerimentos);
-        /* if(parginaDosPrev.indexOf("Não foram encontrados requerimentos em nome do autor.") != -1){
-           
-            return [];
-            
-        } */
+         
             for(let t=2; t<tamanhoColunasRequerimentos; t++){
                 if(typeof (getXPathText(parginaDosPrevFormatada,`/html/body/div/div[3]/table/tbody/tr[${t}]`)) === 'string'){
                     const xpathColunaRequerimentos = `/html/body/div/div[3]/table/tbody/tr[${t}]`;   
@@ -34,7 +29,7 @@ export class DatasRequerimento{
                 }
             }
             const dataAtual = encontrarDataMaisAtual(arrayDatas);
-            const dataMenosdezesseis = SubtrairAnoMaisAtual(dataAtual, -16);
+            const dataMenosdezesseis = SubtrairAnoMaisAtual(dataAtual, -dataSubtrair);
 
             return [dataAtual, dataMenosdezesseis]
     }

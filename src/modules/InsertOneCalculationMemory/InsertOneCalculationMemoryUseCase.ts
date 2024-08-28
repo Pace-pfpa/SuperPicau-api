@@ -34,7 +34,7 @@ export class RequestInformationForSamir {
             let documento_id = createDocument[0].id;
             const tipo_documento = "1344"
 
-            const upload = await uploadDocumentUseCase.execute(cookie, `${processo}MemoriaCalculo.html`, processoAfazer.conteudo, documento_id, tipo_documento);
+            const upload = await uploadDocumentUseCase.execute(cookie, `${processo}MemoriaCalculo.html`, processoAfazer.conteudo, documento_id);
             await response.push({ createDocument: createDocument[0], upload });
         }
 
