@@ -1,32 +1,39 @@
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 
-export function buscarTableCpf(capa: string){
-    for(let i=0; i<10; i++){
-        let pathTableCpf = `/html/body/div/div[${i}]`
-        let tableIsTrue = getXPathText(capa, pathTableCpf);        
-        if(tableIsTrue){  
-            let verificarLinhaPoloAtivo = tableIsTrue.indexOf("PÓLO ATIVO")
-            if(verificarLinhaPoloAtivo != -1){
-                 for(let j=0; j<=6;j++){
-                    let xpathCpf = `html/body/div/div[${i}]/table/tbody/tr[${j}]`
-                    let poloAtivo = getXPathText(capa, xpathCpf)                    
-                    if(poloAtivo){
-                         let poloAtivoCpf = poloAtivo.indexOf("PÓLO ATIVO")
-                         if(poloAtivoCpf != -1){
-                            //console.log(`html/body/div/div[${i}]/table/tbody/tr[${j}]`)
-                            let isCpf = (poloAtivo.split(/[()]/)[1]).replaceAll(/[.-]/g, "")
-                            //console.log("CPF OU ADVOGADO: ")
-                            //console.log(!/\D/.test(isCpf))
-                            if (!/\D/.test(isCpf)) {
-                                return isCpf
-                            } else {
-                                return undefined
-                            }
-                         }
+function isCPF(text: string): boolean {
+    const cpf = text.split(/[()]/)[1]?.replace(/[.-]/g, "");
+    return !/\D/.test(cpf);
+}
+
+export function buscarTableCpf(capa: string): string | undefined {
+    const MAX_DIVS = 10;
+    const MAX_ROWS = 6;
+
+    for(let i = 0; i < MAX_DIVS; i++) {
+        const pathTableCpf = `/html/body/div/div[${i}]`
+        let tableText = getXPathText(capa, pathTableCpf);        
+
+        if (tableText && tableText.includes("PÓLO ATIVO")) {  
+            for (let j = 0; j <= MAX_ROWS; j++) {
+                const rowXpath = `html/body/div/div[${i}]/table/tbody/tr[${j}]`;
+                const rowText = getXPathText(capa, rowXpath);
+
+                if (rowText) {
+                    const isPoloAtivo = rowText.includes("PÓLO ATIVO");
+                    const isRepresentandoAGU = rowText.includes("SIM");
+
+                    if (isPoloAtivo && !isRepresentandoAGU) {
+                        if (isCPF(rowText)) {
+                            console.log("CPF OU ADVOGADO: true");
+                            return rowText.split(/[()]/)[1]?.replace(/[.-]/g, "");
+                        } else {
+                            console.log("CPF OU ADVOGADO: false");
+                            return undefined;
+                        }
                     }
-                 }
+                }
             }
         }
     }
     return undefined
-}
+} 
