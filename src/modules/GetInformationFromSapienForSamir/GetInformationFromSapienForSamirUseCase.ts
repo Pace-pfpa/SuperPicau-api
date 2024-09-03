@@ -226,10 +226,10 @@ export class GetInformationFromSapienForSamirUseCase {
                     
                     
                     
-                
                     const cpfCapa = buscarTableCpf(novaCapa);
-                    //console.log(cpfCapa)
+                    console.log(cpfCapa)
                     if(!cpfCapa){
+                        console.log("Zanetti");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: `AVISO: CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
                         return {erro: ` CPF NÃO ENCONTRADO -`}
                     }
