@@ -17,9 +17,6 @@ import { getInformationDossieForPicaPau } from './GetInformationFromDossieForPic
 import { getDocumentSislabraFromSapiens, getDocumentSislabraFromSapiensLoas } from './GetDocumentSislabraFromSapiens';
 import { getInformationCapa } from './GetInformationCapa';
 import { compararNup } from "./helps/ComparaNUP";
-import { LoasDossieUseCase } from './loas/LoasDossieUseCase';
-import { LoasSuperDossieUseCase } from './loas/LoasSuperDossieUseCase ';
-import { loasDossieUseCase, loasSuperDossieUseCase } from './loas';
 import { verificarDossieMaisAtual } from './helps/verificarDossieMaisAtual';
 import { cadUnico } from './loas/CadUnico';
 import { getInfoReqDossieSuper } from './helps/getInfoReqDossieSuper';
@@ -34,17 +31,14 @@ import { compararPrioridade } from './loas/Business/Help/compareRenda';
 import { getInfoEnvDossieSuper } from './helps/getInfoEnvDossieSuper';
 import { GetInteressadosReq } from '../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq';
 import { arrayInteressados } from '../CreateInterested/Helps/ArrayInteressados';
-// QUANDO TIVER O PROCESSO, IMPLEMENTAR O UPLOAD.
-import { uploadDocumentForAttachmentUseCase } from '../../upload';
 import { uploadDocumentUseCase } from '../UploadDocument';
 import { verificarImpedimentos } from './helps/verificarImpedimentos';
 import { gerarObjetoUpload } from './helps/gerarObjetoUpload';
 import { impeditivosHtml } from '../CreateHtmlForLoas';
-import { insertSapiensMinutasUseCase } from '../InsertSapiensMinutas';
 import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
-import { ILoginDTO } from '../../DTO/LoginDTO';
 import { IMinutasDTO } from '../../DTO/MinutaDTO';
 import { createDocumentoUseCase } from '../CreateDocumento';
+import { error } from 'console';
  
 export class GetInformationFromSapienForSamirUseCase {
     
@@ -61,8 +55,6 @@ export class GetInformationFromSapienForSamirUseCase {
         let response: string = '';
         let dossieNormal = false;
         let nupInicio = undefined;
-        let nupFim = undefined;
-        let erros = {};
         let dosprevEncontrado = false;
         let gastoComMedicamentos;
         let grupoFamiliarCpfs;

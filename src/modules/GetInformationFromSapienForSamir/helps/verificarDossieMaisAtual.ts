@@ -2,286 +2,137 @@ import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfCom
 import { getCPFDosPrevNormal } from "./getCPFDosPrevNormal";
 import { getCPFDosPrevSuper } from "./getCPFDosPrevSuper";
 
-export async function verificarDossieMaisAtual(cpf: string, cookie:string, normalDossie?: any[], superDossie?: any[]){
+// Função auxiliar para validar se o dossiê tem componentes digitais válidos
+function validarDossie(dossie: any): boolean {
+    return dossie.documentoJuntado?.componentesDigitais?.length > 0 && !!dossie.documentoJuntado.componentesDigitais[0].id;
+}
+
+// Função auxiliar para buscar o CPF no dossiê normal ou super
+async function buscarCpfNoDossie(dossie: any, tipo: 'normal' | 'super', cookie: string): Promise<string | null> {
+    if (tipo === 'normal') {
+        return getCPFDosPrevNormal(dossie, cookie);
+    } else {
+        return getCPFDosPrevSuper(dossie, cookie);
+    }
+}
+
+// Função auxiliar para verificar se o CPF do dossiê corresponde ao CPF fornecido
+async function verificarCpfCorrespondente(dossie: any, cpf: string, tipo: 'normal' | 'super', cookie: string): Promise<boolean> {
+    const cpfDossie = await buscarCpfNoDossie(dossie, tipo, cookie);
+    if (!cpfDossie) return false;
+    return cpf.trim() === CorrigirCpfComZeros(cpfDossie.trim());
+}
+
+// Função auxiliar para comparar dossiês pela numeração sequencial
+function compararDossiesPorSequencial(dossieNormal: any, dossieSuper: any): number {
+    return dossieNormal.numeracaoSequencial - dossieSuper.numeracaoSequencial;
+}
+
+export async function verificarDossieMaisAtual(cpf: string, cookie:string, normalDossie?: any[], superDossie?: any[]): Promise<any> {
     
- try{
-     if(normalDossie && !superDossie){
-        console.log("-> DOSPREV: CASILLAS")
+ try {
+     // 1. Verifica apenas dossiês normais
+     if (normalDossie && !superDossie) {
+        console.log("-> DOSPREV: CASILLAS (Somente dossiês normais)");
+        for (let i = 0; i < normalDossie.length; i++) {
+            if (!validarDossie(normalDossie[i])) {
+                console.warn(`Alerta: Dossiê normal inválido detectado na posição ${i}. Continuando a busca.`);
+                continue;
+            }
 
-         for(let i = 0; i < normalDossie.length; i++){
-             let objetoDosprev =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
-             if(objetoDosprev){
-                 return new Error("DOSPREV COM FALHA NA PESQUISA")
-             }
+            // Busca pelo CPF no dossiê
+            if (await verificarCpfCorrespondente(normalDossie[i], cpf, 'normal', cookie)) {
+                console.log(`Dossiê normal retornado da posição ${i}, ${normalDossie[i].numeracaoSequencial} do array normal.`);
+                return [normalDossie[i], 0]; // Retorna dossiê normal se o CPF bater
+            }
+        }
+        return new Error("Nenhum dossiê normal encontrado para o CPF fornecido.");
+    }
 
-             const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
-     
-             if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-     
-             if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                 return [normalDossie[i], 0]
-             }    
-         }
-     }
-     
-     
-     if(!normalDossie && superDossie){
-        console.log("-> DOSPREV: RAMOS")
-         for(let i = 0; i < superDossie.length; i++){
-             try{
+    // 2. Verifica apenas dossiês super
+    if (!normalDossie && superDossie) {
+        console.log("-> DOSPREV: RAMOS (Somente dossiês super)");
+        for (let i = 0; i < superDossie.length; i++) {
+            if (!validarDossie(superDossie[i])) {
+                console.warn(`Alerta: Dossiê super inválido detectado na posição ${i}. Continuando a busca.`);
+                continue;
+            }
 
-                 const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
-                 
-                 if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-                    
-                 if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()) {
-                     return [superDossie[i], 1]
-                 }    
-                 
-             }catch(e){
-                 return new Error("DOSPREV COM FALHA NA PESQUISA")
-             }
-     
-         }
-     }
-     
-     if(normalDossie && superDossie){
-        console.log('-> DOSPREV: ARBELOA')
-
-        console.log('---QUANTIDADE DE DOSPREV 1-NORMAL, 2-SUPER')
-        console.log(normalDossie.length)
-        console.log(superDossie.length)
-
-         if(normalDossie.length >= superDossie.length){
-            console.log('+ ARBELOA REAL MADRID')
-             for(let i=0; i < superDossie.length; i++){
-                
-                 let objetoDosprevNormal =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
-                 
-                
-                 let objetoDosprevSuper = (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!superDossie[i].documentoJuntado.componentesDigitais[0].id)
-
-                 if(objetoDosprevNormal && !objetoDosprevSuper){
-
-                    const cpfDosprev = getCPFDosPrevSuper(superDossie[i], cookie)
+            // Busca pelo CPF no dossiê
+            if (await verificarCpfCorrespondente(superDossie[i], cpf, 'super', cookie)) {
+                console.log(`Dossiê super retornado da posição ${i}, ${superDossie[i].numeracaoSequencial} do array super.`);
+                return [superDossie[i], 1]; // Retorna dossiê super se o CPF bater
+            }
+        }
+        return new Error("Nenhum dossiê super encontrado para o CPF fornecido.");
+    }
     
-                    if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-    
-                    if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                        return [superDossie[i], 1]
-                    }
+    // 3. Quando existem dossiês normais e super
+    if (normalDossie && superDossie) {
+        console.log('-> DOSPREV: ARBELOA (Dossiês normais e super)');
 
-                 } else if (objetoDosprevSuper && !objetoDosprevNormal){
+        let dossieNormalEncontrado: any = null;
+        let dossieSuperEncontrado: any = null;
+        let posicaoNormalEncontrado: number = -1;
+        let posicaoSuperEncontrado: number = -1;
 
-                     const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
-     
-                     if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-     
-                     if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                         return [normalDossie[i], 0]
-                     }    
+        // Busca CPF no array de dossiês normais
+        for (let i = 0; i < normalDossie.length; i++) {
+            if (!validarDossie(normalDossie[i])) {
+                console.warn(`Alerta: Dossiê normal inválido detectado na posição ${i}. Continuando a busca.`);
+                continue;
+            }
 
+            if (await verificarCpfCorrespondente(normalDossie[i], cpf, 'normal', cookie)) {
+                dossieNormalEncontrado = normalDossie[i];
+                posicaoNormalEncontrado = i;
+                break; // Para ao encontrar o CPF correspondente
+            }
+        }
 
-                 } else {
+        // Busca CPF no array de dossiês super
+        for (let i = 0; i < superDossie.length; i++) {
+            if (!validarDossie(superDossie[i])) {
+                console.warn(`Alerta: Dossiê super inválido detectado na posição ${i}. Continuando a busca.`);
+                continue;
+            }
 
+            if (await verificarCpfCorrespondente(superDossie[i], cpf, 'super', cookie)) {
+                dossieSuperEncontrado = superDossie[i];
+                posicaoSuperEncontrado = i;
+                break; // Para ao encontrar o CPF correspondente
+            }
+        }
 
-                    if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
-                        try {
-                            const cpfDosprev = await getCPFDosPrevNormal(normalDossie[i], cookie)
+        // Se encontrarmos dossiês em ambos os arrays, comparamos pelo número sequencial
+        if (dossieNormalEncontrado && dossieSuperEncontrado) {
+            if (compararDossiesPorSequencial(dossieNormalEncontrado, dossieSuperEncontrado) > 0) {
+                console.log(`Dossiê normal retornado da posição ${posicaoNormalEncontrado}, ${dossieNormalEncontrado.numeracaoSequencial} do array normal.`);
+                return [dossieNormalEncontrado, 0]; // Retorna o dossiê normal se for mais atual
+            } else {
+                console.log(`Dossiê super retornado da posição ${posicaoSuperEncontrado}, ${dossieSuperEncontrado.numeracaoSequencial} do array super.`);
+                return [dossieSuperEncontrado, 1]; // Retorna o dossiê super se for mais atual
+            }
+        }
 
-                            if(!cpfDosprev) throw new Error("cpf com falha na pesquisa dosprev")
-        
-                            if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()) {
-                                return [normalDossie[i], 0]
-                            }  
-                        } catch (error) {
-                            console.error(`Erro no documento ${normalDossie[i]}: ${error.message}`)
-                        }
-                
-                          
-                         // SHEVCHENKO: se não retornar pelo if de cima é um SHEVCHENKO (só que SUPER).
-                        const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
-    
-                        if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-    
-                        if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()){
-                            return [superDossie[i], 1]
-                        }
-        
-                    }else{
-                        
-                        try {
-                            const cpfDosprev = await getCPFDosPrevSuper(superDossie[i], cookie)
-                            console.log(cpfDosprev)
-                            
-                            if(!cpfDosprev) {
-                                throw new Error("cpf com falha na pesquisa dosprev")
-                            }
-            
-                            if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()){
-                                return [superDossie[i], 1]
-                            }    
-                        } catch (error) {
-                            console.error(`Erro no documento ${superDossie[i]}: ${error.message}`)
-                        }
+         // Se encontrarmos dossiê apenas no array normal
+         if (dossieNormalEncontrado) {
+            console.log(`Dossiê normal retornado da posição ${posicaoNormalEncontrado}, ${dossieNormalEncontrado.numeracaoSequencial} do array normal.`);
+            return [dossieNormalEncontrado, 0]; // Retorna o dossiê normal
+        }
 
-                    }
+        // Se encontrarmos dossiê apenas no array super
+        if (dossieSuperEncontrado) {
+            console.log(`Dossiê super retornado da posição ${posicaoSuperEncontrado}, ${dossieSuperEncontrado.numeracaoSequencial} do array super.`);
+            return [dossieSuperEncontrado, 1]; // Retorna o dossiê super
+        }
 
-                 }
-     
-             }
-     
-     
-             for(let i = 0; i < normalDossie.length; i++){
-     
-                 let objetoDosprev =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id)
-     
-                 if(objetoDosprev){
-                     return new Error("DOSPREV COM FALHA NA PESQUISA")
-                 }
-                 
-                 
-                 const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
-     
-                 if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-     
-                 if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                     return [normalDossie[i], 0]
-                 }    
-     
-             }
-     
-     
-         } else {
-            console.log('+ ARBELOA DEPORTIVO')
+        // Se nenhum dossiê foi encontrado em ambos os arrays
+        return new Error("Nenhum dossiê encontrado para o CPF fornecido.");
+    }
 
-            const superDossieNaoSorted = superDossie.sort((a, b) => b.numeracaoSequencial - a.numeracaoSequencial)
-
-
-            const superDossieSorted = superDossie.sort((a, b) => a.numeracaoSequencial - b.numeracaoSequencial)
-
-            
-
-             for(let i=0; i < normalDossie.length; i++){
-                
-                
-                 let objetoDosprevNormal =  (normalDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id) 
-
-                 if(objetoDosprevNormal){
-                    
-                     return new Error("DOSPREV COM FALHA NA PESQUISA")
-                 }
-     
-                 
-                 let objetoDosprevSuper = (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id)
-     
-                 if(objetoDosprevSuper){
-                     return new Error("DOSPREV COM FALHA NA PESQUISA")
-                 }
-     
-                 
-                 if(normalDossie[i].numeracaoSequencial > superDossie[i].numeracaoSequencial){
-
-                     const cpfDosprev = getCPFDosPrevNormal(normalDossie[i], cookie)
-     
-                     if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-     
-                     if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                         return [normalDossie[i], 0]
-                     }    
-     
-     
-                 }else{
-
-                    const cpfDosprevSuper = await getCPFDosPrevSuper(superDossieNaoSorted[i], cookie)
-
-                    if(!cpfDosprevSuper) return new Error("cpf com falha na pesquisa dosprev")
-
-                    if(cpf.trim() == CorrigirCpfComZeros(cpfDosprevSuper).trim()){
-                        
-                        return [superDossie[i], 1]
-
-                    } else {
-                        
-                        // INZAGHI: inverte e pega o CPF do DOSPREV mais antigo (garantido de ser o do requerente).
-                        const cpfDosprev = await getCPFDosPrevSuper(superDossieSorted[i], cookie)
-
-                        if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-                        
-                        if (cpf.trim() == CorrigirCpfComZeros(( cpfDosprev).trim())) {
-                            return [superDossieSorted[i], 1]
-                        }    
-                    }
-
-                     
-                    // SHEVCHENKO: se não retornar pelo if de cima é um SHEVCHENKO.
-                    const cpfDosprev = await getCPFDosPrevNormal(normalDossie[i], cookie)
-    
-                    if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-
-    
-                    if(cpf.trim() == CorrigirCpfComZeros(cpfDosprev).trim()){
-                        return [normalDossie[i], 0]
-                    }
-
-
-                    // SITUAÇÃO EM QUE NÃO É O PRIMEIRO 1 (ITERAÇÃO)
-
-                    for (let i = 0; i < superDossieNaoSorted.length; i++) {
-                        console.log('+ ARBELOA LIVERPOOL')
-
-                        const cpfDosprevOutro = await getCPFDosPrevSuper(superDossieNaoSorted[i], cookie)
-    
-                        if(!cpfDosprevOutro) return new Error("cpf com falha na pesquisa dosprev")
-                            
-                        if (cpf.trim() == CorrigirCpfComZeros((cpfDosprevOutro).trim())) {
-                            return [superDossieNaoSorted[i], 1]
-                        }  
-                    }
-
-
-
-                 }
-     
-             }
-     
-     
-             for(let i = 0; i < superDossie.length; i++){
-                 let objetoDosprev =  (superDossie[i].documentoJuntado.componentesDigitais.length) <= 0 ||  (!normalDossie[i].documentoJuntado.componentesDigitais[0].id)
-         
-                 if(objetoDosprev){
-                     return new Error("DOSPREV COM FALHA NA PESQUISA")
-                 }
-
-                 const cpfDosprev = getCPFDosPrevSuper(superDossie[i], cookie)
-         
-                 if(!cpfDosprev) return new Error("cpf com falha na pesquisa dosprev")
-         
-                 if(cpf.trim() == CorrigirCpfComZeros((await cpfDosprev).trim())){
-                     return [superDossie[i], 1]
-                 }    
-             }
-     
-     
-     
-     
-     
-         }
-     
-     
-     }
-     
-     
-
-
- }  catch(e){
-    return new Error("DOSPREV COM FALHA NA PESQUISA")
- }     
-
-
- 
-
-
-
-
+    return new Error("Nenhum dossiê fornecido.");
+  } catch(e){
+     return new Error("DOSPREV COM FALHA NA PESQUISA")
+  }
 }

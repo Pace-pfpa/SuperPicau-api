@@ -87,7 +87,7 @@ routerInsertSapiens.post("/getArvoreDocumentoController", async (req, res) => {
     return getArvoreDocumentoController.handle(req, res);
 })
 
-routerInsertSapiens.post("/updateEtiqueta", async (req, res) => {
+routerInsertSapiens.post("/updateEtiqueta", async (req, res) => { 
     return updateEtiquetaController.handle(req, res);
 })
 
