@@ -27,8 +27,6 @@ export class GetInformationDossieForPicaPau {
       const dataSubtrair = 5;
       const DatasAtualEMenocinco: Array<Date> =
         await requerimentos.dataRequerimento(paginaDosprevFormatada, dataSubtrair); 
-      //console.log("data atual menos dezesseis: ", DatasAtualEMenosDezesseis)
-      //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
       if (DatasAtualEMenocinco[0] == null) {
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
@@ -40,7 +38,6 @@ export class GetInformationDossieForPicaPau {
           );
           
         if (verificarDataFinal) {
-          //console.log('emprego?')
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }
@@ -129,8 +126,6 @@ export class GetInformationDossieForPicaPau {
       const dataSubtrair = 16;
       const DatasAtualEMenosDezesseis: Array<Date> =
         await requerimentos.dataRequerimento(paginaDosprevFormatada, dataSubtrair); 
-      //console.log("data atual menos dezesseis: ", DatasAtualEMenosDezesseis)
-      //console.log("Data Requerimento: " + DatasAtualEMenosDezesseis.length);
       if (DatasAtualEMenosDezesseis[0] == null) {
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
@@ -142,7 +137,6 @@ export class GetInformationDossieForPicaPau {
           );
           
         if (verificarDataFinal) {
-          //console.log('emprego?')
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }

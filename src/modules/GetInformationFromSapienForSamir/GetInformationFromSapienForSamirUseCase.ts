@@ -38,7 +38,6 @@ import { impeditivosHtml } from '../CreateHtmlForLoas';
 import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
 import { IMinutasDTO } from '../../DTO/MinutaDTO';
 import { createDocumentoUseCase } from '../CreateDocumento';
-import { error } from 'console';
  
 export class GetInformationFromSapienForSamirUseCase {
     
@@ -62,7 +61,6 @@ export class GetInformationFromSapienForSamirUseCase {
         try {
             let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
             console.log("SÓ OS LOUCOS SABEM")
-            //console.log(tarefas)
             nupInicio = tarefas[0].pasta.NUP
 
             let VerificarSeAindExisteProcesso: boolean = true;
