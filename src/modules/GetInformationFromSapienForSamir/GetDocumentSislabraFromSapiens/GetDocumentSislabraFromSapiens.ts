@@ -7,6 +7,7 @@ import { getEmpresa } from "./SislabraBusiness/GetEmpresaSislabra";
 
 export class GetDocumentSislabraFromSapiens{
     async execute(paginaformatada: string, indentificadorDocumento: string): Promise<string>{
+        console.log(indentificadorDocumento);
        try{
         let response = "";
 
@@ -29,6 +30,7 @@ export class GetDocumentSislabraFromSapiens{
         }
 
         const GetImoveisRuraisSislabra = await getImoveisRurais(paginaformatada);
+        console.log(GetImoveisRuraisSislabra)
         if(GetImoveisRuraisSislabra && indentificadorDocumento == 'AUTOR'){
             response = response + " IMOVEIS RURAIS AUTOR -"
         }else if(GetImoveisRuraisSislabra && indentificadorDocumento == 'CONJUGE'){

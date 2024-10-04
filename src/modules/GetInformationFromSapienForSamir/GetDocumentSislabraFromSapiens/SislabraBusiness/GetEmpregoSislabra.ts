@@ -1,12 +1,11 @@
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
 
 export async function getEmpregoSislabra(paginaSislabra: string){
-    ///html/body/div/main/div/div[8]/table/tbody/tr[2]/td[8]
-    ///html/body/div/main/div/div[8]/table/tbody/tr[3]/td[8]
-    ///html/body/div/main/div/div[8]/table/tbody/tr[2]/td[5]
+
     let contadorWhile = true;
     let contadorXpath = 2;
     while(contadorWhile){
+        console.log("calma pae")
         const salarioContradoXpath = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[8]`)
         const ocupacao = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[5]`)
        
@@ -32,6 +31,11 @@ export async function getEmpregoSislabra(paginaSislabra: string){
             
         }
         contadorXpath = contadorXpath + 1
+
+        if (contadorXpath > 7) {
+            console.log('Máximo de tentativas alcançado (Emprego Sislabra)')
+            return false;
+        }
         
     }
 }

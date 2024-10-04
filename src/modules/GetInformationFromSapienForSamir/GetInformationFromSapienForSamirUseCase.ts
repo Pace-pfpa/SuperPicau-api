@@ -845,6 +845,7 @@ export class GetInformationFromSapienForSamirUseCase {
                                 }
                             }
                         });
+
     
                        if(paginaSislabraConjuge && paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao){
                             if(paginaSislabraConjugeCasoNeoExistaOModeloDeBuscaPadrao.numeracaoSequencial > paginaSislabraConjuge.numeracaoSequencial){
@@ -860,20 +861,17 @@ export class GetInformationFromSapienForSamirUseCase {
                         if(paginaSislabraPoloAtivo && paginaSislabraConjuge){
                             const idSislabraParaPesquisaAutor = paginaSislabraPoloAtivo.documentoJuntado.componentesDigitais[0].id;
                             const parginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaAutor });
-    
                             const paginaSislabraFormatadaAutor = new JSDOM(parginaSislabraAutor);
-    
                             const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaAutor, "AUTOR")
                             response = response + sislabraAutor
     
     
                             const idSislabraParaPesquisaConjuge = paginaSislabraConjuge.documentoJuntado.componentesDigitais[0].id;
                             const parginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaConjuge });
-    
                             const paginaSislabraFormatadaConjuge = new JSDOM(parginaSislabraConjuge);
     
                             const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaSislabraFormatadaConjuge, "CONJUGE")
-    
+
                             response = response + sislabraConjuge
     
                         }else if(paginaSislabraPoloAtivo && !paginaSislabraConjuge){
@@ -914,11 +912,13 @@ export class GetInformationFromSapienForSamirUseCase {
                         //console.log(haveSislabraRural)
 
 
+                        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
                         // ETIQUETA COMO PROCESSO LIMPO, OU AVISA SE FALTA ALGUM DOCUMENTO (RURAL E MATERNIDADE)
                         if (isRural) {
                             console.log("-> IT'S A RURAL")
                             if (response == " *RURAL* ") {
+                                await sleep(5000);
                                 await updateEtiquetaUseCase.execute({ cookie, etiqueta: `PROCESSO LIMPO`, tarefaId })
                                 return {impeditivos: true} 
                             } else if (haveSislabraRural) {
