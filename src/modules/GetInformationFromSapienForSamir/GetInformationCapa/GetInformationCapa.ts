@@ -1,4 +1,5 @@
 import axios from "axios";
+require('dotenv').config();
 
 export class GetInformationCapa{
     constructor(){};
@@ -53,8 +54,10 @@ export class GetInformationCapa{
     }
 
     async buscarAdvogados(): Promise<any[]> {
+        let baseUrl = process.env.CONTROLER_IP;
+        let port = process.env.CONTROLER_PORT;
         try {
-            const response = await axios.get(`${process.env.CONTROLE_USER}register/advogados`)
+            const response = await axios.get(`${baseUrl}:${port}/register/advogados`)
             const newArrayAdvogados = response.data.map((advogado) => (
                 advogado.nome
             ))
