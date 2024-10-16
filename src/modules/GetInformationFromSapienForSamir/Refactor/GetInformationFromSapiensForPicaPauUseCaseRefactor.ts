@@ -12,7 +12,9 @@ import { buscarArvoreDeDocumentos } from "./helps/buscarArvoreDeDocumentos";
 import { processarDossie } from "./helps/processarDossie";
 import { verificarECorrigirCapa } from "./helps/verificarECorrigirCapa";
 import { atualizarEtiquetaAviso } from "./utils/atualizarEtiquetaAviso";
+import { buscarDossieSocial } from "./utils/buscarDossieSocial";
 import { verificarEAtualizarDossie } from "./utils/verificarEAtualizarDossie";
+import { verificarGeracaoDossie } from "./utils/verificarGeracaoDossie";
 
 export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
@@ -62,41 +64,38 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             const { arrayDeDossiesNormais, arrayDeDossiesSuper } = await processarDossie(arrayDeDocumentos);
             if (!arrayDeDossiesNormais && !arrayDeDossiesSuper) {
                 await atualizarEtiquetaAviso(cookie, "DOSPREV NÃO EXISTE", data.tarefa.id)
-                return { warning: `DOSPREV NÃO EXISTE -` };
+                return { warning: `DOSPREV NÃO EXISTE` };
             }
 
             // 7. Identificação do dossiê do requerente (normal, super ou inexistente)
-            const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie, data.tarefa.id);
+            const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
             
             if (!dosprevPoloAtivo) {
                 await atualizarEtiquetaAviso(cookie, "DOSPREV NÃO EXISTE", data.tarefa.id);
-                return { warning: `DOSPREV NÃO EXISTE -` };
+                return { warning: `DOSPREV NÃO EXISTE` };
             }
 
-            // 8. Busca do cadúnico
+            // 8. Verificação de falhas na geração do dossiê
+            const falhaNaGeracao = await verificarGeracaoDossie(dosprevPoloAtivo, cookie);
+            if (falhaNaGeracao instanceof Error) {
+                await atualizarEtiquetaAviso(cookie, "DOSPREV COM FALHA NA GERAÇÃO", data.tarefa.id);
+                return { warning: "DOSPREV COM FALHA NA GERAÇÃO" }
+            }
 
+            // 9. Busca do cadúnico
             let dossieSocialInfo = null;
-            const dossieSocial = arrayDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla === "DOSOC");
-
-            if (dossieSocial) {
-                const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
-                const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
-
-                const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial);
-                const medicamentos = await cadUnico.execute(paginaDossieSocialFormatada);
-
-                const gastoComMedicamentos = medicamentos !== '0.00';
-                const grupoFamiliarCpfs = await cadUnico.grupoFamiliar(paginaDossieSocialFormatada, cpfCapa);
-
-                dossieSocialInfo = { gastoComMedicamentos, grupoFamiliarCpfs };
+            dossieSocialInfo = await buscarDossieSocial(arrayDeDocumentos, cookie, cpfCapa);
+            if (dossieSocialInfo instanceof Error) {
+                dossieSocialInfo = null;
             }
 
-            // 9. Montar um objeto com todas as informações necessárias
-
+            // 10. Montar um objeto com todas as informações necessárias
             if (tipo_triagem === 2) {
                 const informacoesProcesso: IInformacoesProcessoLoasDTO = {
                     usuario_id,
+                    cookie,
                     tipo_triagem,
+                    capaFormatada,
                     cpfCapa,
                     arrayDeDocumentos,
                     dosprevPoloAtivo,
@@ -109,7 +108,9 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             } else {
                 const informacoesProcesso: IInformacoesProcessoDTO = {
                     usuario_id,
+                    cookie,
                     tipo_triagem,
+                    capaFormatada,
                     cpfCapa,
                     arrayDeDocumentos,
                     dosprevPoloAtivo,
@@ -125,7 +126,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     }
 
     async identificarDossieAtivo(
-        arrayDeDossiesNormais: any[], arrayDeDossiesSuper: any[], cpfCapa: string, cookie: string, tarefaId: string
+        arrayDeDossiesNormais: any[], arrayDeDossiesSuper: any[], cpfCapa: string, cookie: string
     ): Promise<{ dosprevPoloAtivo: any, isDosprevPoloAtivoNormal: boolean } | any> {
 
         let dosprevPoloAtivo: any = null;
@@ -133,7 +134,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
 
         try {
             if (arrayDeDossiesNormais && !arrayDeDossiesSuper) {
-                    const dossieIsvalid = await verificarEAtualizarDossie(cpfCapa, cookie, arrayDeDossiesNormais, null, tarefaId);
+                    const dossieIsvalid = await verificarEAtualizarDossie(cpfCapa, cookie, arrayDeDossiesNormais, null);
     
                     if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                         throw new Error('DOSPREV NÃO EXISTE');
@@ -143,7 +144,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     isDosprevPoloAtivoNormal = true;
     
             } else if (!arrayDeDossiesNormais && arrayDeDossiesSuper) {
-                    const dossieIsvalid = await verificarEAtualizarDossie(cpfCapa, cookie, null, arrayDeDossiesSuper, tarefaId);
+                    const dossieIsvalid = await verificarEAtualizarDossie(cpfCapa, cookie, null, arrayDeDossiesSuper);
     
                     if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                         throw new Error('DOSPREV NÃO EXISTE');
@@ -153,7 +154,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     isDosprevPoloAtivoNormal = false;
     
             } else {
-                    const dossieIsvalid = await verificarEAtualizarDossie(cpfCapa, cookie, arrayDeDossiesNormais, arrayDeDossiesSuper, tarefaId);
+                    const dossieIsvalid = await verificarEAtualizarDossie(cpfCapa, cookie, arrayDeDossiesNormais, arrayDeDossiesSuper);
     
                     if (dossieIsvalid instanceof Error || !dossieIsvalid) {
                         throw new Error('DOSPREV NÃO EXISTE');
