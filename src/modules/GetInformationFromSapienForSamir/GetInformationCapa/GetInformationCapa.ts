@@ -1,9 +1,15 @@
 import axios from "axios";
 require('dotenv').config();
+import { JSDOM } from 'jsdom';
 
 export class GetInformationCapa{
     constructor(){};
     async ImpedimentosCapa(capaHTML: any): Promise<boolean>{
+
+        if (capaHTML instanceof JSDOM) {
+            capaHTML = capaHTML.serialize();
+        }
+
         const novoArray = await this.buscarAdvogados();
 
         // const arrayAdvogados: Array<string> = ["SABRINA DE PONTES ARAUJO",
