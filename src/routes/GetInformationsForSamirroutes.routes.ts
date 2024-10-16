@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { getInformationFromSapienForSamirController } from "../modules/GetInformationFromSapienForSamir";
+import { getInformationFromSapiensForPicaPauControllerRefactor } from "../modules/GetInformationFromSapienForSamir/Refactor";
 import { atualizacaoDossiePrevidenciarioController } from "../modules/AtualizacaoDossiePrevidenciario";
 import { verificadorValidadeDossiePrevidenciarioController } from '../modules/VerificadorValidadeDossiePrevidenciario/index';
 import { verificadorDeDupliciadeController } from "../modules/VerificadorDeDupliciade";
 import { createInterestedController } from "../modules/CreateInterested";
 
-//const sessao = request.session();
 
 export const routerGetInformationsForSamir = Router();
 
@@ -35,9 +35,16 @@ export const routerGetInformationsForSamir = Router();
  *         description: The request error
  */
 
+// ALTERADA PARA O TESTE DE REFACTOR
 
+// ORIGINAL
+// routerGetInformationsForSamir.post("/getInformationFromSapienForSamir", async (req, res) => {
+//     return getInformationFromSapienForSamirController.handle(req, res);
+// })
+
+// REFACTOR
 routerGetInformationsForSamir.post("/getInformationFromSapienForSamir", async (req, res) => {
-    return getInformationFromSapienForSamirController.handle(req, res);
+    return getInformationFromSapiensForPicaPauControllerRefactor.handle(req, res);
 })
 
 /**
