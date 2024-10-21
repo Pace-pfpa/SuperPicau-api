@@ -3,7 +3,7 @@ import { getDocumentoUseCase } from "../../../GetDocumento";
 import { getInformationDossieForPicaPau } from "../../GetInformationFromDossieForPicaPau";
 
 export class NormalDossie {
-    async buscarImpedimentosForRural(dosprevPoloAtivo: any, cookie: string) {
+    async buscarImpedimentosForRural(dosprevPoloAtivo: any, cookie: string): Promise<string[]> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
@@ -13,7 +13,7 @@ export class NormalDossie {
         return impeditivosRural.split('-');
     }
 
-    async burcarImpedimentosForMaternidade(dosprevPoloAtivo: any, cookie: string) {
+    async burcarImpedimentosForMaternidade(dosprevPoloAtivo: any, cookie: string): Promise<string[]> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
@@ -21,5 +21,15 @@ export class NormalDossie {
         const impeditivosMaternidade = await getInformationDossieForPicaPau.impedimentosMaternidade(paginaDosPrevFormatada, paginaDosPrev);
 
         return impeditivosMaternidade.split('-');
+    }
+
+    async buscarImpedimentosForLoas(dosprevPoloAtivo: any, cookie: string): Promise<string[]> {
+        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+
+        const impeditivosLoas = await getInformationDossieForPicaPau.impeditivoLoas(paginaDosPrevFormatada);
+
+        return impeditivosLoas.split('-');
     }
 }

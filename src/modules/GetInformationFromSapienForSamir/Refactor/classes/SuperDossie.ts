@@ -22,4 +22,14 @@ export class SuperDossie {
 
         return impeditivosMaternidade.split('-');
     }
+
+    async buscarImpedimentosForLOAS(dosprevPoloAtivo: any, cookie: string) {
+        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+
+        const impeditivosLoas = await superDossie.impeditivosLoas(paginaDosPrevFormatada, paginaDosPrev);
+
+        return impeditivosLoas.split('-');
+    }
 }

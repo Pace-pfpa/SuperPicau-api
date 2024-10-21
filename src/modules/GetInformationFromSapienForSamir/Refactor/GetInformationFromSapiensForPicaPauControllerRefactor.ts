@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { IGetInformationsFromSapiensDTO } from '../../../DTO/GetInformationsFromSapiensDTO';
 import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInformationFromSapiensForPicaPauUseCaseRefactor';
 import { BuscarImpedimentosUseCase } from '../BuscarImpedimentos/BuscarImpedimentosUseCase';
+import { finalizarTriagem } from './utils/finalizarTriagem';
+import { Console } from 'console';
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
@@ -18,7 +20,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                 try {
                     const result = await this.getInformationFromSapiensForPicaPauUseCaseRefactor.execute(data);
 
-                    if (result.warning) {
+                    if ('warning' in result) {
                         return resolve(response.status(200).json(result))
                     }
 
@@ -30,9 +32,12 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                         impedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
                     }
 
-                    resolve(response.status(200).json(impedimentos));
+                    const processo = await finalizarTriagem(impedimentos, result[0].cookie, result[0].tarefaId);
+
+                    resolve(response.status(200).json(processo));
 
                 } catch (error) {
+                    console.log("Farfan", error)
                     return response.status(400).json({
                         message: error.message || "Unexpected error"
                     });
