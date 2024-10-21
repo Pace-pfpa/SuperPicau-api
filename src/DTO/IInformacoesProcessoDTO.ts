@@ -1,5 +1,5 @@
 export interface IInformacoesProcessoDTO {
-    usuario_id: string,
+    tarefaId: number,
     cookie: string,
     tipo_triagem: Number,
     capaFormatada: string,
@@ -7,4 +7,6 @@ export interface IInformacoesProcessoDTO {
     arrayDeDocumentos: any[],
     dosprevPoloAtivo: any[],
     isDosprevPoloAtivoNormal: boolean,
+    sislabraPoloAtivo: any,
+    sislabraConjuge: any
 }

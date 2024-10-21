@@ -67,9 +67,6 @@ export class GetDocumentSislabraFromSapiensLoas {
             response += " AERONAVE GF -"
         }
 
-        console.log("----RESPONSE LABRA")
-        console.log(response)
-
         return response
 
 
