@@ -1,4 +1,5 @@
 import { IInformacoesProcessoDTO } from "./IInformacoesProcessoDTO"
+import { IInfoUploadDTO } from "./IInfoUploadDTO";
 export interface IInformacoesProcessoLoasDTO {
     tarefaId: number,
     tarefaPastaID: number;
@@ -6,7 +7,7 @@ export interface IInformacoesProcessoLoasDTO {
     tipo_triagem: Number,
     capaFormatada: string,
     cpfCapa: string,
-    arrayDeDocumentos: any[],
+    infoUpload: IInfoUploadDTO,
     dosprevPoloAtivo: any[],
     isDosprevPoloAtivoNormal: boolean,
     sislabraPoloAtivo: any[],
