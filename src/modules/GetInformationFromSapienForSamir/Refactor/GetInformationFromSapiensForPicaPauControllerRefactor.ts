@@ -3,7 +3,6 @@ import { IGetInformationsFromSapiensDTO } from '../../../DTO/GetInformationsFrom
 import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInformationFromSapiensForPicaPauUseCaseRefactor';
 import { BuscarImpedimentosUseCase } from '../BuscarImpedimentos/BuscarImpedimentosUseCase';
 import { finalizarTriagem } from './utils/finalizarTriagem';
-import { Console } from 'console';
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
@@ -24,7 +23,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                         return resolve(response.status(200).json(result))
                     }
 
-                    let impedimentos: any;
+                    let impedimentos: string[];
 
                     if (result[1] === 'LOAS') {
                         impedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
@@ -32,7 +31,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                         impedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
                     }
 
-                    const processo = await finalizarTriagem(impedimentos, result[0].cookie, result[0].tarefaId);
+                    const processo = await finalizarTriagem(impedimentos, result[0]);
 
                     resolve(response.status(200).json(processo));
 
@@ -47,4 +46,3 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
         })
     }
 }
-

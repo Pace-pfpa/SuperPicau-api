@@ -2,6 +2,7 @@ import { IGetArvoreDocumentoDTO } from "../../../DTO/GetArvoreDocumentoDTO";
 import { IGetInformationsFromSapiensDTO } from "../../../DTO/GetInformationsFromSapiensDTO";
 import { IInformacoesProcessoDTO } from "../../../DTO/IInformacoesProcessoDTO";
 import { ExecuteReturnType, IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
+import { IInfoUploadDTO } from "../../../DTO/IInfoUploadDTO";
 import { ResponseArvoreDeDocumento } from "../../../sapiensOperations/response/ResponseArvoreDeDocumento";
 import { getTarefaUseCase } from "../../GetTarefa";
 import { buscarTableCpf } from "../helps/procurarTableCpf";
@@ -23,6 +24,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
         // 1. Autenticação e obtenção de usuário
         const { cookie, usuario } = await autenticarUsuario(data);
         const usuario_id = `${usuario[0].id}`;
+        const usuario_nome = `${usuario[0].nome}`;
         
         try {
 
@@ -91,11 +93,22 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             if (dossieSocialInfo instanceof Error) {
                 dossieSocialInfo = null;
             }
+
+            // 10. Coletar informações de upload minuta
+            const infoUpload: IInfoUploadDTO = {
+                usuario_nome: usuario_nome,
+                numeroProcesso: `${tarefas[0].pasta.processoJudicial.numero}`,
+                nup: data.tarefa.pasta.NUP,
+                tarefa_id: `${tarefas[0].id}`,
+                pasta_id: `${tarefas[0].pasta.id}`,
+                usuario_setor: `${tarefas[0].setorResponsavel_id}`,
+                interessados: tarefas[0].pasta.interessados
+            }
             
-            // 10. Montar um objeto com todas as informações necessárias
+            // 11. Montar um objeto com todas as informações necessárias
             if (tipo_triagem === 2) {
                 
-                // 10. Busca do SISLABRA LOAS
+                // 12. Busca do SISLABRA LOAS
                 const { sislabraPoloAtivo, sislabraGF } = await buscarSislabraLOAS(arrayDeDocumentos);
                 if (!sislabraPoloAtivo) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
@@ -109,7 +122,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     tipo_triagem,
                     capaFormatada,
                     cpfCapa,
-                    arrayDeDocumentos,
+                    infoUpload,
                     dosprevPoloAtivo,
                     isDosprevPoloAtivoNormal,
                     sislabraPoloAtivo,
@@ -122,7 +135,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return [informacoesProcesso, 'LOAS'];
             } else {
 
-                // 11. Busca do SISLABRA NÃO LOAS
+                // 13. Busca do SISLABRA NÃO LOAS
                 const { sislabraPoloAtivo, sislabraConjuge } = await buscarSislabraRuralMaternidade(arrayDeDocumentos);
                 if (!sislabraPoloAtivo) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
@@ -135,7 +148,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     tipo_triagem,
                     capaFormatada,
                     cpfCapa,
-                    arrayDeDocumentos,
+                    infoUpload,
                     dosprevPoloAtivo,
                     isDosprevPoloAtivoNormal,
                     sislabraPoloAtivo,

@@ -1,9 +1,21 @@
+import { IInformacoesProcessoDTO } from "../../../../DTO/IInformacoesProcessoDTO";
+import { IInformacoesProcessoLoasDTO } from "../../../../DTO/IInformacoesProcessoLoasDTO";
 import { atualizarEtiquetaImpeditivo } from "./atualizarEtiquetaImpeditivo";
 import { atualizarEtiquetaProcessoLimpo } from "./atualizarEtiquetaProcessoLimpo";
+import { subirMinuta } from "./subirMinuta";
 
-export async function finalizarTriagem(impeditivos: string[], cookie: string, tarefaId: number) {
+export async function finalizarTriagem(impeditivos: string[], informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO): Promise<{ impeditivos: boolean }> {
+
+    try {
+        await subirMinuta(informacoesProcesso, impeditivos);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    } catch (error) {
+        console.error("Erro na função finalizarTriagem ao subir a minuta:", error);
+    }
+
+
     if (isProcessoLimpo(impeditivos)) {
-        await atualizarEtiquetaProcessoLimpo(cookie, tarefaId);
+        await atualizarEtiquetaProcessoLimpo(informacoesProcesso.cookie, informacoesProcesso.tarefaId);
         return {impeditivos: true}
     } else {
 
@@ -16,15 +28,16 @@ export async function finalizarTriagem(impeditivos: string[], cookie: string, ta
         const impeditivosString = relevantes.join(' - ');
 
         if (isRural) {
-            await atualizarEtiquetaImpeditivo(cookie, `RURAL IMPEDITIVOS: ${impeditivosString}`, tarefaId);
+            await atualizarEtiquetaImpeditivo(informacoesProcesso.cookie, `RURAL IMPEDITIVOS: ${impeditivosString}`, informacoesProcesso.tarefaId);
         } else if (isMaternidade) {
-            await atualizarEtiquetaImpeditivo(cookie, `MATERNIDADE IMPEDITIVOS: ${impeditivosString}`, tarefaId);
+            await atualizarEtiquetaImpeditivo(informacoesProcesso.cookie, `MATERNIDADE IMPEDITIVOS: ${impeditivosString}`, informacoesProcesso.tarefaId);
         } else if (isLOAS) {
-            await atualizarEtiquetaImpeditivo(cookie, `LOAS IMPEDITIVOS: ${impeditivosString}`, tarefaId);
+            await atualizarEtiquetaImpeditivo(informacoesProcesso.cookie, `LOAS IMPEDITIVOS: ${impeditivosString}`, informacoesProcesso.tarefaId);
         }
 
         return {impeditivos: false}
     }
+    
 }
 
 function isProcessoLimpo(impeditivos: string[]): boolean {
