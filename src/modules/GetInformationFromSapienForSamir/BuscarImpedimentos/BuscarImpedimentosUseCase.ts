@@ -1,5 +1,6 @@
 import { IInformacoesProcessoDTO } from "../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
+import { IObjInfoImpeditivosRM } from "../../../DTO/IObjInfoImpeditivosRM";
 import { arrayInteressados } from "../../CreateInterested/Helps/ArrayInteressados";
 import { GetInteressadosReq } from "../../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq";
 import { getInformationCapa } from "../GetInformationCapa";
@@ -15,7 +16,7 @@ import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/imp
 
 export class BuscarImpedimentosUseCase {
 
-    async procurarImpedimentos(informacoesProcesso: IInformacoesProcessoDTO): Promise<string[]> {
+    async procurarImpedimentos(informacoesProcesso: IInformacoesProcessoDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
         const {
             cookie,
             tipo_triagem,
@@ -39,38 +40,38 @@ export class BuscarImpedimentosUseCase {
             if (isDosprevPoloAtivoNormal) {  
                 const impedimentosBusca = await normalDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
                 console.log("RURAL NORMAL")
                 console.log(impedimentos)
 
-                return impedimentos;
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
             } else {
                 const impedimentosBusca = await superDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
                 console.log("RURAL SUPER")
                 console.log(impedimentos)
 
-                return impedimentos;
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
             }
         } else {
 
             if (isDosprevPoloAtivoNormal) {
                 const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
                 console.log("MATERNIDADE NORMAL")
                 console.log(impedimentos)
 
-                return impedimentos;
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
             } else {
                 const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
                 console.log("MATERNIDADE SUPER")
                 console.log(impedimentos)
 
-                return impedimentos;
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
             }
         }
     }
@@ -81,7 +82,6 @@ export class BuscarImpedimentosUseCase {
             cookie,
             capaFormatada,
             cpfCapa,
-            arrayDeDocumentos,
             dosprevPoloAtivo,
             isDosprevPoloAtivoNormal,
             sislabraPoloAtivo,

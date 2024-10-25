@@ -1,13 +1,13 @@
-// import { Buffer } from 'node:buffer';
-import { PreparingForJSON } from '../../helps/PreparingForJSON';
-import axios from "axios";
-import { RequestHeaderUploadArquivo } from "../../sapiensOperations/resquest/RequestHeaderUploadArquivo";
-import { RequestHeaders } from '../../sapiensOperations/resquest/RequestHeaders';
 import { requestSapiens } from './requestSapiens';
 
 export async function RequestSapiens(coockie: string, operation:string): Promise<any> {
     const response = await requestSapiens(coockie,operation); 
-    //console.log("RequestSapiens: ", response[0].result.records )
+
+    if (!response || !Array.isArray(response) || response.length === 0 || !response[0].result || !response[0].result.records) {
+        console.error("Resposta inválida da API Visão:", response);
+        throw new Error("Resposta inválida da API Visão.");
+    }
+
     return response[0].result.records;
 }
 // async function requestSapiens(cookie: string, payload: string ): Promise<any>{

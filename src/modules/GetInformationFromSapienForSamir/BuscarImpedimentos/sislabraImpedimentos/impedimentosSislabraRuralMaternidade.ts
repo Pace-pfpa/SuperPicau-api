@@ -2,7 +2,7 @@ const { JSDOM } = require('jsdom');
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { getDocumentSislabraFromSapiens } from "../../GetDocumentSislabraFromSapiens";
 
-export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: any, documentoConjuge: any, cookie: string): Promise<string[] | null> {
+export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: any, documentoConjuge: any, cookie: string): Promise<string[]> {
     let response = '';
 
     if (documentoPoloAtivo && documentoConjuge) {

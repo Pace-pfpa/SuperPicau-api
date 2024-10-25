@@ -1,7 +1,8 @@
+import { IImpeditivoLitispendencia } from "../../../../DTO/IImpeditivosRM";
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
 
-export async function buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada: any, numeroUnicoCnj: string): Promise<any> {
- 
+export async function buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada: any, numeroUnicoCnj: string): Promise<IImpeditivoLitispendencia> {
+    let impeditivoLitispendencia: string | null = null;
 
     
     ///html/body/div/div[5]/table/tbody/tr[2]/td[1]
@@ -15,16 +16,19 @@ export async function buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada: any
         if(processoJudicial !== null && processoJudicial != undefined && processoJudicial.trim().length > 0){
             
             if(processoJudicial && processoJudicial.trim().replace(/\D/g, '') !== numeroUnicoCnj.trim().replace(/\D/g, '')){
-                return true;
+                impeditivoLitispendencia = getXPathText(paginaDosprevFormatada, `/html/body/div/div[5]/table/tbody/tr[${i}]`).trim();
+                return {
+                    haveLitispendencia: true,
+                    litispendencia: impeditivoLitispendencia
+                }
               }
         }
 
+    }
 
-
-
-
-
-
+    return {
+        haveLitispendencia: false,
+        litispendencia: impeditivoLitispendencia
     }
 
 }

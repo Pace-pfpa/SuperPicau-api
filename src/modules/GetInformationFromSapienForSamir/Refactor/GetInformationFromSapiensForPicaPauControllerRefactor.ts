@@ -15,7 +15,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
         const data: IGetInformationsFromSapiensDTO = request.body;
         console.log("CALL HERE REFACTOR")
         return new Promise((resolve, reject) => {
-            setTimeout( async() => {
+            setTimeout(async() => {
                 try {
                     const result = await this.getInformationFromSapiensForPicaPauUseCaseRefactor.execute(data);
 
@@ -28,7 +28,8 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     if (result[1] === 'LOAS') {
                         impedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
                     } else {
-                        impedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
+                        const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
+                        impedimentos = buscaDeImpedimentos.impedimentos;
                     }
 
                     const processo = await finalizarTriagem(impedimentos, result[0]);
@@ -38,10 +39,9 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                 } catch (error) {
                     console.log("Farfan", error)
                     return response.status(400).json({
-                        message: error.message || "Unexpected error"
+                        message: error.message || "Erro inesperado durante a triagem."
                     });
                 }
-
             }, 5000)
         })
     }

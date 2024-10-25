@@ -1,8 +1,7 @@
+import { IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
+import { IObjInfoImpeditivosRM, IReturnImpedimentosRM } from "../../../DTO/IObjInfoImpeditivosRM";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
-import { loasEmpregoDossie, loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
-import { LoasIdadeDossie } from "../loas/Business/Dossie/LoasIdadeDossie";
-import { calcularIdade } from "./DosprevBusiness/GetInformationIdade";
-import { litispedenciaRural, litispendenciaMaternidade } from "./DosprevBusiness/GetInformationLitispendencia";
+import { loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
 import {
   requerimentos,
@@ -15,11 +14,11 @@ export class GetInformationDossieForPicaPau {
   async impedimentosMaternidade(
     paginaDosprevFormatada: any,
     parginaDosPrev: any
-    ): Promise<string> {
+    ): Promise<IReturnImpedimentosRM> {
     let ArrayImpedimentos: string = '';
 
     
-      console.log('-> CAPDEVILA MATERNIDADE')
+    const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
  
 
     try {
@@ -28,16 +27,18 @@ export class GetInformationDossieForPicaPau {
       const DatasAtualEMenocinco: Array<Date> =
         await requerimentos.dataRequerimento(paginaDosprevFormatada, dataSubtrair); 
       if (DatasAtualEMenocinco[0] == null) {
+        objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ";
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
-        const verificarDataFinal: boolean =
+        const verificarDataFinal: IImpeditivoEmpregoRM =
           await dataPrevidencias.Previdenciarias(
             DatasAtualEMenocinco[0],
             DatasAtualEMenocinco[1],
             paginaDosprevFormatada
           );
           
-        if (verificarDataFinal) {
+        if (verificarDataFinal.haveEmprego) {
+          objInfoImpeditivos.emprego = verificarDataFinal.emprego;
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }
@@ -58,11 +59,15 @@ export class GetInformationDossieForPicaPau {
 
 
     const segurado = await seguradoEspecial.handle(parginaDosPrev);
-    const requerimentoAtivo: boolean = await requerimentosAtivos.handle(
+    const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await requerimentosAtivos.handle(
       paginaDosprevFormatada
     );
 
-    if (segurado !== -1 || requerimentoAtivo == true) {
+    if (segurado !== -1) {
+      objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+    } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+      objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
       ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
     }
 
@@ -82,27 +87,27 @@ export class GetInformationDossieForPicaPau {
 
         const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
 
-        const processoJudicial = await buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
+        const processoJudicial: IImpeditivoLitispendencia = await buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
 
-        if(processoJudicial){
+        if(processoJudicial.haveLitispendencia) {
+          objInfoImpeditivos.litispendencia = processoJudicial.litispendencia;
           ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -"
         }
-       /*  const verificarLitispedencia = await litispendenciaMaternidade.funcLitis(
-          paginaDosprevFormatada
-        );
-        
-        if (verificarLitispedencia) {
-          ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA M -";
-        } */
       }
 
 
-      
+      console.log('---OBJETO IMPEDITIVOS MATERNIDADE NORMAL')
+      console.log(objInfoImpeditivos)
     
 
 
 
-    return ArrayImpedimentos + " *MATERNIDADE* ";
+      ArrayImpedimentos = ArrayImpedimentos + " *MATERNIDADE* ";
+      return {
+        arrayDeImpedimentos: ArrayImpedimentos,
+        objImpedimentosRM: objInfoImpeditivos
+      }
+
   }
 
 
@@ -115,11 +120,11 @@ export class GetInformationDossieForPicaPau {
 
   async impeditivosRural(
     paginaDosprevFormatada: any,
-    parginaDosPrev: any):Promise<string> {
+    parginaDosPrev: any):Promise<IReturnImpedimentosRM> {
 
     let ArrayImpedimentos: string = '';
 
-    console.log('-> CAPDEVILA RURAL')
+    const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
 
     try {
 
@@ -127,16 +132,18 @@ export class GetInformationDossieForPicaPau {
       const DatasAtualEMenosDezesseis: Array<Date> =
         await requerimentos.dataRequerimento(paginaDosprevFormatada, dataSubtrair); 
       if (DatasAtualEMenosDezesseis[0] == null) {
+        objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ"
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
-        const verificarDataFinal: boolean =
+        const verificarDataFinal: IImpeditivoEmpregoRM =
           await dataPrevidencias.Previdenciarias(
             DatasAtualEMenosDezesseis[0],
             DatasAtualEMenosDezesseis[1],
             paginaDosprevFormatada
           );
           
-        if (verificarDataFinal) {
+        if (verificarDataFinal.haveEmprego) {
+          objInfoImpeditivos.emprego = verificarDataFinal.emprego;
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }
@@ -148,12 +155,16 @@ export class GetInformationDossieForPicaPau {
 
 
     const segurado = await seguradoEspecial.handle(parginaDosPrev);
-    const requerimentoAtivo: boolean = await requerimentosAtivos.handle(
+    const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await requerimentosAtivos.handle(
       paginaDosprevFormatada
     );
 
-    if (segurado !== -1 || requerimentoAtivo == true) {
+    if (segurado !== -1) {
+      objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
       ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+    } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+      objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
+      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR (Requerimento Ativo) -";
     }
 
 
@@ -172,9 +183,10 @@ export class GetInformationDossieForPicaPau {
 
 
 
-        const processoJudicial = await buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
+        const processoJudicial: IImpeditivoLitispendencia = await buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
         
-        if (processoJudicial) {
+        if (processoJudicial.haveLitispendencia) {
+          objInfoImpeditivos.litispendencia = processoJudicial.litispendencia;
           ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA R-";
         }
       }
@@ -183,12 +195,16 @@ export class GetInformationDossieForPicaPau {
 
 
 
+      console.log('---OBJETO IMPEDITIVOS RURAL NORMAL')
+      console.log(objInfoImpeditivos)
 
 
+      ArrayImpedimentos = ArrayImpedimentos + " *RURAL* ";
 
-
-
-    return ArrayImpedimentos + " *RURAL* "
+      return {
+        arrayDeImpedimentos: ArrayImpedimentos,
+        objImpedimentosRM: objInfoImpeditivos
+      }
   }
 
 

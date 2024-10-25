@@ -53,7 +53,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             // 4. Busca da árvore de documentos
             const arrayDeDocumentos: ResponseArvoreDeDocumento[] | Error = await buscarArvoreDeDocumentos(objectGetArvoreDocumento);
             if (arrayDeDocumentos instanceof Error) {
-                await atualizarEtiquetaAviso(cookie, "DOSPREV COM FALHA NA GERAÇÃO", tarefaId);
+                await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
                 return { warning: "DOSPREV COM FALHA NA PESQUISA" }
             }
 
@@ -61,7 +61,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             const capaFormatada = await verificarECorrigirCapa(data, cookie);
             const cpfCapa = buscarTableCpf(capaFormatada);
             if (!cpfCapa) {
-                await atualizarEtiquetaAviso(cookie, "CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)", tarefaId)
+                await atualizarEtiquetaAviso(cookie, "CPF NÃO ENCONTRADO NA CAPA", tarefaId)
                 return { warning: `CPF NÃO ENCONTRADO -` };
             }
 
@@ -76,7 +76,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
             
             if (!dosprevPoloAtivo) {
-                await atualizarEtiquetaAviso(cookie, "DOSPREV NÃO EXISTE", tarefaId);
+                await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
                 return { warning: `DOSPREV NÃO EXISTE` };
             }
 
