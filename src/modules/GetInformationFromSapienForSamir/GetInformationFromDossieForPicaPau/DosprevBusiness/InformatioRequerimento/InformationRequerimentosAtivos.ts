@@ -1,7 +1,9 @@
+import { IImpeditivoRequerimentoAtivo } from "../../../../../DTO/IImpeditivosRM";
 import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 
 export class DatasRequerimentoAtivo{
-    async handle(parginaDosPrevFormatada: any):Promise<any>{
+    async handle(parginaDosPrevFormatada: any):Promise<IImpeditivoRequerimentoAtivo>{
+        let impedimentoRequerimentoAtivo: string = '';
         //Estrutura para identificar a maior data, e fazer a subtração dela
         let tamanhoColunasRequerimentos = 2;
         const arrayDatas: Array<Date> = [];
@@ -19,13 +21,19 @@ export class DatasRequerimentoAtivo{
                     const xpathColunaRequerimentos = `/html/body/div/div[3]/table/tbody/tr[${t}]`;
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
                     if(xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1){
-                        //console.log("ENTROU")
-                        return true;
+                        impedimentoRequerimentoAtivo = xpathCoulaFormatadoRequerimentos;
+                        return {
+                            haveRequerimentoAtivo: true,
+                            requerimentoAtivo: impedimentoRequerimentoAtivo
+                        }
                     }
                 }
             }
-            return false;
-            
+
+            return {
+                haveRequerimentoAtivo: false,
+                requerimentoAtivo: impedimentoRequerimentoAtivo
+            }
             
     }
     

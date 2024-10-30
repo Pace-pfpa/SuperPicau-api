@@ -1,13 +1,9 @@
-import { response } from "express";
+import { IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../../../DTO/IObjInfoImpeditivosRM";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
-import { calcularIdade } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationIdade";
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
-import { requerimentos, requerimentosAtivos } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformatioRequerimento";
-import { dataPrevidencias } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/InformationPrevidenciarias";
-import { loasEmpregoSuperDossie, loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie, loasIdadeSuperDossie } from "../loas/Business";
+import { loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie, loasIdadeSuperDossie } from "../loas/Business";
 import { buscarTabelaRelacaoDeProcessos } from "./Help/BuscarTabelaRelacaoDeProcessos";
-import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
-import { litispedenciaNewDossieMaternidade, litispedenciaNewDossieRural } from "./SuperDossieBusiness/GetInformationLitispedencia";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
 import { datasRequerimentoAtivoNewDossie, datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformationRequerimento";
 
@@ -16,13 +12,10 @@ export class SuperDossie {
     async impedimentosMaternidade(
         paginaDosprevFormatada: any,
         parginaDosPrev: any
-      ): Promise<string> {
+      ): Promise<IReturnImpedimentosRM> {
         let ArrayImpedimentos: string = '';
 
-        
-    
-
-
+        const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
 
         try {
 
@@ -30,15 +23,17 @@ export class SuperDossie {
           const DatasAtualEMenosDezesseis: Array<Date> =
             await datasRequerimentoNewDossie.dataRequerimento(paginaDosprevFormatada, dataSubtrair)
           if (DatasAtualEMenosDezesseis[0] == null) {
+            objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ"
             ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
           } else {
-            const verificarDataFinal: boolean =
+            const verificarDataFinal: IImpeditivoEmpregoRM =
               await dataPrevidenciariasNewDossie.Previdenciarias(
                 DatasAtualEMenosDezesseis[0],
                 DatasAtualEMenosDezesseis[1],
                 paginaDosprevFormatada
               );
-            if (verificarDataFinal) {
+            if (verificarDataFinal.haveEmprego) {
+              objInfoImpeditivos.emprego = verificarDataFinal.emprego;
               ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }
@@ -60,11 +55,15 @@ export class SuperDossie {
 
 
         const segurado = await seguradoEspecial.handle(parginaDosPrev);
-        const requerimentoAtivo: boolean = await datasRequerimentoAtivoNewDossie.handle(
+        const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await datasRequerimentoAtivoNewDossie.handle(
           paginaDosprevFormatada
         );
     
-        if (segurado !== -1 || requerimentoAtivo == true) {
+        if (segurado !== -1) {
+          objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+        } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+          objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
           ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
         }
 
@@ -83,31 +82,27 @@ export class SuperDossie {
             const xpathNumeroUnicoCnj = "/html/body/div/div[4]/table/tbody/tr[1]/td";
             const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
 
-            const processoJudicial = await buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
+            const processoJudicial: IImpeditivoLitispendencia = await buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
 
-            if(processoJudicial){
+            if(processoJudicial.haveLitispendencia){
+              objInfoImpeditivos.litispendencia = processoJudicial.litispendencia;
               ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m-";
-              /* const verificarLitispedencia = await litispedenciaNewDossieMaternidade.funcLitis(
-                paginaDosprevFormatada
-              );
-              if (verificarLitispedencia) {
-                ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r-";
-              } */
-
             }
 
 
           }
 
+          console.log('---OBJETO DE IMPEDIMENTOS MATERNIDADE SUPER')
+          console.log(objInfoImpeditivos);
 
-      
+          ArrayImpedimentos = ArrayImpedimentos + " *MATERNIDADE* ";
+
     
-        
-    
-    
-  
-    
-        return ArrayImpedimentos + " *MATERNIDADE* ";
+        return {
+          arrayDeImpedimentos: ArrayImpedimentos,
+          objImpedimentosRM: objInfoImpeditivos
+        }
+
       }
 
 
@@ -118,10 +113,10 @@ export class SuperDossie {
 
       async impeditivosRural(paginaDosprevFormatada: any,
         parginaDosPrev: any
-      ){
+      ): Promise<IReturnImpedimentosRM> {
         let ArrayImpedimentos: string = '';
 
-
+        const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
 
         try {
 
@@ -131,13 +126,14 @@ export class SuperDossie {
           if (DatasAtualEMenosDezesseis[0] == null) {
             ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
           } else {
-            const verificarDataFinal: boolean =
+            const verificarDataFinal: IImpeditivoEmpregoRM =
               await dataPrevidenciariasNewDossie.Previdenciarias(
                 DatasAtualEMenosDezesseis[0],
                 DatasAtualEMenosDezesseis[1],
                 paginaDosprevFormatada
               );
-            if (verificarDataFinal) {
+            if (verificarDataFinal.haveEmprego) {
+              objInfoImpeditivos.emprego = verificarDataFinal.emprego;
               ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }
@@ -149,17 +145,17 @@ export class SuperDossie {
 
 
         const segurado = await seguradoEspecial.handle(parginaDosPrev);
-        const requerimentoAtivo: boolean = await datasRequerimentoAtivoNewDossie.handle(
+        const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await datasRequerimentoAtivoNewDossie.handle(
           paginaDosprevFormatada
         );
     
-        if (segurado !== -1 || requerimentoAtivo == true) {
+        if (segurado !== -1) {
+          objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+        } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+          objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
           ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
         }
-
-
-
-
 
 
 
@@ -175,20 +171,26 @@ export class SuperDossie {
             const xpathNumeroUnicoCnj = "/html/body/div/div[4]/table/tbody/tr[1]/td";
             const numeroUnicoCnj = getXPathText(paginaDosprevFormatada, xpathNumeroUnicoCnj);
           
-            const processoJudicial = await buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
+            const processoJudicial: IImpeditivoLitispendencia = await buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
            
-            if(processoJudicial){
-              
-              ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r-"
+            if(processoJudicial.haveLitispendencia){
+              objInfoImpeditivos.litispendencia = processoJudicial.litispendencia;
+              ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r-";
             }
             
           }
 
 
+          console.log('---OBJETO DE IMPEDIMENTOS RURAL SUPER')
+          console.log(objInfoImpeditivos);
 
 
+          ArrayImpedimentos = ArrayImpedimentos + " *RURAL* ";
 
-          return ArrayImpedimentos + " *RURAL* "
+          return {
+            arrayDeImpedimentos: ArrayImpedimentos,
+            objImpedimentosRM: objInfoImpeditivos
+          }
 
       }
 
@@ -202,9 +204,9 @@ export class SuperDossie {
 
 
       async impeditivosLoas(paginaDosprevFormatada: any,
-        parginaDosPrev: any){
+        parginaDosPrev: any): Promise<IReturnImpedimentosLOAS> {
           let ArrayImpedimentos: string = ''; 
-
+          const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
           
           try{
@@ -215,7 +217,7 @@ export class SuperDossie {
             if (restabelecimentoRequerimentos instanceof Error) {
               ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
             } else if (restabelecimentoRequerimentos.valorBooleano) {
-              console.log("IMPEDITIVO: " + restabelecimentoRequerimentos.impeditivo)
+              objInfoImpeditivos.requerimento = "IMPEDITIVO SOBRE REQUERIMENTO ENCONTRADO";
               ArrayImpedimentos = ArrayImpedimentos + restabelecimentoRequerimentos.impeditivo
             }
 
@@ -228,32 +230,9 @@ export class SuperDossie {
             if(loasLitispendencia instanceof Error){
               ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
               }else if(loasLitispendencia){
+                objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA";
                 ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -"
               }
-  
-  
-  
-  
-            /*  
-            const loasEmprego = await loasEmpregoSuperDossie.execute(paginaDosprevFormatada)
-            console.log('----LOAS EMPREGO: ')
-            console.log(loasEmprego)
-  
-  
-            if(typeof(loasEmprego) == "boolean"){
-              if(loasEmprego){
-                ArrayImpedimentos = ArrayImpedimentos + " LOAS EMPREGO -"
-              }
-            }else if(typeof(loasEmprego) == "object"){
-              if(loasEmprego.valorBooleano){
-                ArrayImpedimentos = ArrayImpedimentos + loasEmprego.message
-              }else{
-                ArrayImpedimentos = ArrayImpedimentos + loasEmprego.message
-              }
-            }
-            */  
-
-
 
 
             const loasAtivo = await loasAtivoSuperDossie.handle(paginaDosprevFormatada)
@@ -262,6 +241,7 @@ export class SuperDossie {
 
             if (typeof(loasAtivo) == "object") {
               if (loasAtivo.valorBooleano) {
+                objInfoImpeditivos.bpc = "BENEFÍCIO ATIVO ENCONTRADO";
                 ArrayImpedimentos = ArrayImpedimentos + loasAtivo.impeditivo
               }
             }
@@ -269,22 +249,22 @@ export class SuperDossie {
 
 
             const loasIdade = await loasIdadeSuperDossie.handle(paginaDosprevFormatada)
-            console.log("MAIOR QUE 65 ANOS? " + loasIdade)
 
             if (!loasIdade) {
+              objInfoImpeditivos.idade = "IDADE INFERIOR"
               ArrayImpedimentos += " IDADE -"
             }
 
 
-  
-  
-  
-  
-            return ArrayImpedimentos + " *LOAS* ";
+            ArrayImpedimentos += " *LOAS* ";
+
+            return {
+              arrayDeImpedimentos: ArrayImpedimentos,
+              objImpedimentosLoas: objInfoImpeditivos
+            }
 
           }catch(e){
-            console.log(e)
-            return "Erro ao ler LOAS"
+            console.error(e)
           }
 
 

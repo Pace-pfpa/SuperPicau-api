@@ -2,13 +2,13 @@ import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 import { verificarDataNoPeriodoDeDezesseisAnos } from "../../../../../helps/VerificarDataNoPeriodoDosdezeseisAnos";
 import { converterDatasParaDate } from "../../../../../helps/TransformarStringParaFormatoDate";
 import { ordenarDatas } from "../../../../../helps/BuscarDatasEmString";
+import { IImpeditivoEmpregoRM } from "../../../../../DTO/IImpeditivosRM";
 
 //Estrutura para identificar data de emprego
 
-///html/body/div/div[7]/table/tbody/tr[1]
-///html/body/div/div[7]/table/tbody/tr[2]
 export class DataPrevidenciariasNewDossie{
-    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<boolean>{
+    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<IImpeditivoEmpregoRM> {
+    let impeditivoEmprego: string | null = null; 
     
     let tamanhoColunaPrevidenciarias = 1;
     let verificarWhilePrevidenciarias = true;
@@ -22,26 +22,31 @@ export class DataPrevidenciariasNewDossie{
 
     
                             
-    for(let p=1; p<tamanhoColunaPrevidenciarias; p++){
+    for (let p=1; p<tamanhoColunaPrevidenciarias; p++) {
         if(typeof (getXPathText(parginaDosPrevFormatada,`html/body/div/div[7]/table/tbody/tr[${p}]`)) === 'string'){
         const xpathColunaPrevidenciarias = `html/body/div/div[7]/table/tbody/tr[${p}]`;
         const xpathCoulaFormatadoPrevidenciarias: string = getXPathText(parginaDosPrevFormatada, xpathColunaPrevidenciarias);
             if(xpathCoulaFormatadoPrevidenciarias.indexOf("Empregado") !== -1 || xpathCoulaFormatadoPrevidenciarias.indexOf("Contribuinte Individual") !== -1){
                     const datasEmprego = converterDatasParaDate(ordenarDatas(getXPathText(parginaDosPrevFormatada, xpathColunaPrevidenciarias))); 
-                    //console.log(dataAtual, dataMenosdezesseis, datasEmprego[0], datasEmprego[1])            
                     const impeditivoBoolean = verificarDataNoPeriodoDeDezesseisAnos(dataAtual, dataMenosdezesseis, datasEmprego[0], datasEmprego[1]);
                     //console.log(impeditivoBoolean)
                         if(impeditivoBoolean){
-                            return true;
+                            impeditivoEmprego = xpathCoulaFormatadoPrevidenciarias.trim();
+
+                            return {
+                                haveEmprego: true,
+                                emprego: impeditivoEmprego   
+                            } 
                         }
-            }
-            
-                                    
+            }         
         }
     }
-    return false;
+
+    return {
+       haveEmprego: false,
+       emprego: impeditivoEmprego
+    }
+
     }
     
 }
-    
-                        

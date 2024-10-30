@@ -20,14 +20,12 @@ export function buscarTableCpf(capa: string): string | undefined {
 
                 if (rowText) {
                     const isPoloAtivo = rowText.includes("PÓLO ATIVO");
-                    const isRepresentandoAGU = rowText.includes("SIM");
+                    const isRepresentandoAGU = /\bSIM\b/.test(rowText);
 
                     if (isPoloAtivo && !isRepresentandoAGU) {
                         if (isCPF(rowText)) {
-                            console.log("CPF OU ADVOGADO: true");
                             return rowText.split(/[()]/)[1]?.replace(/[.-]/g, "");
                         } else {
-                            console.log("CPF OU ADVOGADO: false");
                             return undefined;
                         }
                     }
@@ -36,4 +34,4 @@ export function buscarTableCpf(capa: string): string | undefined {
         }
     }
     return undefined
-} 
+}

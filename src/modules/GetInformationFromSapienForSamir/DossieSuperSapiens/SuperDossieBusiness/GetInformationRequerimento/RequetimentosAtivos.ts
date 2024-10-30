@@ -1,10 +1,11 @@
+import { IImpeditivoRequerimentoAtivo } from "../../../../../DTO/IImpeditivosRM";
 import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 
-export class DatasRequerimentoAtivoNewDossie{
-    async handle(parginaDosPrevFormatada: any):Promise<any>{
-        //Estrutura para identificar a maior data, e fazer a subtração dela
+export class DatasRequerimentoAtivoNewDossie {
+    async handle(parginaDosPrevFormatada: any):Promise<IImpeditivoRequerimentoAtivo>{
+
+        let impedimentoRequerimentoAtivo: string | null = null;
         let tamanhoColunasRequerimentos = 1;
-        const arrayDatas: Array<Date> = [];
         let verificarWhileRequerimentos = true;
         while(verificarWhileRequerimentos){
             if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object'){
@@ -19,16 +20,22 @@ export class DatasRequerimentoAtivoNewDossie{
                     const xpathColunaRequerimentos = `/html/body/div/div[6]/table/tbody/tr[${t}]`;
                     const xpathCoulaFormatadoRequerimentos: string = getXPathText(parginaDosPrevFormatada, xpathColunaRequerimentos);
                     if(xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1){
-                        //console.log("ENTROU")
-                        return true;
+                        impedimentoRequerimentoAtivo = xpathCoulaFormatadoRequerimentos;
+                        return {
+                            haveRequerimentoAtivo: true,
+                            requerimentoAtivo: impedimentoRequerimentoAtivo
+                        }
                     }
                 }
             }
-            return false;
+
+            return {
+                haveRequerimentoAtivo: false,
+                requerimentoAtivo: impedimentoRequerimentoAtivo
+            }
             
             
     }
-    
-    }
+}
 
     

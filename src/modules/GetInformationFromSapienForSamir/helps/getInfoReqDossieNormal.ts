@@ -16,8 +16,6 @@ export async function getInfoReqDossieNormal (cookie:string, normalDossie: any) 
         const paginaDosPrevDossie = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossie });
         
         const paginaDosPrevFormatadaDossie = new JSDOM(paginaDosPrevDossie); 
-
-        // /html/body/div/div[1]/table/tbody/tr[2]/td
         
         // FICHA SINTÉTICA DO PROCESSO XPATH
         const xpathDataAjuizamento = "/html/body/div/div[1]/table/tbody/tr[2]/td"

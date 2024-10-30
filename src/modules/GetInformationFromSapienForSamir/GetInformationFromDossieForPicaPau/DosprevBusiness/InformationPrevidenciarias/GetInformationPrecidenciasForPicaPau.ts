@@ -4,10 +4,13 @@ import { converterDatasParaDate } from "../../../../../helps/TransformarStringPa
 import { ordenarDatas } from "../../../../../helps/BuscarDatasEmString";
 import { subtrairDates } from "../../../../../helps/SubstrairDates";
 import { calcularDiasEmprego } from "../../../helps/calcularDiasEmprego";
+import { IImpeditivoEmpregoRM } from "../../../../../DTO/IImpeditivosRM";
 
 //Estrutura para identificar data de emprego
 export class DataPrevidenciarias {
-    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<boolean> {
+    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<IImpeditivoEmpregoRM> {
+        let impeditivoEmprego: string = ''; 
+
         let tamanhoColunaPrevidenciarias = 2;
         let verificarWhilePrevidenciarias = true;
         while (verificarWhilePrevidenciarias) {
@@ -31,17 +34,17 @@ export class DataPrevidenciarias {
                     if (!datasOrdenadas) continue
 
                     const datasEmprego = converterDatasParaDate(datasOrdenadas);
-                    //console.log('ERRO3')
-                    //console.log(datasEmprego)
-                    //console.log(dataAtual, dataMenosdezesseis, datasEmprego[0], datasEmprego[1])            
+   
                     const impeditivoBoolean = verificarDataNoPeriodoDeDezesseisAnos(dataAtual, dataMenosdezesseis, datasEmprego[0], datasEmprego[1]);
-                    //console.log('ERRO4')
-                    //console.log(impeditivoBoolean)
+
                     if (impeditivoBoolean) {
-                        //console.log(calcularDiasEmprego(datasEmprego[0], datasEmprego[1]))
 
                         if (calcularDiasEmprego(datasEmprego[0], datasEmprego[1]) > 120) {
-                            return true;
+                            impeditivoEmprego = xpathCoulaFormatadoPrevidenciarias.trim();
+                            return {
+                                haveEmprego: true,
+                                emprego: impeditivoEmprego   
+                            } 
                         }
 
                     }
@@ -51,7 +54,10 @@ export class DataPrevidenciarias {
             }
 
         }
-        return false;
+        return {
+            haveEmprego: false,
+            emprego: impeditivoEmprego
+         }
     }
 
 }

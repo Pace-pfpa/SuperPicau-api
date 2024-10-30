@@ -40,10 +40,9 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
                 continue;
             }
 
-            // Busca pelo CPF no dossiê
             if (await verificarCpfCorrespondente(normalDossie[i], cpf, 'normal', cookie)) {
                 console.log(`Dossiê normal retornado da posição ${i}, ${normalDossie[i].numeracaoSequencial} do array normal.`);
-                return [normalDossie[i], 0]; // Retorna dossiê normal se o CPF bater
+                return [normalDossie[i], 0];
             }
         }
         return new Error("Nenhum dossiê normal encontrado para o CPF fornecido.");
@@ -58,10 +57,9 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
                 continue;
             }
 
-            // Busca pelo CPF no dossiê
             if (await verificarCpfCorrespondente(superDossie[i], cpf, 'super', cookie)) {
                 console.log(`Dossiê super retornado da posição ${i}, ${superDossie[i].numeracaoSequencial} do array super.`);
-                return [superDossie[i], 1]; // Retorna dossiê super se o CPF bater
+                return [superDossie[i], 1];
             }
         }
         return new Error("Nenhum dossiê super encontrado para o CPF fornecido.");
@@ -76,7 +74,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
         let posicaoNormalEncontrado: number = -1;
         let posicaoSuperEncontrado: number = -1;
 
-        // Busca CPF no array de dossiês normais
         for (let i = 0; i < normalDossie.length; i++) {
             if (!validarDossie(normalDossie[i])) {
                 console.warn(`Alerta: Dossiê normal inválido detectado na posição ${i}. Continuando a busca.`);
@@ -86,11 +83,10 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
             if (await verificarCpfCorrespondente(normalDossie[i], cpf, 'normal', cookie)) {
                 dossieNormalEncontrado = normalDossie[i];
                 posicaoNormalEncontrado = i;
-                break; // Para ao encontrar o CPF correspondente
+                break;
             }
         }
 
-        // Busca CPF no array de dossiês super
         for (let i = 0; i < superDossie.length; i++) {
             if (!validarDossie(superDossie[i])) {
                 console.warn(`Alerta: Dossiê super inválido detectado na posição ${i}. Continuando a busca.`);
@@ -100,34 +96,30 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
             if (await verificarCpfCorrespondente(superDossie[i], cpf, 'super', cookie)) {
                 dossieSuperEncontrado = superDossie[i];
                 posicaoSuperEncontrado = i;
-                break; // Para ao encontrar o CPF correspondente
+                break;
             }
         }
 
-        // Se encontrarmos dossiês em ambos os arrays, comparamos pelo número sequencial
         if (dossieNormalEncontrado && dossieSuperEncontrado) {
             if (compararDossiesPorSequencial(dossieNormalEncontrado, dossieSuperEncontrado) > 0) {
                 console.log(`Dossiê normal retornado da posição ${posicaoNormalEncontrado}, ${dossieNormalEncontrado.numeracaoSequencial} do array normal.`);
-                return [dossieNormalEncontrado, 0]; // Retorna o dossiê normal se for mais atual
+                return [dossieNormalEncontrado, 0];
             } else {
                 console.log(`Dossiê super retornado da posição ${posicaoSuperEncontrado}, ${dossieSuperEncontrado.numeracaoSequencial} do array super.`);
-                return [dossieSuperEncontrado, 1]; // Retorna o dossiê super se for mais atual
+                return [dossieSuperEncontrado, 1];
             }
         }
 
-         // Se encontrarmos dossiê apenas no array normal
          if (dossieNormalEncontrado) {
             console.log(`Dossiê normal retornado da posição ${posicaoNormalEncontrado}, ${dossieNormalEncontrado.numeracaoSequencial} do array normal.`);
-            return [dossieNormalEncontrado, 0]; // Retorna o dossiê normal
+            return [dossieNormalEncontrado, 0];
         }
 
-        // Se encontrarmos dossiê apenas no array super
         if (dossieSuperEncontrado) {
             console.log(`Dossiê super retornado da posição ${posicaoSuperEncontrado}, ${dossieSuperEncontrado.numeracaoSequencial} do array super.`);
-            return [dossieSuperEncontrado, 1]; // Retorna o dossiê super
+            return [dossieSuperEncontrado, 1];
         }
 
-        // Se nenhum dossiê foi encontrado em ambos os arrays
         return new Error("Nenhum dossiê encontrado para o CPF fornecido.");
     }
 
