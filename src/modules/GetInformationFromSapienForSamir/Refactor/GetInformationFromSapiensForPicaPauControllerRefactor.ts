@@ -26,7 +26,8 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     let impedimentos: string[];
 
                     if (result[1] === 'LOAS') {
-                        impedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
+                        const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
+                        impedimentos = buscaDeImpedimentos.impedimentos;
                     } else {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
                         impedimentos = buscaDeImpedimentos.impedimentos;
@@ -37,7 +38,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     resolve(response.status(200).json(processo));
 
                 } catch (error) {
-                    console.log("Farfan", error)
+                    console.error("Farfan", error)
                     return response.status(400).json({
                         message: error.message || "Erro inesperado durante a triagem."
                     });

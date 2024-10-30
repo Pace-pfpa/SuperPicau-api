@@ -1,6 +1,6 @@
 import { IInformacoesProcessoDTO } from "../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
-import { IObjInfoImpeditivosRM } from "../../../DTO/IObjInfoImpeditivosRM";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM } from "../../../DTO/IObjInfoImpeditivosRM";
 import { arrayInteressados } from "../../CreateInterested/Helps/ArrayInteressados";
 import { GetInteressadosReq } from "../../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq";
 import { getInformationCapa } from "../GetInformationCapa";
@@ -76,7 +76,7 @@ export class BuscarImpedimentosUseCase {
         }
     }
 
-    async procurarImpedimentosLOAS(informacoesProcesso: IInformacoesProcessoLoasDTO): Promise<string[]> {
+    async procurarImpedimentosLOAS(informacoesProcesso: IInformacoesProcessoLoasDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
         const {
             tarefaPastaID,
             cookie,
@@ -118,7 +118,7 @@ export class BuscarImpedimentosUseCase {
         let arrayDossieEnvolvidosSuper = [];
         let infoRequerente;
 
-        let impedimentosBusca: string[] = null;
+        let impedimentosBusca: { impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas };
 
         if (isDosprevPoloAtivoNormal) {
             impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(dosprevPoloAtivo, cookie);
@@ -152,10 +152,10 @@ export class BuscarImpedimentosUseCase {
         const resultadoRenda = await calcularRendaFamiliar(arrayObjetosEnvolvidos, updated_cpf_dos_familiares2.length + 1, infoRequerente);
         const impedimentoRenda: string[] = await etiquetarRenda(resultadoRenda);
 
-        const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca, ...impedimentosSislabra, ...(impedimentoRenda || [])];
+        const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra, ...(impedimentoRenda || [])];
         console.log("LOAS")
         console.log(impedimentos)
 
-        return impedimentos;
+        return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
     }
 }

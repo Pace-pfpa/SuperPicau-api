@@ -1,5 +1,5 @@
 import { IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
-import { IObjInfoImpeditivosRM, IReturnImpedimentosRM } from "../../../DTO/IObjInfoImpeditivosRM";
+import { IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM, IObjInfoImpeditivosLoas } from "../../../DTO/IObjInfoImpeditivosRM";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
@@ -211,10 +211,9 @@ export class GetInformationDossieForPicaPau {
 
 
 
-  async impeditivoLoas(paginaDosprevFormatada: any){
+  async impeditivoLoas(paginaDosprevFormatada: any): Promise<IReturnImpedimentosLOAS>{
     let impeditivos = "";
-
-    console.log('-> CAPDEVILA LOAS')
+    const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
     try{
 
@@ -226,6 +225,7 @@ export class GetInformationDossieForPicaPau {
       if(restabelecimentoRequerimento instanceof Error){
         impeditivos = impeditivos + " erro estabelecimento -"
       }else if(restabelecimentoRequerimento.valorBooleano){
+        objInfoImpeditivos.requerimento = "IMPEDITIVO SOBRE REQUERIMENTO ENCONTRADO"
         impeditivos = impeditivos + restabelecimentoRequerimento.impeditivo
       }
 
@@ -236,6 +236,7 @@ export class GetInformationDossieForPicaPau {
       if(litispendenciaLoas instanceof Error){
         impeditivos = impeditivos + " erro estabelecimento -"
       }else if(litispendenciaLoas){
+        objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA"
         impeditivos = impeditivos + " LITISPENDÊNCIA -"
       }
 
@@ -263,6 +264,7 @@ export class GetInformationDossieForPicaPau {
 
       if (typeof (loasAtivo) == "object") {
         if (loasAtivo.valorBooleano) {
+          objInfoImpeditivos.bpc = "BENEFÍCIO ATIVO ENCONTRADO";
           impeditivos = impeditivos + loasAtivo.impeditivo
         }
       }
@@ -271,16 +273,19 @@ export class GetInformationDossieForPicaPau {
       const loasIdade = await loasIdadeDossie.handle(paginaDosprevFormatada)
 
       if (!loasIdade) {
+        objInfoImpeditivos.idade = "IDADE INFERIOR"
         impeditivos += " IDADE -"
       }
 
+      impeditivos += " *LOAS* "
 
-      return impeditivos + " *LOAS* "
+      return {
+        arrayDeImpedimentos: impeditivos,
+        objImpedimentosLoas: objInfoImpeditivos
+      }
       
     } catch(e) {
-
-      console.log(e)
-      return "Erro ao ler LOAS"
+      console.error(e)
     }
     
   }

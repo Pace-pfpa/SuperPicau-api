@@ -1,5 +1,5 @@
 import { IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
-import { IObjInfoImpeditivosRM, IReturnImpedimentosRM } from "../../../DTO/IObjInfoImpeditivosRM";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../../../DTO/IObjInfoImpeditivosRM";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
 import { loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie, loasIdadeSuperDossie } from "../loas/Business";
@@ -204,9 +204,9 @@ export class SuperDossie {
 
 
       async impeditivosLoas(paginaDosprevFormatada: any,
-        parginaDosPrev: any){
+        parginaDosPrev: any): Promise<IReturnImpedimentosLOAS> {
           let ArrayImpedimentos: string = ''; 
-
+          const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
           
           try{
@@ -217,7 +217,7 @@ export class SuperDossie {
             if (restabelecimentoRequerimentos instanceof Error) {
               ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
             } else if (restabelecimentoRequerimentos.valorBooleano) {
-              console.log("IMPEDITIVO: " + restabelecimentoRequerimentos.impeditivo)
+              objInfoImpeditivos.requerimento = "IMPEDITIVO SOBRE REQUERIMENTO ENCONTRADO";
               ArrayImpedimentos = ArrayImpedimentos + restabelecimentoRequerimentos.impeditivo
             }
 
@@ -230,6 +230,7 @@ export class SuperDossie {
             if(loasLitispendencia instanceof Error){
               ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
               }else if(loasLitispendencia){
+                objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA";
                 ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -"
               }
 
@@ -240,6 +241,7 @@ export class SuperDossie {
 
             if (typeof(loasAtivo) == "object") {
               if (loasAtivo.valorBooleano) {
+                objInfoImpeditivos.bpc = "BENEFÍCIO ATIVO ENCONTRADO";
                 ArrayImpedimentos = ArrayImpedimentos + loasAtivo.impeditivo
               }
             }
@@ -247,22 +249,22 @@ export class SuperDossie {
 
 
             const loasIdade = await loasIdadeSuperDossie.handle(paginaDosprevFormatada)
-            console.log("MAIOR QUE 65 ANOS? " + loasIdade)
 
             if (!loasIdade) {
+              objInfoImpeditivos.idade = "IDADE INFERIOR"
               ArrayImpedimentos += " IDADE -"
             }
 
 
-  
-  
-  
-  
-            return ArrayImpedimentos + " *LOAS* ";
+            ArrayImpedimentos += " *LOAS* ";
+
+            return {
+              arrayDeImpedimentos: ArrayImpedimentos,
+              objImpedimentosLoas: objInfoImpeditivos
+            }
 
           }catch(e){
-            console.log(e)
-            return "Erro ao ler LOAS"
+            console.error(e)
           }
 
 

@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-import { IObjInfoImpeditivosRM, IReturnImpedimentosRM } from "../../../../DTO/IObjInfoImpeditivosRM";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../../../../DTO/IObjInfoImpeditivosRM";
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { superDossie } from "../../DossieSuperSapiens";
 
@@ -30,13 +30,16 @@ export class SuperDossie {
         return { impedimentos, objImpedimentos };
     }
 
-    async buscarImpedimentosForLOAS(dosprevPoloAtivo: any, cookie: string) {
+    async buscarImpedimentosForLOAS(dosprevPoloAtivo: any, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
 
-        const impeditivosLoas = await superDossie.impeditivosLoas(paginaDosPrevFormatada, paginaDosPrev);
+        const impeditivosLoas: IReturnImpedimentosLOAS = await superDossie.impeditivosLoas(paginaDosPrevFormatada, paginaDosPrev);
 
-        return impeditivosLoas.split('-');
+        const impedimentos: string[] = impeditivosLoas.arrayDeImpedimentos.split('-');
+        const objImpedimentos: IObjInfoImpeditivosLoas = impeditivosLoas.objImpedimentosLoas;
+
+        return { impedimentos, objImpedimentos };
     }
 }
