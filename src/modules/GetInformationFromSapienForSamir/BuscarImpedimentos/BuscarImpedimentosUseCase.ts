@@ -1,6 +1,7 @@
 import { IInformacoesProcessoDTO } from "../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM } from "../../../DTO/IObjInfoImpeditivosRM";
+import { IResponseLabraAutorConjuge, IResponseSislabra } from "../../../DTO/IResponseSislabra";
 import { arrayInteressados } from "../../CreateInterested/Helps/ArrayInteressados";
 import { GetInteressadosReq } from "../../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq";
 import { getInformationCapa } from "../GetInformationCapa";
@@ -16,7 +17,7 @@ import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/imp
 
 export class BuscarImpedimentosUseCase {
 
-    async procurarImpedimentos(informacoesProcesso: IInformacoesProcessoDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
+    async procurarImpedimentos(informacoesProcesso: IInformacoesProcessoDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
         const {
             cookie,
             tipo_triagem,
@@ -29,49 +30,53 @@ export class BuscarImpedimentosUseCase {
 
         const impedimentoCapa: string[] = [];
         const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
-        if(!informationcapa){
+        if(!informationcapa.encontrouAdvogado){
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const impedimentosSislabra: IResponseSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
+            autor: impedimentosSislabra.autor,
+            conjuge: impedimentosSislabra.conjuge,
+        } 
 
         if (tipo_triagem === 0) {
 
-            if (isDosprevPoloAtivoNormal) {  
+            if (isDosprevPoloAtivoNormal) {
                 const impedimentosBusca = await normalDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
                 console.log("RURAL NORMAL")
                 console.log(impedimentos)
 
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
             } else {
                 const impedimentosBusca = await superDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
                 console.log("RURAL SUPER")
                 console.log(impedimentos)
 
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
             }
         } else {
 
             if (isDosprevPoloAtivoNormal) {
                 const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
                 console.log("MATERNIDADE NORMAL")
                 console.log(impedimentos)
 
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
             } else {
                 const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra];
+                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
                 console.log("MATERNIDADE SUPER")
                 console.log(impedimentos)
 
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
+                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
             }
         }
     }

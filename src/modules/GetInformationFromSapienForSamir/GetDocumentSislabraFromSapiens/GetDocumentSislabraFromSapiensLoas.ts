@@ -27,8 +27,8 @@ export class GetDocumentSislabraFromSapiensLoas {
         }
 
         const GetVeiculosSislabra = await getVeiculos(paginaformatada)
-        if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].tipo == "MOTOCICLETA" || 
-        GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA"
+        if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].Tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].Tipo == "MOTOCICLETA" || 
+        GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].Tipo == "MOTOCICLETA"
         )){
             if(GetVeiculosSislabra.length != 0 && isPoloAtivo){
                 response += " VEÍCULOS -"

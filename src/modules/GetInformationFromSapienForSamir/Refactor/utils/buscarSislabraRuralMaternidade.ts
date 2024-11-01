@@ -14,7 +14,7 @@ export async function buscarSislabraRuralMaternidade(arrayDeDocumentos: any[]): 
         || arrayDeDocumentos.find((doc) => doc.movimento?.includes("POSSÍVEL CÔNJUGE"));
 
     if (documentoConjuge) {
-        sislabraConjuge = documentoPoloAtivo;
+        sislabraConjuge = documentoConjuge;
     } else {
         sislabraConjuge = null;
     }

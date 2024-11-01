@@ -1,6 +1,7 @@
 import { IInformacoesProcessoDTO } from "../../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../../DTO/IInformacoesProcessoLoasDTO";
 import { IInfoUploadDTO } from "../../../../DTO/IInfoUploadDTO";
+import { IResponseLabraAutorConjuge } from "../../../../DTO/IResponseSislabra";
 import { createDocumentoUseCase } from "../../../CreateDocumento";
 import { ImpeditivosHtmlLoas } from "../../../CreateHtmlForLoas/impeditivosLoas";
 import { ImpeditivosHtmlRuralMaternidade } from "../../../CreateHtmlForRuralMaternidade/impeditivosRuralMaternidade";
@@ -14,7 +15,7 @@ interface IMinutasDTO {
     nup: string;
 }
 
-export async function subirMinuta(informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO, impeditivos: string[]): Promise<void> {
+export async function subirMinuta(informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO, impeditivos: string[], impeditivosLabra: IResponseLabraAutorConjuge): Promise<void> {
     try {
 
         let htmlUpload: string;
@@ -28,13 +29,13 @@ export async function subirMinuta(informacoesProcesso: IInformacoesProcessoDTO |
     
             const objetoUpload = gerarObjetoUploadRM(impeditivos);
             const htmlGenerator = new ImpeditivosHtmlRuralMaternidade();
-            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'RURAL');
+            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'RURAL', impeditivosLabra);
     
         } else if (informacoesProcesso.tipo_triagem === 1) {
     
             const objetoUpload = gerarObjetoUploadRM(impeditivos);
             const htmlGenerator = new ImpeditivosHtmlRuralMaternidade();
-            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'MATERNIDADE');
+            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'MATERNIDADE', impeditivosLabra);
     
         }
     

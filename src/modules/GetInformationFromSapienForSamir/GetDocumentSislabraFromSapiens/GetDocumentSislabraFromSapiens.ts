@@ -2,23 +2,15 @@ import { getEmpregoSislabra } from "./SislabraBusiness/GetEmpregoSislabra";
 import { getImoveisRurais } from "./SislabraBusiness/GetImoveisRuraisSislabra";
 import { getVeiculos } from "./SislabraBusiness/GetVeiculosSislabra";
 import { getEmpresa } from "./SislabraBusiness/GetEmpresaSislabra";
-import { IImpedimentos, IResponseSislabra } from "../../../DTO/IResponseSislabra";
+import { IImpedimentos } from "../../../DTO/IResponseSislabra";
 
+export class GetDocumentSislabraFromSapiens {
+    async execute(paginaformatada: string, indentificadorDocumento: string): Promise<{ impedimentos: string, objImpedimentos: IImpedimentos }> {
 
-export class GetDocumentSislabraFromSapiens{
-    async execute(paginaformatada: string, indentificadorDocumento: string): Promise<string>{
+       try {
+        let response: string = "";
 
-       try{
-        let response = "";
-
-        const impedimentosAutor: IImpedimentos = {
-            veiculos: [],
-            empregos: [],
-            imoveisRurais: [],
-            empresas: [],
-        };
-
-        const impedimentosConjuge: IImpedimentos = {
+        const ObjImpedimentos: IImpedimentos = {
             veiculos: [],
             empregos: [],
             imoveisRurais: [],
@@ -26,47 +18,49 @@ export class GetDocumentSislabraFromSapiens{
         };
 
         const GetVeiculosSislabra = await getVeiculos(paginaformatada);
-        if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].Tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].Tipo == "MOTOCICLETA" || 
-        GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].Tipo == "MOTOCICLETA"
+        if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].tipo == "MOTOCICLETA" || 
+        GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA"
         )){
-            if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'AUTOR'){
-                response = response + " VEICULO AUTOR -"
-                impedimentosAutor.veiculos = GetVeiculosSislabra;
-            }else if(GetVeiculosSislabra.length != 0 && indentificadorDocumento == 'CONJUGE'){
-                response = response + " VEICULO CONJUGE -"
-                impedimentosConjuge.veiculos = GetVeiculosSislabra;
+            if(GetVeiculosSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
+                response = response + " VEICULO AUTOR -";
+                ObjImpedimentos.veiculos = GetVeiculosSislabra;
+            }else if(GetVeiculosSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
+                response = response + " VEICULO CONJUGE -";
+                ObjImpedimentos.veiculos = GetVeiculosSislabra;
             }
         }
-        
+
         const GetEmpregoSislabra = await getEmpregoSislabra(paginaformatada);
         if(GetEmpregoSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
-            response = response + " EMPREGO AUTOR -"
-            impedimentosAutor.empregos = GetEmpregoSislabra;
+            response = response + " EMPREGO AUTOR -";
+            ObjImpedimentos.empregos = GetEmpregoSislabra;
         }else if(GetEmpregoSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
-            response = response + " EMPREGO CONJUGE -"
-            impedimentosConjuge.empregos = GetEmpregoSislabra;
+            response = response + " EMPREGO CONJUGE -";
+            ObjImpedimentos.empregos = GetEmpregoSislabra;
         }
 
         const GetImoveisRuraisSislabra = await getImoveisRurais(paginaformatada);
-        if(GetImoveisRuraisSislabra && indentificadorDocumento == 'AUTOR'){
-            response = response + " IMOVEIS RURAIS AUTOR -"
-        }else if(GetImoveisRuraisSislabra && indentificadorDocumento == 'CONJUGE'){
-            response = response + " IMOVEIS RURAIS CONJUGE -"
+        if(GetImoveisRuraisSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
+            response = response + " IMOVEIS RURAIS AUTOR -";
+            ObjImpedimentos.imoveisRurais = GetImoveisRuraisSislabra;
+        }else if(GetImoveisRuraisSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
+            response = response + " IMOVEIS RURAIS CONJUGE -";
+            ObjImpedimentos.imoveisRurais = GetImoveisRuraisSislabra;
         }
 
         const GetEmpresaSislabra = await getEmpresa(paginaformatada)
-        if(GetEmpresaSislabra && indentificadorDocumento == 'AUTOR'){
-            response = response + " EMPRESA AUTOR -"
-        }else if(GetEmpresaSislabra && indentificadorDocumento == 'CONJUGE'){
-            response = response + " EMPRESA CONJUGE -"
+        if(GetEmpresaSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
+            response = response + " EMPRESA AUTOR -";
+            ObjImpedimentos.empresas = GetEmpresaSislabra;
+        }else if(GetEmpresaSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
+            response = response + " EMPRESA CONJUGE -";
+            ObjImpedimentos.empresas = GetEmpresaSislabra;
         }
 
-        // TODO atualizar o tipo de retorno
-        return response;
+        return { impedimentos: response, objImpedimentos: ObjImpedimentos }
 
        }catch(e){
         console.error("Erro ao buscar sislabra" + e)
-        return '';
     }
         
     }
