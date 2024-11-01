@@ -2,7 +2,6 @@ import { getXPathText } from "../../../../../helps/GetTextoPorXPATH";
 import { verificarDataNoPeriodoDeDezesseisAnos } from "../../../../../helps/VerificarDataNoPeriodoDosdezeseisAnos";
 import { converterDatasParaDate } from "../../../../../helps/TransformarStringParaFormatoDate";
 import { ordenarDatas } from "../../../../../helps/BuscarDatasEmString";
-import { subtrairDates } from "../../../../../helps/SubstrairDates";
 import { calcularDiasEmprego } from "../../../helps/calcularDiasEmprego";
 import { IImpeditivoEmpregoRM } from "../../../../../DTO/IImpeditivosRM";
 

@@ -2,7 +2,7 @@ const { JSDOM } = require('jsdom');
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { getDocumentoUseCase } from "../../GetDocumento";
 
-export async function getCPFDosPrevNormal (normalDossie: any, cookie: string) {
+export async function getCPFDosPrevNormal (normalDossie: any, cookie: string): Promise<string> {
 
     const idDosprevParaPesquisaDossieNormal = normalDossie.documentoJuntado.componentesDigitais[0].id;
     const parginaDosPrevDossieNormal = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieNormal });

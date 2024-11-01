@@ -1,7 +1,0 @@
-import { GetInformationFromSapienForSamirController } from './GetInformationFromSapienForSamirController';
-import { GetInformationFromSapienForSamirUseCase } from './GetInformationFromSapienForSamirUseCase';
-
-const getInformationFromSapienForSamirUseCase = new GetInformationFromSapienForSamirUseCase();
-const getInformationFromSapienForSamirController = new GetInformationFromSapienForSamirController(getInformationFromSapienForSamirUseCase);
-
-export {getInformationFromSapienForSamirUseCase, getInformationFromSapienForSamirController };

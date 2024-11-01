@@ -5,7 +5,6 @@ import { isDateInRange } from "./dataIsInRange";
 import { getRemuneracaoAjuizamentoSuper } from "./getRemuneracaoAjuizamentoSuper";
 import { removeDayFromDate } from "./removeDayFromDate";
 import { parseDateToString } from "./parseDateToString";
-import { Console } from "console";
 const { JSDOM } = require('jsdom');
 
 export async function getValueCalcDossieSuper(cookie:string, superDossie: any, dataAjuizamento: string, dataRequerimento: string) {
