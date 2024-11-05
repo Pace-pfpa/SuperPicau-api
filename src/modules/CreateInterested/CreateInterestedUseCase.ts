@@ -21,11 +21,18 @@ import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
 
-export class CreateInterestedUseCase{
+export class CreateInterestedUseCase {
 
 
-    async execute(data: IinteressadosDTO){
-        console.log(data.login)
+    async execute(data: IinteressadosDTO) {
+        
+        const resultado = {
+            totalTarefas: 0,
+            envolvidosCadastrados: 0,
+            cpfNaoConstaNaReceita: 0,
+            erroAoCadastrarEnvolvidos: [] as string[],
+        };
+
         const cookie = await loginUseCase.execute(data.login);
         const usuario = (await getUsuarioUseCase.execute(cookie));
         const usuario_id = `${usuario[0].id}`;
@@ -33,6 +40,7 @@ export class CreateInterestedUseCase{
         let cpfCapa;
 
         let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
+        resultado.totalTarefas = tarefas.length;
         let arrayDeDocumentos: ResponseArvoreDeDocumento[];
 
         
@@ -51,11 +59,6 @@ export class CreateInterestedUseCase{
         
         
                 const dossieSocial = arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
-
-                // BUSCAR DOSSIÊ SOCIAL COMO OUTROS
-
-
-                console.log(dossieSocial)
             
                 const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
                 const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
@@ -96,8 +99,7 @@ export class CreateInterestedUseCase{
                     cpfCapa = buscarTableCpf(novaCapa);
                     if(!cpfCapa){
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
-                       /*  return {erro: ` CPF NÃO ENCONTRADO -`} */
-                      /*  return new Error("error no cpf capa") */
+                        resultado.cpfNaoConstaNaReceita++;
                       continue;
                     }
 
@@ -113,7 +115,6 @@ export class CreateInterestedUseCase{
     
                 let InputArray = await GetInteressadosReq(tarefas[i].pasta_id, cookie)
                 console.log('--RESPOSTA:')
-                console.log(InputArray)
                 let ArrayEnvolvidos = arrayInteressados(InputArray)
                 
                 
@@ -121,7 +122,7 @@ export class CreateInterestedUseCase{
                 const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocialFormatada); 
                  
                 let cpfInvalidoEncontrado = false
-                let arrayDeCpfInválido = []
+                let arrayDeCpfInvalido = []
 
                 try {
                     for (let j = 0; j < arrayCpfsInteressados.length; j++ ) {
@@ -155,10 +156,11 @@ export class CreateInterestedUseCase{
                             
 
                         } catch (error) {
-                            arrayDeCpfInválido.push(" " + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
+                            arrayDeCpfInvalido.push(" " + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
                             cpfInvalidoEncontrado = true
                             if (error.message === 'CPF NÃO CONSTA NA RECEITA') {
-                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInválido} NÃO CONSTA NA RECEITA`, tarefaId })
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInvalido} NÃO CONSTA NA RECEITA`, tarefaId })
+                                resultado.cpfNaoConstaNaReceita++;
                             }
                         }
 
@@ -172,24 +174,24 @@ export class CreateInterestedUseCase{
 
                     if (!cpfInvalidoEncontrado) {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ENVOLVIDOS CADASTRADOS`, tarefaId })
+                        resultado.envolvidosCadastrados++;
                     }
 
 
                 } catch (error) {
                     await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ERRO AO CADASTRAR ENVOLVIDOS`, tarefaId })
+                    resultado.erroAoCadastrarEnvolvidos.push(tarefas[i].pasta.NUP);
                 }
 
     
             }catch(e){
                 console.log(e)
-                return e
+                resultado.erroAoCadastrarEnvolvidos.push(tarefas[i].pasta.NUP);
             }
         }
 
+        return resultado;
 
     }
 
 }
-
-
-//ENVOLVIDOS CADASTRADOS

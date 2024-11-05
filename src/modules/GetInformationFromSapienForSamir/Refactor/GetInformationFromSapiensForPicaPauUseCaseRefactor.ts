@@ -54,7 +54,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
                 return { warning: "DOSPREV COM FALHA NA PESQUISA" }
             }
-
+ 
             const capaFormatada = await verificarECorrigirCapa(data, cookie);
             const cpfCapa = buscarTableCpf(capaFormatada);
             if (!cpfCapa) {
@@ -198,7 +198,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
             return { dosprevPoloAtivo, isDosprevPoloAtivoNormal };
         } catch (error) {
-            console.log("Erro na identificação do Dossiê");
+            console.error("Erro na identificação do Dossiê" + error);
             return { warning: error.message || "Erro desconhecido" };
         }
 

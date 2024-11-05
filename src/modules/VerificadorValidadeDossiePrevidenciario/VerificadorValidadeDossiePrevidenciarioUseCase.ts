@@ -10,7 +10,7 @@ import { getArvoreDocumentoUseCase } from '../GetArvoreDocumento/index';
 import { coletarArvoreDeDocumentoDoPassivo } from "../GetInformationFromSapienForSamir/helps/coletarArvoreDeDocumentoDoPassivo";
 import { getDocumentoUseCase } from '../GetDocumento/index';
 import { getXPathText } from '../../helps/GetTextoPorXPATH';
-import { VerificaçaoDaQuantidadeDeDiasParaInspirarODossie } from "../../helps/VerificaçaoDaQuantidadeDeDiasParaInspirarODossie";
+import { VerificaçaoDaQuantidadeDeDiasParaInspirarODossie } from "../../helps/VerificacaoDaQuantidadeDeDiasParaInspirarODossie";
 
 export class VerificadorValidadeDossiePrevidenciarioUseCase {
 

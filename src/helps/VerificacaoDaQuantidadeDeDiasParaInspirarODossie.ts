@@ -1,5 +1,5 @@
 import { parse } from "date-fns";
-export function VerificaçaoDaQuantidadeDeDiasParaInspirarODossie(dosPrev: string): number {
+export function VerificacaoDaQuantidadeDeDiasParaInspirarODossie(dosPrev: string): number {
     //Exemplo: dosprev = * "Informações extraídas dos sistemas informatizados do INSS em: 10/08/2022 11:58:28"
     //Obtendo somente a data em string
     const dateString = dosPrev.split(": ")[1];

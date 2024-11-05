@@ -6,7 +6,7 @@ import { EncontrarDataCesSusMaisAtual } from "../loas/Business/Help/EncontrarCes
 import { EncontrarDataMaisAtual } from "../loas/Business/Help/EncontrarDataMaisAtual";
 import { formatDate } from "../loas/Business/Help/FormatarDataLoas";
 
-export async function getDERorDCBSuper (paginaDosPrevFormatada: any, dataAjuizamento: any) {
+export async function getDERorDCBSuper (paginaDosPrevFormatada: any, dataAjuizamento: any): Promise<string> {
 
     try {
         

@@ -9,6 +9,7 @@ export async function getEmpregoSislabra(paginaSislabra: string): Promise<Empreg
         console.log("calma pae")
         const salarioContradoXpath = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[8]`)
         const ocupacao = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[5]`)
+        const empresa = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[3]`)
        
         if(!salarioContradoXpath){
             break;
@@ -17,19 +18,28 @@ export async function getEmpregoSislabra(paginaSislabra: string): Promise<Empreg
         const salarioSemVirgulaEPonto = parseInt(salarioContradoXpath.split(",")[0].replace(".",""))
         if(salarioSemVirgulaEPonto > 3000){
             empregosEncontrados.push({
-                salarioContrato: `${salarioSemVirgulaEPonto}`,
+                salarioContrato: `${salarioContradoXpath}`,
                 ocupacao: ocupacao ? `${ocupacao}` : "OCUPAÇÃO NÃO ENCONTRADA",
+                empresa: empresa ? `${empresa}` : "EMPRESA NÃO ENCONTRADA",
               });
         }
             
     
         contadorXpath += 1;
 
-        if (contadorXpath > 7) {
+        if (contadorXpath > 10) {
             console.log('Máximo de tentativas alcançado (Emprego Sislabra)')
             break;
         }
     }
 
-    return empregosEncontrados;
+    const uniqueArray = empregosEncontrados.filter((value, index, self) =>
+        index === self.findIndex((obj) => 
+            obj.empresa === value.empresa && 
+            obj.ocupacao === value.ocupacao && 
+            obj.salarioContrato === value.salarioContrato
+        )
+    );
+
+    return uniqueArray;
 }

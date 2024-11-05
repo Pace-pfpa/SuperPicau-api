@@ -12,6 +12,7 @@ export class CreateInterestedController{
 
         try{
             const created = await this.createInterestedUseCase.execute(data);
+            console.log(created)
 
             resp.status(200).json(created);
         }catch(error){

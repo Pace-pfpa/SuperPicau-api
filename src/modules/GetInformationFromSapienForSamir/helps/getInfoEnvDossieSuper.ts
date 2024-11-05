@@ -7,7 +7,7 @@ import { correçaoDoErroDeFormatoDoSapiens } from "../../../helps/CorreçaoDoErr
 import { convertToDate } from "./createFormatDate";
 import { getValueCalcDossieSuper } from "./getValueCalcDossieSuper";
 
-export async function getInfoEnvDossieSuper (cookie:string, superDossie: any, dataReq: string) {
+export async function getInfoEnvDossieSuper (cookie:string, superDossie: any, dataReq: string): Promise<IPicaPauCalculeDTO> {
 
 
     try {

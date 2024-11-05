@@ -1,13 +1,14 @@
 import { IInformacoesProcessoDTO } from "../../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../../DTO/IInformacoesProcessoLoasDTO";
+import { IResponseLabraAutorConjuge } from "../../../../DTO/IResponseSislabra";
 import { atualizarEtiquetaImpeditivo } from "./atualizarEtiquetaImpeditivo";
 import { atualizarEtiquetaProcessoLimpo } from "./atualizarEtiquetaProcessoLimpo";
 import { subirMinuta } from "./subirMinuta";
 
-export async function finalizarTriagem(impeditivos: string[], informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO): Promise<{ impeditivos: boolean }> {
+export async function finalizarTriagem(impeditivos: string[], impeditivosLabra: IResponseLabraAutorConjuge, informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO): Promise<{ impeditivos: boolean }> {
 
     try {
-        await subirMinuta(informacoesProcesso, impeditivos);
+        await subirMinuta(informacoesProcesso, impeditivos, impeditivosLabra);
         await new Promise(resolve => setTimeout(resolve, 5000));
     } catch (error) {
         console.error("Erro na função finalizarTriagem ao subir a minuta:", error);

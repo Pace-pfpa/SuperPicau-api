@@ -8,7 +8,7 @@ import { convertToDate } from "./createFormatDate";
 import { getDERorDCBNormal } from "./getDERorDCBNormal";
 import { getValueCalcDossieNormal } from "./getValueCalcDossieNormal";
 
-export async function getInfoReqDossieNormal (cookie:string, normalDossie: any) {
+export async function getInfoReqDossieNormal (cookie:string, normalDossie: any): Promise<IPicaPauCalculeDTO> {
 
     try {
 

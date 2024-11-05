@@ -2,17 +2,19 @@ import { Veiculo } from "../../../../DTO/IResponseSislabra";
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
 
 export async function getVeiculos(paginaSislabra: string): Promise<Veiculo[]> {
-    ///html/body/div/main/div/div[11]/table/tbody/tr[2]/td[5]
-    ///html/body/div/main/div/div[11]/table/tbody/tr[2]/td[5]
-    ///html/body/div/main/div/div[11]/table/tbody/tr[3]/td[10]
 
     const veiculosEncontrados: Veiculo[] = [];
     let valueWhile = true;
     let contadorPaxh = 2;
     while(valueWhile){
         const VeiculoMarca = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[5]`)
+        const placaVeiculo = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[3]`)
+        const renavamVeiculo = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[4]`)
+        const anoFabricacaoVeiculo = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[6]`)
+        const municipio = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[9]`)
         const tipoVeiculo = getXPathText(paginaSislabra, `/html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[7]`)
         const valorEstipulado = getXPathText(paginaSislabra, `/html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[10]`)
+        const restricao = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[11]`)
 
         if(!VeiculoMarca && !tipoVeiculo){
             break;
@@ -20,18 +22,28 @@ export async function getVeiculos(paginaSislabra: string): Promise<Veiculo[]> {
 
         if(VeiculoMarca && !tipoVeiculo){
             veiculosEncontrados.push({
-                Marca: `${VeiculoMarca}`,
-                Tipo: "TIPO NÃO ENCONTRADO",
-                ValorEstipulado: valorEstipulado || "VALOR NÃO ENCONTRADO",
+                marca: `${VeiculoMarca}`,
+                tipo: "TIPO NÃO ENCONTRADO",
+                valorEstipulado: valorEstipulado || "VALOR NÃO ENCONTRADO",
+                placa: placaVeiculo || "PLACA NÃO ENCONTRADA",
+                renavam: renavamVeiculo || "RENAVAM NÃO ENCONTRADO",
+                anoFabricacao: anoFabricacaoVeiculo || "ANO DE FABRICAÇÃO NÃO ENCONTRADO",
+                municipio: municipio || "MUNICÍPIO NÃO ENCONTRADO",
+                restricao: restricao,
             })
         }
 
         if(!VeiculoMarca && tipoVeiculo){
             if(tipoVeiculo.trim() != "MOTOCICLETA"){
                 veiculosEncontrados.push({
-                    Marca: "MARCA NÃO ENCONTRADO",
-                    Tipo: `${tipoVeiculo}`,
-                    ValorEstipulado: valorEstipulado || "VALOR NÃO ENCONTRADO",
+                    marca: "MARCA NÃO ENCONTRADO",
+                    tipo: `${tipoVeiculo}`,
+                    valorEstipulado: valorEstipulado || "VALOR NÃO ENCONTRADO",
+                    placa: placaVeiculo || "PLACA NÃO ENCONTRADA",
+                    renavam: renavamVeiculo || "RENAVAM NÃO ENCONTRADO",
+                    anoFabricacao: anoFabricacaoVeiculo || "ANO DE FABRICAÇÃO NÃO ENCONTRADO",
+                    municipio: municipio || "MUNICÍPIO NÃO ENCONTRADO",
+                    restricao: restricao,
                 })
             }
             
@@ -40,12 +52,16 @@ export async function getVeiculos(paginaSislabra: string): Promise<Veiculo[]> {
         if(VeiculoMarca && tipoVeiculo){
             if(tipoVeiculo.trim() != "MOTOCICLETA"){
                 veiculosEncontrados.push({
-                    Marca: `${VeiculoMarca}`,
-                    Tipo: `${tipoVeiculo}`,
-                    ValorEstipulado: valorEstipulado || "VALOR NÃO ENCONTRADO",
+                    marca: `${VeiculoMarca}`,
+                    tipo: `${tipoVeiculo}`,
+                    valorEstipulado: valorEstipulado || "VALOR NÃO ENCONTRADO",
+                    placa: placaVeiculo || "PLACA NÃO ENCONTRADA",
+                    renavam: renavamVeiculo || "RENAVAM NÃO ENCONTRADO",
+                    anoFabricacao: anoFabricacaoVeiculo || "ANO DE FABRICAÇÃO NÃO ENCONTRADO",
+                    municipio: municipio || "MUNICÍPIO NÃO ENCONTRADO",
+                    restricao: restricao,
                 })
             }
-            
         }
 
         contadorPaxh += 1;
