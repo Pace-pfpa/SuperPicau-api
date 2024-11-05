@@ -1,6 +1,7 @@
 import { IInformacoesProcessoDTO } from "../../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../../DTO/IInformacoesProcessoLoasDTO";
 import { IInfoUploadDTO } from "../../../../DTO/IInfoUploadDTO";
+import { IObjInfoImpeditivosRM } from "../../../../DTO/IObjInfoImpeditivosRM";
 import { IResponseLabraAutorConjuge } from "../../../../DTO/IResponseSislabra";
 import { createDocumentoUseCase } from "../../../CreateDocumento";
 import { ImpeditivosHtmlLoas } from "../../../CreateHtmlForLoas/impeditivosLoas";
@@ -15,7 +16,12 @@ interface IMinutasDTO {
     nup: string;
 }
 
-export async function subirMinuta(informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO, impeditivos: string[], impeditivosLabra: IResponseLabraAutorConjuge): Promise<void> {
+export async function subirMinuta(
+    informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO,
+    impeditivos: string[], 
+    impeditivosLabraRM: IResponseLabraAutorConjuge, 
+    impeditivosDosprevRM: IObjInfoImpeditivosRM): Promise<void> {
+
     try {
 
         let htmlUpload: string;
@@ -29,13 +35,13 @@ export async function subirMinuta(informacoesProcesso: IInformacoesProcessoDTO |
     
             const objetoUpload = gerarObjetoUploadRM(impeditivos);
             const htmlGenerator = new ImpeditivosHtmlRuralMaternidade();
-            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'RURAL', impeditivosLabra);
+            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'RURAL', impeditivosLabraRM, impeditivosDosprevRM);
     
         } else if (informacoesProcesso.tipo_triagem === 1) {
     
             const objetoUpload = gerarObjetoUploadRM(impeditivos);
             const htmlGenerator = new ImpeditivosHtmlRuralMaternidade();
-            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'MATERNIDADE', impeditivosLabra);
+            htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload.usuario_nome, 'MATERNIDADE', impeditivosLabraRM, impeditivosDosprevRM);
     
         }
     

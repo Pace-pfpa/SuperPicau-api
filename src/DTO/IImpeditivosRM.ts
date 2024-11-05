@@ -1,6 +1,14 @@
 export interface IImpeditivoEmpregoRM {
     haveEmprego: boolean;
-    emprego: string;
+    emprego: EmpregoDP[];
+}
+
+export type EmpregoDP = {
+    vinculo: string;
+    dataInicio: string;
+    dataFim: string;
+    filiacao: string;
+    ocupacao: string;
 }
 
 export interface IImpeditivoRequerimentoAtivo {

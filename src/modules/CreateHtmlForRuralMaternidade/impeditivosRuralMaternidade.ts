@@ -1,8 +1,15 @@
 import { HtmlIImpeditivosRuralMaternidadeDTO } from "../../DTO/HtmlImpeditivosRuralMaternidadeDTO";
+import { IObjInfoImpeditivosRM } from "../../DTO/IObjInfoImpeditivosRM";
 import { IResponseLabraAutorConjuge } from "../../DTO/IResponseSislabra";
 
 export class ImpeditivosHtmlRuralMaternidade {
-    async execute(data: HtmlIImpeditivosRuralMaternidadeDTO, nome: string, tipo: string, impedimentosLabra: IResponseLabraAutorConjuge): Promise<string> {
+    async execute(
+        data: HtmlIImpeditivosRuralMaternidadeDTO, 
+        nome: string, 
+        tipo: string, 
+        impedimentosLabra: IResponseLabraAutorConjuge, 
+        impedimentosDosprev: IObjInfoImpeditivosRM): Promise<string> {
+
         const currentDate = new Date().toLocaleString();
         const getStatus = (value: boolean | null): string => {
             if (value === true) {
@@ -37,7 +44,11 @@ export class ImpeditivosHtmlRuralMaternidade {
             localizacao: "LOCALIZAÇÃO",
             distrito: "DISTRITO",
             cep: "CEP",
-            uf: "UF"
+            uf: "UF",
+            vinculo: "ORIGEM DO VÍNCULO",
+            dataInicio: "DATA DE INÍCIO",
+            dataFim: "DATA DE FIM",
+            filiacao: "TIPO DE FILIAÇÃO"
         };
 
         const renderImpedimentos = (impedimentos: any[], imp: string): string => {
@@ -85,7 +96,11 @@ export class ImpeditivosHtmlRuralMaternidade {
                 <thead><tr><th><span class="title-doc">DOSPREV AUTOR</span></th></tr></thead>
                 <tbody>
                     <tr><td><span class="title">REQUERIMENTO:</span> ${getStatus(data.requerimento)}</td></tr>
-                    <tr><td><span class="title">EMPREGO:</span> ${getStatus(data.emprego)}</td></tr>
+                    <tr>
+                        <td><span class="title">EMPREGO:</span> ${getStatus(data.emprego)}
+                            ${data.emprego && impedimentosDosprev.emprego.length ? renderImpedimentos(impedimentosDosprev.emprego, "EMPREGO") : ''}
+                        </td>
+                    </tr>
                     <tr><td><span class="title">VÍNCULO ABERTO:</span> ${getStatus(data.vinculoAberto)}</td></tr>
                     <tr><td><span class="title">CONCESSÃO ANTERIOR:</span> ${getStatus(data.concessaoAnterior)}</td></tr>
                     <tr><td><span class="title">LITISPENDÊNCIA:</span> ${getStatus(data.litispendencia)}</td></tr>

@@ -1,4 +1,4 @@
-import { IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
+import { EmpregoDP, IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
 import { IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM, IObjInfoImpeditivosLoas } from "../../../DTO/IObjInfoImpeditivosRM";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
@@ -30,15 +30,15 @@ export class GetInformationDossieForPicaPau {
         objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ";
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
-        const verificarDataFinal: IImpeditivoEmpregoRM =
+        const verificarDataFinal: EmpregoDP[] =
           await dataPrevidencias.Previdenciarias(
             DatasAtualEMenocinco[0],
             DatasAtualEMenocinco[1],
             paginaDosprevFormatada
           );
           
-        if (verificarDataFinal.haveEmprego) {
-          objInfoImpeditivos.emprego = verificarDataFinal.emprego;
+        if (verificarDataFinal.length !== 0) {
+          objInfoImpeditivos.emprego = verificarDataFinal;
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }
@@ -135,15 +135,15 @@ export class GetInformationDossieForPicaPau {
         objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ"
         ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
       } else {
-        const verificarDataFinal: IImpeditivoEmpregoRM =
+        const verificarDataFinal: EmpregoDP[] =
           await dataPrevidencias.Previdenciarias(
             DatasAtualEMenosDezesseis[0],
             DatasAtualEMenosDezesseis[1],
             paginaDosprevFormatada
           );
           
-        if (verificarDataFinal.haveEmprego) {
-          objInfoImpeditivos.emprego = verificarDataFinal.emprego;
+        if (verificarDataFinal.length !== 0) {
+          objInfoImpeditivos.emprego = verificarDataFinal;
           ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
         }
       }

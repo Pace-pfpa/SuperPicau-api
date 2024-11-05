@@ -1,6 +1,8 @@
+import { EmpregoDP } from "./IImpeditivosRM";
+
 export interface IObjInfoImpeditivosRM {
     requerimento: string | null;
-    emprego: string | null;
+    emprego: EmpregoDP[];
     concessaoAnterior: string | null;
     litispendencia: string | null;
 }

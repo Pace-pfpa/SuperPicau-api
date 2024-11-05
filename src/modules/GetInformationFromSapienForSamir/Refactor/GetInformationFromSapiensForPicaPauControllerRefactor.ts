@@ -4,6 +4,7 @@ import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInforma
 import { BuscarImpedimentosUseCase } from '../BuscarImpedimentos/BuscarImpedimentosUseCase';
 import { finalizarTriagem } from './utils/finalizarTriagem';
 import { IResponseLabraAutorConjuge } from '../../../DTO/IResponseSislabra';
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM } from '../../../DTO/IObjInfoImpeditivosRM';
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
@@ -25,7 +26,12 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     }
 
                     let impedimentos: string[];
-                    let impedimentosLabra: IResponseLabraAutorConjuge;
+
+                    let impedimentosLabraRM: IResponseLabraAutorConjuge;
+                    let impedimentosLabraLoas: any;
+
+                    let impedimentosDosprevRM: IObjInfoImpeditivosRM;
+                    let impedimentosDosprevLoas: IObjInfoImpeditivosLoas;
 
                     if (result[1] === 'LOAS') {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
@@ -33,10 +39,11 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     } else {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
                         impedimentos = buscaDeImpedimentos.impedimentos;
-                        impedimentosLabra = buscaDeImpedimentos.objImpedimentosLabra;
+                        impedimentosLabraRM = buscaDeImpedimentos.objImpedimentosLabra;
+                        impedimentosDosprevRM = buscaDeImpedimentos.objImpedimentos;
                     }
 
-                    const processo = await finalizarTriagem(impedimentos, impedimentosLabra, result[0]);
+                    const processo = await finalizarTriagem(impedimentos, impedimentosLabraRM, impedimentosLabraLoas, impedimentosDosprevRM, impedimentosDosprevLoas , result[0]);
 
                     resolve(response.status(200).json(processo));
 

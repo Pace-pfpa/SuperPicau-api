@@ -3,12 +3,12 @@ import { verificarDataNoPeriodoDeDezesseisAnos } from "../../../../../helps/Veri
 import { converterDatasParaDate } from "../../../../../helps/TransformarStringParaFormatoDate";
 import { ordenarDatas } from "../../../../../helps/BuscarDatasEmString";
 import { calcularDiasEmprego } from "../../../helps/calcularDiasEmprego";
-import { IImpeditivoEmpregoRM } from "../../../../../DTO/IImpeditivosRM";
+import { EmpregoDP } from "../../../../../DTO/IImpeditivosRM";
 
-//Estrutura para identificar data de emprego
+//Estrutura para identificar data de empreg
 export class DataPrevidenciarias {
-    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<IImpeditivoEmpregoRM> {
-        let impeditivoEmprego: string = ''; 
+    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: string): Promise<EmpregoDP[]> {
+        const empregosEncontrados: EmpregoDP[] = [];
 
         let tamanhoColunaPrevidenciarias = 2;
         let verificarWhilePrevidenciarias = true;
@@ -39,11 +39,22 @@ export class DataPrevidenciarias {
                     if (impeditivoBoolean) {
 
                         if (calcularDiasEmprego(datasEmprego[0], datasEmprego[1]) > 120) {
-                            impeditivoEmprego = xpathCoulaFormatadoPrevidenciarias.trim();
-                            return {
-                                haveEmprego: true,
-                                emprego: impeditivoEmprego   
-                            } 
+
+
+                            const vinculoEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[4]/table/tbody/tr[${p}]/td[4]`).trim()
+                            const dataInicioEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[4]/table/tbody/tr[${p}]/td[5]`).trim()
+                            const dataFimEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[4]/table/tbody/tr[${p}]/td[6]`).trim()
+                            const filiacaoEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[4]/table/tbody/tr[${p}]/td[7]`).trim()
+                            const ocupacaoEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[4]/table/tbody/tr[${p}]/td[8]`).trim()
+
+
+                            empregosEncontrados.push({
+                                vinculo: vinculoEmprego ? `${vinculoEmprego}` : "ORIGEM DO VÍNCULO NÃO ENCONTRADA",
+                                dataInicio: dataInicioEmprego ? `${dataInicioEmprego}` : "DATA DE INÍCIO NÃO ENCONTRADA",
+                                dataFim: dataFimEmprego ? `${dataFimEmprego}` : "DATA DE FIM NÃO ENCONTRADA",
+                                filiacao: filiacaoEmprego ? `${filiacaoEmprego}` : "TIPO DE FILIAÇÃO NÃO ENCONTRADA",
+                                ocupacao: ocupacaoEmprego ? `${ocupacaoEmprego}` : "OCUPAÇÃO NÃO ENCONTRADA",
+                              });
                         }
 
                     }
@@ -53,10 +64,8 @@ export class DataPrevidenciarias {
             }
 
         }
-        return {
-            haveEmprego: false,
-            emprego: impeditivoEmprego
-         }
+
+        return empregosEncontrados;
     }
 
 }

@@ -34,14 +34,7 @@ export const routerGetInformationsForSamir = Router();
  *         description: The request error
  */
 
-// ALTERADA PARA O TESTE DE REFACTOR
 
-// ORIGINAL
-// routerGetInformationsForSamir.post("/getInformationFromSapienForSamir", async (req, res) => {
-//     return getInformationFromSapienForSamirController.handle(req, res);
-// })
-
-// REFACTOR
 routerGetInformationsForSamir.post("/getInformationFromSapienForSamir", async (req, res) => {
     return getInformationFromSapiensForPicaPauControllerRefactor.handle(req, res);
 })
