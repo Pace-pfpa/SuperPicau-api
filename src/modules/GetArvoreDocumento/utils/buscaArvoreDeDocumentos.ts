@@ -1,6 +1,5 @@
-import { IGetArvoreDocumentoDTO } from "../../../../DTO/GetArvoreDocumentoDTO";
-import { ResponseArvoreDeDocumento } from "../../../../sapiensOperations/response/ResponseArvoreDeDocumento";
-import { getArvoreDocumentoUseCase } from "../../../GetArvoreDocumento";
+import { getArvoreDocumentoUseCase } from "..";
+import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../DTO";
 
 export async function buscarArvoreDeDocumentos(objectGetArvoreDocumento: IGetArvoreDocumentoDTO): Promise<ResponseArvoreDeDocumento[] | Error> {
     try {

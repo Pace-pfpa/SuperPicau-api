@@ -6,20 +6,18 @@ import { getTarefaUseCase } from "../GetTarefa";
 import { GetPessoa_id } from "./RequisicaoAxiosTarefas/GetPessoa_id";
 import { CreateTarefa } from "./RequisicaoAxiosTarefas/CreateTarefa";
 import { GetInteressadosReq } from "./RequisicaoAxiosTarefas/GetInteressadosReq";
-import { IGetArvoreDocumentoDTO } from "../../DTO/GetArvoreDocumentoDTO";
 import { getArvoreDocumentoUseCase } from "../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../GetDocumento";
-import { ResponseArvoreDeDocumento } from "../../sapiensOperations/response/ResponseArvoreDeDocumento";
 import { BuscarTabelaGrupoFamiliar } from "./Helps/BuscarTabelaGrupoFamiliar";
 import { getCapaDoPassivaUseCase } from "../GetCapaDoPassiva";
-import { verificarCapaTrue } from "../GetInformationFromSapienForSamir/helps/verificarCapaTrue";
 import { getXPathText } from "../../helps/GetTextoPorXPATH";
-import { buscarTableCpf } from "../GetInformationFromSapienForSamir/helps/procurarTableCpf";
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
+import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../GetArvoreDocumento/DTO";
+import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
 
 export class CreateInterestedUseCase {
 

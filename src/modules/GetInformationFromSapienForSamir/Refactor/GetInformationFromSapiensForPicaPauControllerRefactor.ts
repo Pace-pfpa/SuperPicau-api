@@ -43,7 +43,13 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                         impedimentosDosprevRM = buscaDeImpedimentos.objImpedimentos;
                     }
 
-                    const processo = await finalizarTriagem(impedimentos, impedimentosLabraRM, impedimentosLabraLoas, impedimentosDosprevRM, impedimentosDosprevLoas , result[0]);
+                    const processo = await finalizarTriagem(
+                        impedimentos,
+                        impedimentosLabraRM, 
+                        impedimentosLabraLoas, 
+                        impedimentosDosprevRM, 
+                        impedimentosDosprevLoas, 
+                        result[0]);
 
                     resolve(response.status(200).json(processo));
 

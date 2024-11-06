@@ -1,11 +1,12 @@
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { JSDOM } from 'jsdom';
 
 function isCPF(text: string): boolean {
     const cpf = text.split(/[()]/)[1]?.replace(/[.-]/g, "");
     return !/\D/.test(cpf);
 }
 
-export function buscarTableCpf(capa: string): string | undefined {
+export function buscarTableCpf(capa: JSDOM): string | undefined {
     const MAX_DIVS = 10;
     const MAX_ROWS = 6;
 

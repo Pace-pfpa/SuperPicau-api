@@ -1,11 +1,3 @@
-import { EmpregoDP } from "./IImpeditivosRM";
-
-export interface IObjInfoImpeditivosRM {
-    requerimento: string | null;
-    emprego: EmpregoDP[];
-    concessaoAnterior: string | null;
-    litispendencia: string | null;
-}
 
 export interface IObjInfoImpeditivosLoas {
     cadunico: string | null;
@@ -15,13 +7,6 @@ export interface IObjInfoImpeditivosLoas {
     requerimento: string | null;
     renda: string | null;
 }
-
-export interface IReturnImpedimentosRM {
-    arrayDeImpedimentos: string;
-    objImpedimentosRM: IObjInfoImpeditivosRM;
-}
-
-
 
 export interface IReturnImpedimentosLOAS {
     arrayDeImpedimentos: string;

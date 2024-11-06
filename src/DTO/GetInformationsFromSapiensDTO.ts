@@ -1,11 +1,12 @@
+import { ITarefaResponse } from "../modules/GetTarefa/DTO/ITarefaResponse";
 import { ILoginDTO } from "./LoginDTO";
 
 export interface IGetInformationsFromSapiensDTO {
     login: ILoginDTO;
     etiqueta: string;
-    tarefa: any
+    tarefa: ITarefaResponse;
     readDosprevAge: Number;
-    loas: boolean
+    loas: boolean;
 }
 
 

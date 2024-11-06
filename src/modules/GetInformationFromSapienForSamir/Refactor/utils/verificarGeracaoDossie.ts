@@ -1,8 +1,9 @@
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/DTO";
 import { getDocumentoUseCase } from "../../../GetDocumento";
-const { JSDOM } = require('jsdom');
+import { JSDOM } from 'jsdom';
 
-export async function verificarGeracaoDossie(dosprev: any, cookie: string) {
+export async function verificarGeracaoDossie(dosprev: ResponseArvoreDeDocumento, cookie: string): Promise<Error> {
     const idDosprevParaPesquisa = dosprev.documentoJuntado.componentesDigitais[0].id;
     
     try {

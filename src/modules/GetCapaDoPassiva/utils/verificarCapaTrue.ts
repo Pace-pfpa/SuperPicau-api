@@ -1,11 +1,12 @@
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { JSDOM } from 'jsdom';
 
-export async function verificarCapaTrue(capaToVerivy: string){ 
-///html/body/div/div[5]
+export async function verificarCapaTrue(capaToVerivy: JSDOM){ 
+
     for(let i=0; i<10;i++){
         let pathDivTable = `/html/body/div/div[${i}]`;
         let infoxPath = getXPathText(capaToVerivy, pathDivTable);
-        ///html/body/div/div[5]/table/tbody/tr[1]/td[1]
+
         if(infoxPath){
             for(let j=0;j<20; j++){
                 let xpathDivLinha = `html/body/div/div[${i}]/table/tbody/tr[${j}]/td[1]`
@@ -22,10 +23,4 @@ export async function verificarCapaTrue(capaToVerivy: string){
 
     }
     return false;
-
-
-
-    ///html/body/div/div[5]/table/tbody/tr[10]/td[1]
-
-
 }

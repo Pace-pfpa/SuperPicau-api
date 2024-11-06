@@ -1,15 +1,14 @@
-import { IGetArvoreDocumentoDTO } from "../../../DTO/GetArvoreDocumentoDTO";
 import { IGetInformationsFromSapiensDTO } from "../../../DTO/GetInformationsFromSapiensDTO";
 import { IInformacoesProcessoDTO } from "../../../DTO/IInformacoesProcessoDTO";
-import { ExecuteReturnType, IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
+import { ExecuteReturnType, IDossieSocialInfo, IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
 import { IInfoUploadDTO } from "../../../DTO/IInfoUploadDTO";
-import { ResponseArvoreDeDocumento } from "../../../sapiensOperations/response/ResponseArvoreDeDocumento";
+import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../../GetArvoreDocumento/DTO";
+import { buscarArvoreDeDocumentos } from "../../GetArvoreDocumento/utils";
+import { verificarECorrigirCapa, buscarTableCpf } from "../../GetCapaDoPassiva/utils";
 import { getTarefaUseCase } from "../../GetTarefa";
-import { buscarTableCpf } from "../helps/procurarTableCpf";
+import { IdentificarDossieAtivoType } from "./DTO/Triagem/IdentificarDossieAtivoType";
 import { autenticarUsuario } from "./helps/autenticarUsuario";
-import { buscarArvoreDeDocumentos } from "./helps/buscarArvoreDeDocumentos";
 import { processarDossie } from "./helps/processarDossie";
-import { verificarECorrigirCapa } from "./helps/verificarECorrigirCapa";
 import { atualizarEtiquetaAviso } from "./utils/atualizarEtiquetaAviso";
 import { buscarDossieSocial } from "./utils/buscarDossieSocial";
 import { buscarSislabraLOAS } from "./utils/buscarSislabraLOAS";
@@ -31,7 +30,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             const tarefaId = data.tarefa.id;
 
             const tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
-            const tarefaPastaID = tarefas[0].pasta_id;
+            const tarefaPastaID = tarefas[0].pasta_id
 
             if (!tarefas) {
                 return { warning: "TAREFA NÃO ENCONTRADA" };
@@ -68,7 +67,15 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return { warning: `DOSPREV NÃO EXISTE` };
             }
 
-            const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
+            const response = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
+
+            if ('warning' in response) {
+                await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
+                return { warning: `DOSPREV NÃO EXISTE` };
+            }
+
+            const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = response;
+
             if (!dosprevPoloAtivo) {
                 await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
                 return { warning: `DOSPREV NÃO EXISTE` };
@@ -80,7 +87,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return { warning: "DOSPREV COM FALHA NA GERAÇÃO" }
             }
 
-            let dossieSocialInfo = null;
+            let dossieSocialInfo: IDossieSocialInfo = null;
             dossieSocialInfo = await buscarDossieSocial(arrayDeDocumentos, cookie, cpfCapa);
             if (dossieSocialInfo instanceof Error) {
                 dossieSocialInfo = null;
@@ -88,11 +95,11 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
 
             const infoUpload: IInfoUploadDTO = {
                 usuario_nome: usuario_nome,
-                numeroProcesso: `${tarefas[0].pasta.processoJudicial.numero}`,
+                numeroProcesso: tarefas[0].pasta.processoJudicial.numero,
                 nup: data.tarefa.pasta.NUP,
-                tarefa_id: `${tarefas[0].id}`,
-                pasta_id: `${tarefas[0].pasta.id}`,
-                usuario_setor: `${tarefas[0].setorResponsavel_id}`,
+                tarefa_id: tarefas[0].id,
+                pasta_id: tarefas[0].pasta.id,
+                usuario_setor: tarefas[0].setorResponsavel_id,
                 interessados: tarefas[0].pasta.interessados
             }
             
@@ -153,10 +160,13 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     }
 
     async identificarDossieAtivo(
-        arrayDeDossiesNormais: any[], arrayDeDossiesSuper: any[], cpfCapa: string, cookie: string
-    ): Promise<{ dosprevPoloAtivo: any, isDosprevPoloAtivoNormal: boolean } | any> {
+        arrayDeDossiesNormais: ResponseArvoreDeDocumento[], 
+        arrayDeDossiesSuper: ResponseArvoreDeDocumento[], 
+        cpfCapa: string, 
+        cookie: string
+    ): Promise<IdentificarDossieAtivoType> {
 
-        let dosprevPoloAtivo: any = null;
+        let dosprevPoloAtivo: ResponseArvoreDeDocumento = null;
         let isDosprevPoloAtivoNormal: boolean = false;
 
         try {
