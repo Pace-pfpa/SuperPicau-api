@@ -1,8 +1,8 @@
-export interface IGetArvoreDocumentoDTO {
+export interface GetArvoreDocumentoDTO {
     cookie: string
     nup: string;
     chave: string;
-    tarefa_id: string;
+    tarefa_id: number;
 }
 /**
  * @swagger

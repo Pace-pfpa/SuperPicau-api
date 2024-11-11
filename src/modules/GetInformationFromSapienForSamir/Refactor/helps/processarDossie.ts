@@ -1,7 +1,10 @@
-import { ResponseArvoreDeDocumento } from "../../../../sapiensOperations/response/ResponseArvoreDeDocumento";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/dtos";
 
-export async function processarDossie(arrayDeDocumentos: ResponseArvoreDeDocumento[]): Promise<{ arrayDeDossiesNormais: any, arrayDeDossiesSuper: any }> {
-    let objectDosPrev = arrayDeDocumentos.filter(Documento => Documento.documentoJuntado.tipoDocumento.sigla === "DOSPREV" && Documento.documentoJuntado.origemDados.fonteDados === "SAT_INSS");
+export async function processarDossie(arrayDeDocumentos: ResponseArvoreDeDocumento[]): Promise<{ arrayDeDossiesNormais: ResponseArvoreDeDocumento[], arrayDeDossiesSuper: ResponseArvoreDeDocumento[] }> {
+    let objectDosPrev = arrayDeDocumentos.filter(
+        Documento => Documento.documentoJuntado.tipoDocumento.sigla === "DOSPREV" && 
+        Documento.documentoJuntado.origemDados.fonteDados === "SAT_INSS");
+
     let objectDosPrev2 = arrayDeDocumentos.filter(Documento => {
         const movimento = Documento.movimento.split(".");
         return movimento[0] === "JUNTADA DOSSIE DOSSIE PREVIDENCIARIO REF";

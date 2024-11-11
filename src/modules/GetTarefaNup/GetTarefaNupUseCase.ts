@@ -1,4 +1,3 @@
-import { IGetTarefaDTO } from "../../DTO/GetTarefaDTO";
 import { IGetTarefaNupDTO } from "../../DTO/GetTarefaNupDTO";
 import { RequestSapiens } from "../../pytonRequest/requestSapiens";
 import { RequestGetTarefaNup } from "../../sapiensOperations/resquest/RequestGetTarefaNup"

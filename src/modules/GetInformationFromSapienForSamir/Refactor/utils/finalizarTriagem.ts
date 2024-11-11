@@ -1,17 +1,26 @@
 import { IInformacoesProcessoDTO } from "../../../../DTO/IInformacoesProcessoDTO";
 import { IInformacoesProcessoLoasDTO } from "../../../../DTO/IInformacoesProcessoLoasDTO";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM } from "../../../../DTO/IObjInfoImpeditivosRM";
 import { IResponseLabraAutorConjuge } from "../../../../DTO/IResponseSislabra";
 import { atualizarEtiquetaImpeditivo } from "./atualizarEtiquetaImpeditivo";
 import { atualizarEtiquetaProcessoLimpo } from "./atualizarEtiquetaProcessoLimpo";
 import { subirMinuta } from "./subirMinuta";
 
-export async function finalizarTriagem(impeditivos: string[], impeditivosLabra: IResponseLabraAutorConjuge, informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO): Promise<{ impeditivos: boolean }> {
+export async function finalizarTriagem(
+    impeditivos: string[], 
+    impeditivosLabrasRM: IResponseLabraAutorConjuge,
+    impeditivosLabrasLoas: any,
+    impeditivosDosprevRM: IObjInfoImpeditivosRM,
+    impeditivosDosprevLoas: IObjInfoImpeditivosLoas,
+    informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO): Promise<{ impeditivos: boolean }> {
 
-    try {
-        await subirMinuta(informacoesProcesso, impeditivos, impeditivosLabra);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-    } catch (error) {
-        console.error("Erro na função finalizarTriagem ao subir a minuta:", error);
+    if (informacoesProcesso.isUserAdmin) {
+        try {
+            await subirMinuta(informacoesProcesso, impeditivos, impeditivosLabrasRM, impeditivosDosprevRM);
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        } catch (error) {
+            console.error("Erro na função finalizarTriagem ao subir a minuta:", error);
+        }
     }
 
 

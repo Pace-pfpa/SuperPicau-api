@@ -1,15 +1,14 @@
-import { ILoginDTO } from "./LoginDTO";
+import { ILoginDTO } from "../../../DTO/LoginDTO";
+import { ITarefaResponse } from "../../GetTarefa/DTO/ITarefaResponse";
 
-export interface IGetInformationsFromSapiensDTO {
+export interface GetInformationsFromSapiensDTO {
     login: ILoginDTO;
     etiqueta: string;
-    tarefa: any
+    tarefa: ITarefaResponse;
     readDosprevAge: Number;
-    loas: boolean
+    loas: boolean;
+    admin: boolean;
 }
-
-
-
 
 
 /**

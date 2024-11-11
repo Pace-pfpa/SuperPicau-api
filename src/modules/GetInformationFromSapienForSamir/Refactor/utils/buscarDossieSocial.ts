@@ -1,8 +1,13 @@
+import { IDossieSocialInfo } from "../../../../DTO/IInformacoesProcessoLoasDTO";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/dtos";
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { cadUnico } from "../../loas/CadUnico";
-const { JSDOM } = require('jsdom');
+import { JSDOM } from 'jsdom';
 
-export async function buscarDossieSocial(arvoreDeDocumentos: any, cookie: string, cpfCapa: string) {
+export async function buscarDossieSocial(
+    arvoreDeDocumentos: ResponseArvoreDeDocumento[], 
+    cookie: string, 
+    cpfCapa: string): Promise<IDossieSocialInfo> {
 
     let dossieSocialInfo = null;
     const dossieSocial = arvoreDeDocumentos.find(Documento => Documento.documentoJuntado.tipoDocumento.sigla === "DOSOC");
@@ -21,7 +26,7 @@ export async function buscarDossieSocial(arvoreDeDocumentos: any, cookie: string
             dossieSocialInfo = { gastoComMedicamentos, grupoFamiliarCpfs };
         } catch (error) {
             console.log("Erro ao buscar dossie social");
-            throw new Error("DOSPREV COM FALHA NA GERAÇÃO");
+            throw new Error("DOSSIE SOCIAL COM FALHA NA GERAÇÃO");
         } 
     }
 

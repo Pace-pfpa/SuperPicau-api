@@ -1,9 +1,9 @@
 export interface ICreateDocumentDTO {
     cookie: string
-    pasta_id: string;
+    pasta_id: number;
     usuario_nome: string
-    usuario_setor: string;
-    tarefa_id: string;
+    usuario_setor: number;
+    tarefa_id: number;
     tid: string;
     tipoDocumento_id?: string;
     modelo_id?: string;

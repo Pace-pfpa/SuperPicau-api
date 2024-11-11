@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import { IGetInformationsFromSapiensDTO } from '../../../DTO/GetInformationsFromSapiensDTO';
 import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInformationFromSapiensForPicaPauUseCaseRefactor';
 import { BuscarImpedimentosUseCase } from '../BuscarImpedimentos/BuscarImpedimentosUseCase';
 import { finalizarTriagem } from './utils/finalizarTriagem';
 import { IResponseLabraAutorConjuge } from '../../../DTO/IResponseSislabra';
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM } from '../../../DTO/IObjInfoImpeditivosRM';
+import { GetInformationsFromSapiensDTO } from '.';
+
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
@@ -13,7 +15,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
     ) {}
 
     async handle(request: Request, response: Response): Promise<Response> {
-        const data: IGetInformationsFromSapiensDTO = request.body;
+        const data: GetInformationsFromSapiensDTO = request.body;
         console.log("CALL HERE REFACTOR")
         return new Promise((resolve, reject) => {
             setTimeout(async() => {
@@ -25,7 +27,12 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     }
 
                     let impedimentos: string[];
-                    let impedimentosLabra: IResponseLabraAutorConjuge;
+
+                    let impedimentosLabraRM: IResponseLabraAutorConjuge;
+                    let impedimentosLabraLoas: any;
+
+                    let impedimentosDosprevRM: IObjInfoImpeditivosRM;
+                    let impedimentosDosprevLoas: IObjInfoImpeditivosLoas;
 
                     if (result[1] === 'LOAS') {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
@@ -33,10 +40,17 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     } else {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentos(result[0])
                         impedimentos = buscaDeImpedimentos.impedimentos;
-                        impedimentosLabra = buscaDeImpedimentos.objImpedimentosLabra;
+                        impedimentosLabraRM = buscaDeImpedimentos.objImpedimentosLabra;
+                        impedimentosDosprevRM = buscaDeImpedimentos.objImpedimentos;
                     }
 
-                    const processo = await finalizarTriagem(impedimentos, impedimentosLabra, result[0]);
+                    const processo = await finalizarTriagem(
+                        impedimentos,
+                        impedimentosLabraRM, 
+                        impedimentosLabraLoas, 
+                        impedimentosDosprevRM, 
+                        impedimentosDosprevLoas, 
+                        result[0]);
 
                     resolve(response.status(200).json(processo));
 

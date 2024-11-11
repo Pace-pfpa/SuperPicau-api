@@ -1,13 +1,11 @@
-import { ta } from "date-fns/locale";
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
 import { CorrigirCpfComZeros } from "../../../CreateInterested/Helps/CorrigirCpfComZeros";
+import { JSDOM } from 'jsdom';
 
 export class CadUnico{
 
-
-///html/body/div[7]/table/tbody/tr[1]
-    async execute(paginaCadUnico: any){
-        let valorMedicamentoTable = null;
+    async execute(paginaCadUnico: JSDOM): Promise<string> {
+        let valorMedicamentoTable: string = null;
         const procurarporTabelaCorretaDiv = 15;
         const procrurarPorTabelaCorretaTable = 15;
         for(let i = 1; i <= procurarporTabelaCorretaDiv; i++){
@@ -66,25 +64,12 @@ export class CadUnico{
 
 
         }
-        
-
-
         return null;
-
-
-
-
-
-
-
-
-        
     }
 
 
-    async grupoFamiliar (paginaCadUnico: any, cpfCapa: string) {
-        console.log(cpfCapa)
-        const armazenamentoDeCpf = [];
+    async grupoFamiliar (paginaCadUnico: JSDOM, cpfCapa: string): Promise<string[]> {
+        const armazenamentoDeCpf: string[] = [];
         const procurarporTabelaCorretaDiv = 15;
         for(let i = 1; i <= procurarporTabelaCorretaDiv; i++){
             const xpathtable = `/html/body/table[${i}]/tbody`
@@ -112,16 +97,6 @@ export class CadUnico{
             }
             return  armazenamentoDeCpf
         }
-       
-       
-        
-
-
         return null;
     }
-
-
-
-
-
 }

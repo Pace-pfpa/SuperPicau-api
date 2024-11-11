@@ -1,4 +1,4 @@
-import { IImpeditivoEmpregoRM, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
+import { EmpregoDP, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo } from "../../../DTO/IImpeditivosRM";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../../../DTO/IObjInfoImpeditivosRM";
 import { getXPathText } from "../../../helps/GetTextoPorXPATH";
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
@@ -26,14 +26,14 @@ export class SuperDossie {
             objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ"
             ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
           } else {
-            const verificarDataFinal: IImpeditivoEmpregoRM =
+            const verificarDataFinal: EmpregoDP[] =
               await dataPrevidenciariasNewDossie.Previdenciarias(
                 DatasAtualEMenosDezesseis[0],
                 DatasAtualEMenosDezesseis[1],
                 paginaDosprevFormatada
               );
-            if (verificarDataFinal.haveEmprego) {
-              objInfoImpeditivos.emprego = verificarDataFinal.emprego;
+            if (verificarDataFinal.length !== 0) {
+              objInfoImpeditivos.emprego = verificarDataFinal;
               ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }
@@ -126,14 +126,14 @@ export class SuperDossie {
           if (DatasAtualEMenosDezesseis[0] == null) {
             ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
           } else {
-            const verificarDataFinal: IImpeditivoEmpregoRM =
+            const verificarDataFinal: EmpregoDP[] =
               await dataPrevidenciariasNewDossie.Previdenciarias(
                 DatasAtualEMenosDezesseis[0],
                 DatasAtualEMenosDezesseis[1],
                 paginaDosprevFormatada
               );
-            if (verificarDataFinal.haveEmprego) {
-              objInfoImpeditivos.emprego = verificarDataFinal.emprego;
+            if (verificarDataFinal.length !== 0) {
+              objInfoImpeditivos.emprego = verificarDataFinal;
               ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }

@@ -1,4 +1,4 @@
-export type ResponseArvoreDeDocumento = {
+export type ResponseArvoreDeDocumentoDTO = {
     id: number;
     uuid: string;
     numeracaoSequencial: number;

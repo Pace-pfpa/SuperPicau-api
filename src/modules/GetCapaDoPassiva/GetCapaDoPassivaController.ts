@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { IGetArvoreDocumentoDTO } from "../../DTO/GetArvoreDocumentoDTO";
 import { GetCapaDoPassivaUseCase } from "./GetCapaDoPassivaUseCase";
 
 export class GetCapaDoPassivaController {

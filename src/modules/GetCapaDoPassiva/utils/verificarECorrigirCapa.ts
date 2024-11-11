@@ -1,10 +1,11 @@
-const { JSDOM } = require('jsdom');
-import { IGetInformationsFromSapiensDTO } from "../../../../DTO/GetInformationsFromSapiensDTO";
-import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
-import { getCapaDoPassivaUseCase } from "../../../GetCapaDoPassiva";
-import { verificarCapaTrue } from "../../helps/verificarCapaTrue";
+import { getCapaDoPassivaUseCase } from "..";
+import { IGetInformationsFromSapiensDTO } from "../../../DTO/GetInformationsFromSapiensDTO";
+import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { verificarCapaTrue } from "../utils";
+import { JSDOM } from 'jsdom';
 
-export async function verificarECorrigirCapa(data: IGetInformationsFromSapiensDTO, cookie: string): Promise<any> {
+
+export async function verificarECorrigirCapa(data: IGetInformationsFromSapiensDTO, cookie: string): Promise<JSDOM> {
 
     try {
         const capaParaVerificar = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
@@ -12,16 +13,14 @@ export async function verificarECorrigirCapa(data: IGetInformationsFromSapiensDT
 
         const infoClasseExist = await verificarCapaTrue(capaFormatada);
         if (!infoClasseExist) {
-            // Tenta buscar uma nova capa com outro XPath
             try {
-                const novaCapa = await buscarNovaCapaComOutroXPath(capaFormatada, cookie, data);
+                const novaCapa = await buscarNovaCapaComOutroXPath(capaFormatada, cookie);
                 return novaCapa;
             } catch (error) {
                 console.error("Erro ao buscar nova capa:", error);
                 throw new Error("Falha na verificação da capa. Verifique o processo.");
             }
         }
-
         return capaFormatada;
     } catch (error) {
         console.error("Erro ao verificar e corrigir a capa:", error);
@@ -29,7 +28,7 @@ export async function verificarECorrigirCapa(data: IGetInformationsFromSapiensDT
     }
 }
 
-export async function buscarNovaCapaComOutroXPath(capaFormatada: any, cookie: string, data: IGetInformationsFromSapiensDTO): Promise<any> {
+export async function buscarNovaCapaComOutroXPath(capaFormatada: any, cookie: string): Promise<JSDOM> {
 
     const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b";
     const novaNup = await getXPathText(capaFormatada, xpathNovaNup);
