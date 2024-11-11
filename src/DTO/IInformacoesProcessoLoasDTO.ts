@@ -1,4 +1,5 @@
-import { ResponseArvoreDeDocumento } from "../modules/GetArvoreDocumento/DTO";
+
+import { ResponseArvoreDeDocumentoDTO } from "../modules/GetArvoreDocumento";
 import { IInformacoesProcessoDTO } from "./IInformacoesProcessoDTO"
 import { IInfoUploadDTO } from "./IInfoUploadDTO";
 import { JSDOM } from 'jsdom';
@@ -8,16 +9,17 @@ export interface IInformacoesProcessoLoasDTO {
     tarefaPastaID: number;
     cookie: string,
     tipo_triagem: Number,
+    isUserAdmin: boolean,
     capaFormatada: JSDOM,
     cpfCapa: string,
     infoUpload: IInfoUploadDTO,
-    dosprevPoloAtivo: ResponseArvoreDeDocumento,
+    dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO,
     isDosprevPoloAtivoNormal: boolean,
     sislabraPoloAtivo: any[],
     sislabraGF: any[],
     dossieSocialInfo: IDossieSocialInfo;
-    arrayDeDossiesNormais: ResponseArvoreDeDocumento[],
-    arrayDeDossiesSuper: ResponseArvoreDeDocumento[]
+    arrayDeDossiesNormais: ResponseArvoreDeDocumentoDTO[],
+    arrayDeDossiesSuper: ResponseArvoreDeDocumentoDTO[]
 }
 
 export interface IDossieSocialInfo {

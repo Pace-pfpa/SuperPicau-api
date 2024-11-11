@@ -16,7 +16,7 @@ import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
-import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../GetArvoreDocumento/DTO";
+import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../GetArvoreDocumento/dtos";
 import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
 
 export class CreateInterestedUseCase {

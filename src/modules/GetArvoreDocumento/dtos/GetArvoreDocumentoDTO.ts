@@ -1,4 +1,4 @@
-export interface IGetArvoreDocumentoDTO {
+export interface GetArvoreDocumentoDTO {
     cookie: string
     nup: string;
     chave: string;

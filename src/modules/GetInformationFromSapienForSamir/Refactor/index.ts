@@ -6,3 +6,5 @@ const getInformationFromSapiensForPicaPauUseCaseRefactor = new GetInformationFro
 const getInformationFromSapiensForPicaPauControllerRefactor = new GetInformationFromSapiensForPicaPauControllerRefactor(getInformationFromSapiensForPicaPauUseCaseRefactor, buscarImpedimentosUseCase);
 
 export { getInformationFromSapiensForPicaPauUseCaseRefactor, getInformationFromSapiensForPicaPauControllerRefactor };
+
+export * from '../dtos/GetInformationFromSapiensDTO';

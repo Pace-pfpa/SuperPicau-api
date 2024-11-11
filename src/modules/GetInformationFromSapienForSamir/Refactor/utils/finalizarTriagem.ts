@@ -14,11 +14,13 @@ export async function finalizarTriagem(
     impeditivosDosprevLoas: IObjInfoImpeditivosLoas,
     informacoesProcesso: IInformacoesProcessoDTO | IInformacoesProcessoLoasDTO): Promise<{ impeditivos: boolean }> {
 
-    try {
-        await subirMinuta(informacoesProcesso, impeditivos, impeditivosLabrasRM, impeditivosDosprevRM);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-    } catch (error) {
-        console.error("Erro na função finalizarTriagem ao subir a minuta:", error);
+    if (informacoesProcesso.isUserAdmin) {
+        try {
+            await subirMinuta(informacoesProcesso, impeditivos, impeditivosLabrasRM, impeditivosDosprevRM);
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        } catch (error) {
+            console.error("Erro na função finalizarTriagem ao subir a minuta:", error);
+        }
     }
 
 

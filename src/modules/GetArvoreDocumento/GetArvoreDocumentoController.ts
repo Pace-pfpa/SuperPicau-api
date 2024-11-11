@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { IGetArvoreDocumentoDTO } from "../../DTO/GetArvoreDocumentoDTO";
 import { GetArvoreDocumentoUseCase } from "./GetArvoreDocumentoUseCase";
+import { GetArvoreDocumentoDTO } from ".";
 
 export class GetArvoreDocumentoController {
     constructor(private requestInformationForSamir: GetArvoreDocumentoUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
-        const data: IGetArvoreDocumentoDTO = request.body;
+        const data: GetArvoreDocumentoDTO = request.body;
         try {
             const result = await this.requestInformationForSamir.execute(data);
             response.status(200).json(result);

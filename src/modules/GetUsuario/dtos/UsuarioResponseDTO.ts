@@ -2,7 +2,7 @@ interface LastLogin {
     date: string;
   }
   
-export interface IUsuarioResponse {
+export interface UsuarioResponseDTO {
     username: string;
     usernameCanonical: string;
     email: string;
@@ -18,5 +18,5 @@ export interface IUsuarioResponse {
     assinaturaHTML: string;
     validado: boolean;
     configuracoes: string;
-  }
+}
   

@@ -1,4 +1,4 @@
-import { IUsuarioResponse } from "../../GetUsuario/DTO/IUsuarioResponse";
+import { IUsuarioResponse } from "../../GetUsuario/dtos/UsuarioResponseDTO";
 import { EspecieTarefa } from "./IEspecieTarefaResponse";
 import { Minuta } from "./IMinutaTarefaResponse";
 import { Pasta } from "./IPastaTarefaResponse";

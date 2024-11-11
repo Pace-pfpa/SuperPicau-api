@@ -1,4 +1,4 @@
-import { ResponseArvoreDeDocumento } from "../../../../GetArvoreDocumento/DTO"
+import { ResponseArvoreDeDocumento } from "../../../../GetArvoreDocumento/dtos"
 
 export type IdentificarDossieAtivoType = {
     dosprevPoloAtivo: ResponseArvoreDeDocumento | null;

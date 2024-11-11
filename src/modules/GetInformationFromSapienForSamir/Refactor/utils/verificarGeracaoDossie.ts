@@ -1,5 +1,5 @@
 import { getXPathText } from "../../../../helps/GetTextoPorXPATH";
-import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/DTO";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/dtos";
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { JSDOM } from 'jsdom';
 

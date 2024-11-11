@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
-import { IGetInformationsFromSapiensDTO } from '../../../DTO/GetInformationsFromSapiensDTO';
 import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInformationFromSapiensForPicaPauUseCaseRefactor';
 import { BuscarImpedimentosUseCase } from '../BuscarImpedimentos/BuscarImpedimentosUseCase';
 import { finalizarTriagem } from './utils/finalizarTriagem';
 import { IResponseLabraAutorConjuge } from '../../../DTO/IResponseSislabra';
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM } from '../../../DTO/IObjInfoImpeditivosRM';
+import { GetInformationsFromSapiensDTO } from '.';
+
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
@@ -14,7 +15,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
     ) {}
 
     async handle(request: Request, response: Response): Promise<Response> {
-        const data: IGetInformationsFromSapiensDTO = request.body;
+        const data: GetInformationsFromSapiensDTO = request.body;
         console.log("CALL HERE REFACTOR")
         return new Promise((resolve, reject) => {
             setTimeout(async() => {

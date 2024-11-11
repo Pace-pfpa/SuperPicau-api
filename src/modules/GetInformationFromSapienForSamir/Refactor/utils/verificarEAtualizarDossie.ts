@@ -1,4 +1,4 @@
-import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/DTO";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/dtos";
 import { verificarDossieMaisAtual } from "../../helps/verificarDossieMaisAtual";
 
 export async function verificarEAtualizarDossie(

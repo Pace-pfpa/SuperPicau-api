@@ -1,4 +1,4 @@
-import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/DTO";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/dtos";
 
 export async function processarDossie(arrayDeDocumentos: ResponseArvoreDeDocumento[]): Promise<{ arrayDeDossiesNormais: ResponseArvoreDeDocumento[], arrayDeDossiesSuper: ResponseArvoreDeDocumento[] }> {
     let objectDosPrev = arrayDeDocumentos.filter(

@@ -1,5 +1,5 @@
 import { IDossieSocialInfo } from "../../../../DTO/IInformacoesProcessoLoasDTO";
-import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/DTO";
+import { ResponseArvoreDeDocumento } from "../../../GetArvoreDocumento/dtos";
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { cadUnico } from "../../loas/CadUnico";
 import { JSDOM } from 'jsdom';

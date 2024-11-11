@@ -1,13 +1,16 @@
-import { IGetInformationsFromSapiensDTO } from "../../../DTO/GetInformationsFromSapiensDTO";
+
 import { IInformacoesProcessoDTO } from "../../../DTO/IInformacoesProcessoDTO";
 import { ExecuteReturnType, IDossieSocialInfo, IInformacoesProcessoLoasDTO } from "../../../DTO/IInformacoesProcessoLoasDTO";
 import { IInfoUploadDTO } from "../../../DTO/IInfoUploadDTO";
-import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../../GetArvoreDocumento/DTO";
-import { buscarArvoreDeDocumentos } from "../../GetArvoreDocumento/utils";
+import { autenticarUsuarioFacade } from "../../Autenticacao";
+import { 
+        GetArvoreDocumentoDTO, 
+        ResponseArvoreDeDocumentoDTO,
+        GetArvoreDocumentoFacade } from "../../GetArvoreDocumento";
 import { verificarECorrigirCapa, buscarTableCpf } from "../../GetCapaDoPassiva/utils";
 import { getTarefaUseCase } from "../../GetTarefa";
+import { GetInformationsFromSapiensDTO } from "../dtos/GetInformationFromSapiensDTO";
 import { IdentificarDossieAtivoType } from "./DTO/Triagem/IdentificarDossieAtivoType";
-import { autenticarUsuario } from "./helps/autenticarUsuario";
 import { processarDossie } from "./helps/processarDossie";
 import { atualizarEtiquetaAviso } from "./utils/atualizarEtiquetaAviso";
 import { buscarDossieSocial } from "./utils/buscarDossieSocial";
@@ -18,11 +21,11 @@ import { verificarGeracaoDossie } from "./utils/verificarGeracaoDossie";
 
 export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
-    async execute(data: IGetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
+    async execute(data: GetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
 
-        const { cookie, usuario } = await autenticarUsuario(data);
+        const { cookie, usuario } = await autenticarUsuarioFacade.autenicarUsuario(data);
         const usuario_id = `${usuario[0].id}`;
-        const usuario_nome = `${usuario[0].nome}`;
+        const usuario_nome = usuario[0].nome;
         
         try {
 
@@ -39,16 +42,16 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return { warning: "TAREFA NÃO ENCONTRADA" };
             }
             
-            console.log("SÓ OS LOUCOS SABEM")
+            console.log("SÓ OS LOUCOS SABEM");
 
-            const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = {
+            const objectGetArvoreDocumento: GetArvoreDocumentoDTO = {
                 nup: data.tarefa.pasta.NUP,
                 chave: data.tarefa.pasta.chaveAcesso,
                 cookie,
                 tarefa_id: data.tarefa.id
             };
 
-            const arrayDeDocumentos: ResponseArvoreDeDocumento[] | Error = await buscarArvoreDeDocumentos(objectGetArvoreDocumento);
+            const arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[] | Error = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
             if (arrayDeDocumentos instanceof Error) {
                 await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
                 return { warning: "DOSPREV COM FALHA NA PESQUISA" }
@@ -116,6 +119,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     tarefaPastaID,
                     cookie,
                     tipo_triagem,
+                    isUserAdmin: data.admin,
                     capaFormatada,
                     cpfCapa,
                     infoUpload,
@@ -141,6 +145,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     tarefaId,
                     cookie,
                     tipo_triagem,
+                    isUserAdmin: data.admin,
                     capaFormatada,
                     cpfCapa,
                     infoUpload,
@@ -160,13 +165,13 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     }
 
     async identificarDossieAtivo(
-        arrayDeDossiesNormais: ResponseArvoreDeDocumento[], 
-        arrayDeDossiesSuper: ResponseArvoreDeDocumento[], 
+        arrayDeDossiesNormais: ResponseArvoreDeDocumentoDTO[], 
+        arrayDeDossiesSuper: ResponseArvoreDeDocumentoDTO[], 
         cpfCapa: string, 
         cookie: string
     ): Promise<IdentificarDossieAtivoType> {
 
-        let dosprevPoloAtivo: ResponseArvoreDeDocumento = null;
+        let dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO = null;
         let isDosprevPoloAtivoNormal: boolean = false;
 
         try {

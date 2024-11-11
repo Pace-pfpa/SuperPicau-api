@@ -1,11 +1,11 @@
 import axios from "axios";
-import { IGetArvoreDocumentoDTO } from "./DTO/IGetArvoreDocumentoDTO";
+import { GetArvoreDocumentoDTO } from "./dtos/GetArvoreDocumentoDTO";
 import { RequestHeaders } from "../../sapiensOperations/resquest/RequestHeaders";
-import { ResponseArvoreDeDocumento } from "./DTO/ResponseArvoreDocumentoType";
+import { ResponseArvoreDeDocumentoDTO } from "./dtos/ResponseArvoreDocumentoDTO";
 
 export class GetArvoreDocumentoUseCase {
 
-    async execute(data: IGetArvoreDocumentoDTO): Promise<ResponseArvoreDeDocumento[]> {
+    async execute(data: GetArvoreDocumentoDTO): Promise<ResponseArvoreDeDocumentoDTO[]> {
         const now = Date.now();
         const requestHeaderUploadArquivo = new RequestHeaders;
         const headers = await requestHeaderUploadArquivo.execute(data.cookie);
