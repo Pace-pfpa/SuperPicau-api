@@ -1,12 +1,9 @@
-
 import { getUsuarioUseCase } from '../GetUsuario';
-import { loginUseCase } from '../LoginUsuario';
-import { getTarefaUseCase } from '../GetTarefa';
 import { uploadDocumentUseCase } from '../UploadDocument';
 import { createDocumentoUseCase } from '../CreateDocumento';
-import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
-import { updateEtiquetaUseCase } from '../UpdateEtiqueta';
 import { getTarefaUseCaseNup } from '../GetTarefaNup';
+import { ITarefaResponse } from '../GetTarefa/dtos';
+import { IInserirMemoriaCalculoDTO } from './dtos/InserirMemoriaCalculoDTO';
 
 
 export class InsertSapiensMinutasUseCase {
@@ -24,7 +21,7 @@ export class InsertSapiensMinutasUseCase {
         const minutas = data.minutas;
         let response: Array<any> = [];
         for(let k= 0; k<data.minutas.length; k++){
-            const tarefas = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.minutas[k].nup})
+            const tarefas: ITarefaResponse[] = await getTarefaUseCaseNup.execute({ cookie, usuario_id, nup: data.minutas[k].nup})
             
 
 
@@ -47,12 +44,12 @@ export class InsertSapiensMinutasUseCase {
                     }
                 }
                 
-                const tarefa_id = `${tarefas[i].id}`;
-                const pasta_id = `${tarefas[i].pasta.id}`;
-                const usuario_setor = `${tarefas[i].setorResponsavel_id}`
+                const tarefa_id = tarefas[i].id
+                const pasta_id = tarefas[i].pasta.id
+                const usuario_setor = tarefas[i].setorResponsavel_id
                 const tid = `${tidNumber}`;
                 //tarefas[i].postIt = "MEMÓRIA DE CALCULO INSERIDA NA MINUTA";
-                tarefas[i].tid = tidNumber;
+                //tarefas[i].tid = tidNumber;
                 
                 processoAfazer = minutas.find(minuta => minuta.numeroprocesso == processo);
                 processoAFazerPelaNup = processos.pasta.NUP == data.minutas[k].nup;
