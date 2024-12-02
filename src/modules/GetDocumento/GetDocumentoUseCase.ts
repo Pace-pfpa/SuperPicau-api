@@ -1,6 +1,6 @@
 import axios from "axios";
 import { RequestHeaders } from "../../sapiensOperations/resquest/RequestHeaders";
-import { IGetDocumentoDTO } from "./DTO";
+import { IGetDocumentoDTO } from "./dtos";
 
 export class GetDocumentoUseCase {
 
