@@ -1,3 +1,4 @@
+
 export class RequestUpdateTarefa {
     async execute(data: any): Promise<string> {
         
@@ -42,8 +43,6 @@ export class RequestUpdateTarefa {
             "type":"rpc",
             "tid":${data.tid}
          }`
-
-        //console.log(createDocumento)
         
         return updateTarefa;
     }

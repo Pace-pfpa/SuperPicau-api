@@ -1,7 +1,7 @@
-export class RequestTarefas{
+export class RequestTarefas {
 
-    async execute(cpf: string){
-        const requestInteressados = {
+    async execute(cpf: string): Promise<string> {
+        const requestInteressados = `{
             "action": "SapiensMain_CadastroIdentificador",
             "method": "getCadastroIdentificador",
             "data": [
@@ -13,13 +13,13 @@ export class RequestTarefas{
                 ],
                 "limit": 25,
                 "page": 1,
-                "query": `${cpf}`,
+                "query": ${cpf},
                 "start": 0
               }
             ],
             "tid": 18,
             "type": "rpc"
-          }          
+          }`;
 
           return requestInteressados;
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getInformationFromSapiensForPicaPauControllerRefactor } from "../modules/GetInformationFromSapienForSamir/Refactor";
+import { getInformationFromSapiensForPicaPauControllerRefactor } from "../modules/GetInformationFromSapiensForPicaPau";
 import { atualizacaoDossiePrevidenciarioController } from "../modules/AtualizacaoDossiePrevidenciario";
 import { verificadorValidadeDossiePrevidenciarioController } from '../modules/VerificadorValidadeDossiePrevidenciario/index';
 import { verificadorDeDupliciadeController } from "../modules/VerificadorDeDupliciade";
