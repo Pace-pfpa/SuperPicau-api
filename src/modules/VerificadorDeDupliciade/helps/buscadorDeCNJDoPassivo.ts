@@ -1,7 +1,6 @@
-import { correçaoDoErroDeFormatoDoSapiens } from "../../../helps/CorreçaoDoErroDeFormatoDoSapiens";
-import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { correçaoDoErroDeFormatoDoSapiens } from "../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
+import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 import { getCapaDoPassivaUseCase } from "../../GetCapaDoPassiva";
-import { getPastaUseCase } from "../../GetPasta";
 const { JSDOM } = require('jsdom');
 
 

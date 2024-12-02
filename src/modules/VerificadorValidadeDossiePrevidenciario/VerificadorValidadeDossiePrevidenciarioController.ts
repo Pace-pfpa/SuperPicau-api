@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { IGetInformationsFromSapiensDTO } from '../../DTO/GetInformationsFromSapiensDTO';
 import { VerificadorValidadeDossiePrevidenciarioUseCase } from './VerificadorValidadeDossiePrevidenciarioUseCase';
+import { GetInformationsFromSapiensDTO } from '../GetInformationFromSapiensForPicaPau';
 
 export class VerificadorValidadeDossiePrevidenciarioController {
-    constructor(private verificadorValidadeDossiePrevidenciarioUseCase: VerificadorValidadeDossiePrevidenciarioUseCase,) { }
+    constructor(private readonly verificadorValidadeDossiePrevidenciarioUseCase: VerificadorValidadeDossiePrevidenciarioUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
-        const data: IGetInformationsFromSapiensDTO = request.body;
+        const data: GetInformationsFromSapiensDTO = request.body;
         try {
             const result = await this.verificadorValidadeDossiePrevidenciarioUseCase.execute(data);
             response.status(200).json(result);
@@ -16,4 +16,3 @@ export class VerificadorValidadeDossiePrevidenciarioController {
         }
     }
 }
-
