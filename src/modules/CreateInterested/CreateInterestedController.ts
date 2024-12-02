@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { IinteressadosDTO } from "../../DTO/InteressadosDTO";
 import { CreateInterestedUseCase } from "./CreateInterestedUseCase";
-
+import { IinteressadosDTO } from "./dtos/InteressadosDTO";
 
 export class CreateInterestedController{
-    constructor(private createInterestedUseCase: CreateInterestedUseCase){}
+    constructor(private readonly createInterestedUseCase: CreateInterestedUseCase) {}
 
 
     async handle(req: Request, resp: Response){

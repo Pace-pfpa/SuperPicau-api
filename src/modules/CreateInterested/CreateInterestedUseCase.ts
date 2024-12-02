@@ -1,23 +1,24 @@
 const { JSDOM } = require('jsdom');
-import { IinteressadosDTO } from "../../DTO/InteressadosDTO";
 import { loginUseCase } from "../LoginUsuario";
 import { getUsuarioUseCase } from "../GetUsuario";
 import { getTarefaUseCase } from "../GetTarefa";
 import { GetPessoa_id } from "./RequisicaoAxiosTarefas/GetPessoa_id";
 import { CreateTarefa } from "./RequisicaoAxiosTarefas/CreateTarefa";
 import { GetInteressadosReq } from "./RequisicaoAxiosTarefas/GetInteressadosReq";
-import { getArvoreDocumentoUseCase } from "../GetArvoreDocumento";
+import { GetArvoreDocumentoDTO, 
+         getArvoreDocumentoUseCase, 
+         ResponseArvoreDeDocumentoDTO } from "../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../GetDocumento";
 import { BuscarTabelaGrupoFamiliar } from "./Helps/BuscarTabelaGrupoFamiliar";
 import { getCapaDoPassivaUseCase } from "../GetCapaDoPassiva";
-import { getXPathText } from "../../helps/GetTextoPorXPATH";
+import { getXPathText } from "../../shared/utils/GetTextoPorXPATH";
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
-import { IGetArvoreDocumentoDTO, ResponseArvoreDeDocumento } from "../GetArvoreDocumento/dtos";
 import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
+import { IinteressadosDTO } from "./dtos/InteressadosDTO";
 
 export class CreateInterestedUseCase {
 
@@ -39,7 +40,7 @@ export class CreateInterestedUseCase {
 
         let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
         resultado.totalTarefas = tarefas.length;
-        let arrayDeDocumentos: ResponseArvoreDeDocumento[];
+        let arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[];
 
         
         
@@ -49,11 +50,8 @@ export class CreateInterestedUseCase {
                 
 
                 const tarefaId = tarefas[i].id
-                const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
+                const objectGetArvoreDocumento: GetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
                 arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
-
-                //console.log(arrayDeDocumentos[47])
-        
         
         
                 const dossieSocial = arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
@@ -69,7 +67,7 @@ export class CreateInterestedUseCase {
                 const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
                 const tcapaFormatada = new JSDOM(tcapaParaVerificar)
 
-                const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
+                await verificarCapaTrue(tcapaFormatada)
                 try{
 
                
