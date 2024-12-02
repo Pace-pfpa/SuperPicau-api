@@ -1,11 +1,10 @@
-
-import { GetInformationsFromSapiensDTO } from "../../GetInformationFromSapienForSamir/Refactor";
+import { GetInformationsFromSapiensDTO } from "../../GetInformationFromSapiensForPicaPau";
 import { UsuarioResponseDTO, GetUsuarioFacade } from "../../GetUsuario";
 import { LoginUsuarioFacade } from "../../LoginUsuario";
 
 export class AutenticarUsuarioFacade {
-    private loginUsuarioFacade = new LoginUsuarioFacade();
-    private getUsuarioFacade = new GetUsuarioFacade();
+    private readonly loginUsuarioFacade = new LoginUsuarioFacade();
+    private readonly getUsuarioFacade = new GetUsuarioFacade();
 
     async autenicarUsuario(data: GetInformationsFromSapiensDTO): Promise<{ cookie: string; usuario: UsuarioResponseDTO[] }> {
         try {
