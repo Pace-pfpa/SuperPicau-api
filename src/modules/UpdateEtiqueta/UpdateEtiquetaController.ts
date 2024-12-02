@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { UpdateEtiquetaUseCase } from './UpdateEtiquetaUseCase';
-import { IUpdateEtiquetaDTO } from '../../DTO/UpdateEtiquetaDTO';
+import { IUpdateEtiquetaDTO } from './dtos/UpdateEtiquetaDTO';
 
 export class UpdateEtiquetaController {
-    constructor(private updateEtiquetaUseCase: UpdateEtiquetaUseCase,) { }
+    constructor(private readonly updateEtiquetaUseCase: UpdateEtiquetaUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
         const data: IUpdateEtiquetaDTO = request.body;
         try {
