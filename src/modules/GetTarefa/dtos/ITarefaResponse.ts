@@ -1,4 +1,4 @@
-import { IUsuarioResponse } from "../../GetUsuario/dtos/UsuarioResponseDTO";
+import { UsuarioResponseDTO } from "../../GetUsuario/dtos/UsuarioResponseDTO";
 import { EspecieTarefa } from "./IEspecieTarefaResponse";
 import { Minuta } from "./IMinutaTarefaResponse";
 import { Pasta } from "./IPastaTarefaResponse";
@@ -17,13 +17,13 @@ export interface ITarefaResponse {
     tipoDistribuicao: number;
     criadoEm: { date: string };
     atualizadoEm: { date: string };
-    usuarioResponsavel: IUsuarioResponse;
+    usuarioResponsavel: UsuarioResponseDTO;
     pasta: Pasta;
     especieTarefa: EspecieTarefa;
     setorResponsavel: SetorResponsavel;
     minutas: Minuta[];
-    criadoPor: IUsuarioResponse;
-    atualizadoPor: IUsuarioResponse;
+    criadoPor: UsuarioResponseDTO;
+    atualizadoPor: UsuarioResponseDTO;
     acompanhamentos: any[];
     acompanhada: boolean;
     usuarioResponsavel_id: number;
