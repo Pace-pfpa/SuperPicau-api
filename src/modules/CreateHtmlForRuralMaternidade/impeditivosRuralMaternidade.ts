@@ -1,6 +1,7 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../../DTO/HtmlImpeditivosRuralMaternidadeDTO";
-import { IObjInfoImpeditivosRM } from "../../DTO/IObjInfoImpeditivosRM";
-import { IResponseLabraAutorConjuge } from "../../DTO/IResponseSislabra";
+import { IObjInfoImpeditivosRM } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivos";
+import { IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto/Sislabra/interfaces/IResponseLabraAutorConjuge";
+import { HtmlIImpeditivosRuralMaternidadeDTO } from "./dtos/HtmlImpeditivosRMDTO";
+
 
 export class ImpeditivosHtmlRuralMaternidade {
     async execute(
