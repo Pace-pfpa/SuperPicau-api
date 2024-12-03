@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { CreateDocumentoUseCase } from "./CreateDocumentoUseCase";
 
 export class CreateDocumentoController {
-    constructor(private CreateDocumentoUseCase: CreateDocumentoUseCase,) { }
+    constructor(private readonly CreateDocumentoUseCase: CreateDocumentoUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
         const { cookie,
             pasta_id,

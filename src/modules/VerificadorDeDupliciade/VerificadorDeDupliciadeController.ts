@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { IGetInformationsFromSapiensDTO } from "../../DTO/GetInformationsFromSapiensDTO";
 import { VerificadorDeDupliciadeUseCase } from "./VerificadorDeDupliciadeUseCase";
+import { GetInformationsFromSapiensDTO } from "../GetInformationFromSapiensForPicaPau";
 
 export class VerificadorDeDupliciadeController {
-    constructor(private atualizacaoDossiePrevidenciarioUseCase: VerificadorDeDupliciadeUseCase,) { }
+    constructor(private readonly atualizacaoDossiePrevidenciarioUseCase: VerificadorDeDupliciadeUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
-        const data: IGetInformationsFromSapiensDTO = request.body;
+        const data: GetInformationsFromSapiensDTO = request.body;
         try {
             const result = await this.atualizacaoDossiePrevidenciarioUseCase.execute(data);
             response.status(200).json(result);

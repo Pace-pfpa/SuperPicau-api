@@ -1,8 +1,8 @@
-import { ICreateDocumentDTO } from '../../DTO/CreateDocumentDTO';
 import { RequestSapiens } from '../../pytonRequest/requestSapiens';
 import { RequestCreateDocumento } from '../../sapiensOperations/resquest/RequestCreateDocumento';
+import { ICreateDocumentDTO } from './dtos/ICreateDocumentDTO';
 export class CreateDocumentoUseCase {
-    constructor(private RequestCreateDocumento:RequestCreateDocumento){};
+    constructor(private readonly RequestCreateDocumento: RequestCreateDocumento) {};
 
     async execute(data: ICreateDocumentDTO): Promise<any> {
         try {
@@ -23,7 +23,5 @@ export class CreateDocumentoUseCase {
             console.error("Erro na criação do documento:", error.message);
             throw new Error("Falha na criação do documento. Verifique os dados e tente novamente.");
         }
-        
-        
     }
 }

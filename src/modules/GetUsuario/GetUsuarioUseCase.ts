@@ -3,10 +3,10 @@ import { RequestGetUsuario } from "../../sapiensOperations/resquest/RequestGetUs
 import { UsuarioResponseDTO } from "./dtos/UsuarioResponseDTO";
 
 export class GetUsuarioUseCase {
-    constructor(private RequestGetUsuario:RequestGetUsuario){};
+    constructor(private readonly requestGetUsuario:RequestGetUsuario){};
     async execute(cookie: string): Promise<UsuarioResponseDTO[]> {
 
-        const getUsuario = await this.RequestGetUsuario.execute();
+        const getUsuario = await this.requestGetUsuario.execute();
         
         const response = (await RequestSapiens(cookie, getUsuario));
         

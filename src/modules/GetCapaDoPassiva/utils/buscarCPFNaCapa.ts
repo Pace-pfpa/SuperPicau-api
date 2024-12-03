@@ -1,4 +1,4 @@
-import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 import { JSDOM } from 'jsdom';
 
 function isCPF(text: string): boolean {

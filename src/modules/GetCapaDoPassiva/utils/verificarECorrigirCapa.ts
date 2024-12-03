@@ -1,11 +1,11 @@
 import { getCapaDoPassivaUseCase } from "..";
-import { IGetInformationsFromSapiensDTO } from "../../../DTO/GetInformationsFromSapiensDTO";
-import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
+import { GetInformationsFromSapiensDTO } from "../../GetInformationFromSapiensForPicaPau";
 import { verificarCapaTrue } from "../utils";
 import { JSDOM } from 'jsdom';
 
 
-export async function verificarECorrigirCapa(data: IGetInformationsFromSapiensDTO, cookie: string): Promise<JSDOM> {
+export async function verificarECorrigirCapa(data: GetInformationsFromSapiensDTO, cookie: string): Promise<JSDOM> {
 
     try {
         const capaParaVerificar = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
@@ -31,7 +31,7 @@ export async function verificarECorrigirCapa(data: IGetInformationsFromSapiensDT
 export async function buscarNovaCapaComOutroXPath(capaFormatada: any, cookie: string): Promise<JSDOM> {
 
     const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b";
-    const novaNup = await getXPathText(capaFormatada, xpathNovaNup);
+    const novaNup = getXPathText(capaFormatada, xpathNovaNup);
 
     if (!novaNup) {
         throw new Error("Novo NUP não encontrado no XPath especificado.");

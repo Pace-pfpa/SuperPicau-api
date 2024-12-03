@@ -1,4 +1,4 @@
-import { HtmlIImpeditivosLoasDTO } from "../../DTO/HtmlImpeditivosLoasDTO";
+import { HtmlIImpeditivosLoasDTO } from "./dtos/HtmlImpeditivosLoasDTO";
 
 // HTML COM RESUMO DE IMPEDITIVOS - LOAS E SISLABRA LOAS
 export class ImpeditivosHtmlLoas {

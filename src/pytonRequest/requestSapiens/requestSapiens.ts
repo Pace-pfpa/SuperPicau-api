@@ -13,11 +13,6 @@ export async function requestSapiens(cookie: string, payload: string): Promise<a
         console.log('Erro ao parsear o payload:', error);
         return new Error('Erro ao parsear o payload');
     }
-
-    //console.log('URL:', baseURL);
-    //console.log('Headers:', headers);
-    //console.log('Payload:', data);
-    //console.log(payload)
     
     try {
         const response = await axios.post(baseURL, data, { headers })

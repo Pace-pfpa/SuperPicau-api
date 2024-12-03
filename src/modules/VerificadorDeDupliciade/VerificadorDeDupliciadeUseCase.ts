@@ -1,5 +1,5 @@
-import { IGetInformationsFromSapiensDTO } from "../../DTO/GetInformationsFromSapiensDTO";
 import { processoEhAdministrativo } from "../AtualizacaoDossiePrevidenciario/helps/processoEhAdministrativo";
+import { GetInformationsFromSapiensDTO } from "../GetInformationFromSapiensForPicaPau";
 import { getTarefaUseCase } from "../GetTarefa";
 import { getUsuarioUseCase } from "../GetUsuario";
 import { loginUseCase } from "../LoginUsuario";
@@ -8,9 +8,9 @@ import { buscadorDeCNJDoPassivo } from "./helps/buscadorDeCNJDoPassivo";
 
 export class VerificadorDeDupliciadeUseCase {
 
-    async execute(data: IGetInformationsFromSapiensDTO): Promise<Array<string>> {
+    async execute(data: GetInformationsFromSapiensDTO): Promise<Array<string>> {
         return new Promise(async (resolve, reject) => {
-            var arrayDeCNJ = []
+            let arrayDeCNJ = []
             const cookie = await loginUseCase.execute(data.login);
             const usuario = (await getUsuarioUseCase.execute(cookie));
 

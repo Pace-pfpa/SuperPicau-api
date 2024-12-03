@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { GetCapaDoPassivaUseCase } from "./GetCapaDoPassivaUseCase";
 
 export class GetCapaDoPassivaController {
-    constructor(private getCapaDoPassivaUseCase: GetCapaDoPassivaUseCase,) { }
+    constructor(private readonly getCapaDoPassivaUseCase: GetCapaDoPassivaUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
         const {nup, cookie} = request.body;
         try {

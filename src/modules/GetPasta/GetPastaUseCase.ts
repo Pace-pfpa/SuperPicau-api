@@ -1,11 +1,9 @@
 import { RequestSapiens } from "../../pytonRequest/requestSapiens";
-import { ResponseGetPasta } from "../../sapiensOperations/response/ResponseGetPasta";
-import { RequestGetPasta } from "../../sapiensOperations/resquest/RequestGetPasta";
-
-
+import { ResponseGetPasta } from "./operations/response/ResponseGetPasta";
+import { RequestGetPasta } from "./operations/request/RequestGetPasta";
 
 export class GetPastaUseCase {
-    constructor(private RequestGetPasta:RequestGetPasta){};
+    constructor(private readonly RequestGetPasta: RequestGetPasta){};
     async execute(nup: string,cookie: string): Promise<ResponseGetPasta> {
 
         const getPasta = await this.RequestGetPasta.execute(nup);

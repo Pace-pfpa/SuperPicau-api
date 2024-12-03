@@ -1,7 +1,7 @@
-import { getXPathText } from "../../../helps/GetTextoPorXPATH";
-import { JSDOM } from 'jsdom';
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
+import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 
-export async function verificarCapaTrue(capaToVerivy: JSDOM){ 
+export async function verificarCapaTrue(capaToVerivy: JSDOMType){ 
 
     for(let i=0; i<10;i++){
         let pathDivTable = `/html/body/div/div[${i}]`;
