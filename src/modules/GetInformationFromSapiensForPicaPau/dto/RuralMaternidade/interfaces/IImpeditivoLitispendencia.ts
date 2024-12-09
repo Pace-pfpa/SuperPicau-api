@@ -1,4 +1,4 @@
 export interface IImpeditivoLitispendencia {
     haveLitispendencia: boolean;
-    litispendencia: string;
+    litispendencia: string[];
 }

@@ -1,8 +1,9 @@
 import { JSDOM } from 'jsdom';
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { getDocumentSislabraFromSapiensLoas } from "../../GetDocumentSislabraFromSapiens";
+import { ResponseArvoreDeDocumentoDTO } from '../../../GetArvoreDocumento';
 
-export async function impedimentosSislabraLOAS(labrasPoloAtivo: any, labrasGF: any, cookie: string): Promise<string[] | null> {
+export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: any, cookie: string): Promise<string[] | null> {
     let response = '';
 
     if (labrasPoloAtivo.length > 0) {

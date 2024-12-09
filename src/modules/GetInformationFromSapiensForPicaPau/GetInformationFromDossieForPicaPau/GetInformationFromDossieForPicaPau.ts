@@ -1,3 +1,4 @@
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 import { EmpregoDP, 
          IImpeditivoLitispendencia,
@@ -17,8 +18,8 @@ import { buscarTabelaRelacaoDeProcessosNormalDossie } from "./Help/BuscarTabelaR
 
 export class GetInformationDossieForPicaPau {
   async impedimentosMaternidade(
-    paginaDosprevFormatada: any,
-    parginaDosPrev: any
+    paginaDosprevFormatada: JSDOMType,
+    parginaDosPrev: string
     ): Promise<IReturnImpedimentosRM> {
     let ArrayImpedimentos: string = '';
 
@@ -124,8 +125,8 @@ export class GetInformationDossieForPicaPau {
 
 
   async impeditivosRural(
-    paginaDosprevFormatada: any,
-    parginaDosPrev: any):Promise<IReturnImpedimentosRM> {
+    paginaDosprevFormatada: JSDOMType,
+    parginaDosPrev: string):Promise<IReturnImpedimentosRM> {
 
     let ArrayImpedimentos: string = '';
 
@@ -244,25 +245,6 @@ export class GetInformationDossieForPicaPau {
         objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA"
         impeditivos = impeditivos + " LITISPENDÊNCIA -"
       }
-
-
-
-      /*
-      const loasEmprego: any = await loasEmpregoDossie.execute(paginaDosprevFormatada)
-        if(typeof(loasEmprego) == "boolean"){
-          if(loasEmprego){
-              impeditivos = impeditivos + " LOAS EMPREGO -"
-          }
-        }else if(typeof(loasEmprego) == "object"){
-          if(loasEmprego.valorBooleano){
-              impeditivos = impeditivos + loasEmprego.message
-          }else{
-              impeditivos = impeditivos + loasEmprego.message
-          }
-      }
-      */
-
-
 
 
       const loasAtivo = await loasAtivoDossie.handle(paginaDosprevFormatada)

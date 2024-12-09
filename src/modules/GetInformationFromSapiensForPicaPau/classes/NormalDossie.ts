@@ -1,13 +1,15 @@
 const { JSDOM } = require('jsdom');
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
+import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../dto";
 import { getInformationDossieForPicaPau } from "../GetInformationFromDossieForPicaPau";
 
 export class NormalDossie {
-    async buscarImpedimentosForRural(dosprevPoloAtivo: any, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
+    async buscarImpedimentosForRural(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
+        const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev);
 
         const impeditivosRural: IReturnImpedimentosRM = await getInformationDossieForPicaPau.impeditivosRural(paginaDosPrevFormatada, paginaDosPrev);
 
@@ -17,10 +19,10 @@ export class NormalDossie {
         return { impedimentos, objImpedimentos };
     }
 
-    async burcarImpedimentosForMaternidade(dosprevPoloAtivo: any, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
+    async burcarImpedimentosForMaternidade(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
+        const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev); 
 
         const impeditivosMaternidade: IReturnImpedimentosRM = await getInformationDossieForPicaPau.impedimentosMaternidade(paginaDosPrevFormatada, paginaDosPrev);
 
@@ -30,10 +32,10 @@ export class NormalDossie {
         return { impedimentos, objImpedimentos };
     }
 
-    async buscarImpedimentosForLoas(dosprevPoloAtivo: any, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
+    async buscarImpedimentosForLoas(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+        const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev);
 
         const impeditivosLoas: IReturnImpedimentosLOAS = await getInformationDossieForPicaPau.impeditivoLoas(paginaDosPrevFormatada);
 

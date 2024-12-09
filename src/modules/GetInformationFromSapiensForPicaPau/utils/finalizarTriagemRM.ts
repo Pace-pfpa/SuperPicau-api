@@ -1,4 +1,4 @@
-import { minutaClass } from "../classes";
+import { minutaSujaClass, minutaLimpaClass } from "../classes";
 import { IInformacoesProcessoDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../dto";
 import { atualizarEtiquetaImpeditivo } from "./atualizarEtiquetaImpeditivo";
 import { atualizarEtiquetaProcessoLimpo } from "./atualizarEtiquetaProcessoLimpo";
@@ -18,12 +18,19 @@ export async function finalizarTriagemRM(
 
         if (informacoesProcessoRM.isUserAdmin && isMaternidade) {
             try {
-                await minutaClass.maternidadeProcessoLimpo(informacoesProcessoRM);
+                await minutaLimpaClass.maternidadeProcessoLimpo(informacoesProcessoRM);
                 await new Promise(resolve => setTimeout(resolve, 5000));    
             } catch (error) {
-                console.error("Erro na função finalizarTriagem ao subir a minuta (maternidade): ", error);
+                console.error("Erro na função finalizarTriagem ao subir a minuta limpa (maternidade): ", error);
             }
             
+        } else if (informacoesProcessoRM.isUserAdmin && isRural) {
+            try {
+                await minutaLimpaClass.ruralProcessoLimpo(informacoesProcessoRM);
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            } catch (error) {
+                console.error("Erro na função finalizarTriagem ao subir a minuta limpa (rural): ", error);
+            }
         }
 
         await atualizarEtiquetaProcessoLimpo(informacoesProcessoRM.cookie, informacoesProcessoRM.tarefaId);
@@ -31,13 +38,23 @@ export async function finalizarTriagemRM(
         
     } else {
 
-        const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*RURAL*') && !imp.includes('*MATERNIDADE*') && !imp.includes('*LOAS*'));
+        const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*RURAL*') && !imp.includes('*MATERNIDADE*'));
         
         const impeditivosString = relevantes.join(' - ');
 
         if (isRural) {
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `RURAL IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
         } else if (isMaternidade) {
+
+            if (informacoesProcessoRM.isUserAdmin) {
+                try {
+                    await minutaSujaClass.maternidadeProcessoSujo(informacoesProcessoRM, impeditivosDosprevRM, impeditivosLabrasRM, impeditivos);
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                } catch (error) {
+                    console.error("Erro na função finalizarTriagem ao subir a minuta suja (maternidade): ", error);
+                }
+            }
+
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `MATERNIDADE IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
         }
 

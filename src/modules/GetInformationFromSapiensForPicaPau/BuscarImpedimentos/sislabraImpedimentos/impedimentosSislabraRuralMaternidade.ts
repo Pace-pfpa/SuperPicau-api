@@ -1,9 +1,10 @@
 const { JSDOM } = require('jsdom');
+import { ResponseArvoreDeDocumentoDTO } from "../../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { IResponseSislabra, IImpedimentos } from "../../dto";
 import { getDocumentSislabraFromSapiens } from "../../GetDocumentSislabraFromSapiens";
 
-export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: any, documentoConjuge: any, cookie: string): Promise<IResponseSislabra> {
+export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: ResponseArvoreDeDocumentoDTO, documentoConjuge: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<IResponseSislabra> {
     let response = '';
     let impedimentosAutor: IImpedimentos;
     let impedimentosConjuge: IImpedimentos;

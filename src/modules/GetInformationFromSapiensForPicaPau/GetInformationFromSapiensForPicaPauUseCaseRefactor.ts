@@ -1,8 +1,8 @@
-
 import { autenticarUsuarioFacade } from "../Autenticacao";
 import { GetArvoreDocumentoDTO, GetArvoreDocumentoFacade, ResponseArvoreDeDocumentoDTO } from "../GetArvoreDocumento";
 import { verificarECorrigirCapa, buscarTableCpf } from "../GetCapaDoPassiva/utils";
 import { getTarefaFacade } from "../GetTarefa";
+import { buscarInfoForMinuta } from "./BuscarImpedimentos/utils/buscarInfoForMinuta";
 import { ExecuteReturnType,
         GetInformationsFromSapiensDTO,
         IdentificarDossieAtivoType,
@@ -22,9 +22,15 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
     async execute(data: GetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
 
-        const { cookie, usuario } = await autenticarUsuarioFacade.autenicarUsuario(data);
+        const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
         const usuario_id = `${usuario[0].id}`;
         const usuario_nome = usuario[0].nome;
+        const usuario_unidade = usuario[0].colaborador.lotacoes[0].setor.unidade.nome;
+        const usuario_setor = usuario[0].colaborador.lotacoes[0].setor.nome;
+        const usuario_setor_endereco = usuario[0].colaborador.lotacoes[0].setor.endereco;
+        const usuario_cargo = usuario[0].assinaturaHTML;
+        const partes = usuario_cargo?.split('\n');
+        const cargo = partes[1]?.trim();
         
         try {
 
@@ -51,7 +57,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 tarefa_id: data.tarefa.id
             };
 
-            const arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[] | Error = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
+            const arrayDeDocumentos = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
             if (arrayDeDocumentos instanceof Error) {
                 await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
                 return { warning: "DOSPREV COM FALHA NA PESQUISA" }
@@ -63,6 +69,8 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 await atualizarEtiquetaAviso(cookie, "CPF NÃO ENCONTRADO NA CAPA", tarefaId)
                 return { warning: `CPF NÃO ENCONTRADO` };
             }
+
+            const informacoesRequerenteRequerido = await buscarInfoForMinuta(capaFormatada);
 
             const { arrayDeDossiesNormais, arrayDeDossiesSuper } = await processarDossie(arrayDeDocumentos);
             if (!arrayDeDossiesNormais && !arrayDeDossiesSuper) {
@@ -105,7 +113,12 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 tarefa_id: tarefas[0].id,
                 pasta_id: tarefas[0].pasta.id,
                 usuario_setor: tarefas[0].setorResponsavel_id,
-                interessados: tarefas[0].pasta.interessados
+                interessados: tarefas[0].pasta.interessados,
+                usuario_unidade: usuario_unidade,
+                usuario_setor_nome: usuario_setor,
+                usuario_setor_endereco: usuario_setor_endereco,
+                usuario_cargo: cargo,
+                infoMinuta: informacoesRequerenteRequerido,
             }
             
             if (tipo_triagem === 2) {

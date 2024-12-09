@@ -1,17 +1,26 @@
 import { createDocumentoUseCase } from "../../CreateDocumento";
-import { getTarefaFacade } from "../../GetTarefa";
-import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO } from "../dto";
+import { ImpeditivosHtmlMaternidade } from "../../CreateHtmlForMaternidade/impeditivosHtmlMaternidade";
+import { uploadDocumentUseCase } from "../../UploadDocument";
+import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IMinutasDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../dto";
+import { gerarObjetoUploadRM } from "../helps/gerarObjetoUploadRM";
+import { obterNomeInteressadoPrincipal } from "../utils";
 
 export class MinutaSuja {
-    async maternidadeProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO): Promise<void> {
+    async maternidadeProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosRM, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
+        let htmlUpload: string;
 
-        // const arrayMinutas: IMinutasDTO[] = [
-        //     {
-        //         numeroprocesso: informacoesProcesso.infoUpload.numeroProcesso,
-        //         conteudo: '',
-        //         nup: informacoesProcesso.infoUpload.nup,
-        //     }
-        // ];
+        const objetoUpload = gerarObjetoUploadRM(impeditivos);
+        const htmlGenerator = new ImpeditivosHtmlMaternidade();
+
+        htmlUpload = await htmlGenerator.execute(objetoUpload, informacoesProcesso.infoUpload, impeditivosDosprev, impeditivosLabras);
+
+        const minutas: IMinutasDTO[] = [
+            {
+                numeroprocesso: informacoesProcesso.infoUpload.numeroProcesso,
+                conteudo: htmlUpload,
+                nup: informacoesProcesso.infoUpload.nup,
+            }
+        ];
 
         let createDocument: any;
         try {
@@ -22,7 +31,7 @@ export class MinutaSuja {
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
                 tid: '3',
-                modelo_id: '609682', // Maternidade Suja
+                // modelo_id: '609682', Maternidade Suja
                 tipoDocumento_id: '85' // Contestação
             });
     
@@ -36,25 +45,18 @@ export class MinutaSuja {
 
         const documentoId = createDocument[0].id;
 
-        const minutas = await getTarefaFacade.getMinutas(informacoesProcesso.cookie, 
-                                                          informacoesProcesso.infoUpload.usuario_id, 
-                                                          informacoesProcesso.infoUpload.etiqueta);
+        try {
+            const processoNome = obterNomeInteressadoPrincipal(informacoesProcesso.infoUpload);    
+            await uploadDocumentUseCase.execute(informacoesProcesso.cookie, `${processoNome}${documentoId}impeditivos.html`, minutas[0].conteudo, documentoId);
+            console.log("MINUTA SUBIU!");
+        } catch (error) {
+            console.error("Erro ao fazer upload do documento:", error);
+            throw new Error("Falha no upload do documento. Verifique o processo e tente novamente.");
+        }
+    }
 
-        console.log(documentoId);
-        console.log(minutas[0].componentesDigitais[0].id);
-
-        //const minutaHtml = await GetEditorMinutaFacade(minutaInfo) 
-
-        //sapíens.agu.gov.br/editor?id=${documentoId}&c=${minutas[0].componentesDigitais.id}
-
-        // try {
-        //     const processoNome = obterNomeInteressadoPrincipal(informacoesProcesso.infoUpload);    
-        //     await uploadDocumentUseCase.execute(informacoesProcesso.cookie, `${processoNome}${documentoId}impeditivos.html`, minutas[0].conteudo, documentoId);
-        //     console.log("MINUTA SUBIU!");
-        // } catch (error) {
-        //     console.error("Erro ao fazer upload do documento:", error);
-        //     throw new Error("Falha no upload do documento. Verifique o processo e tente novamente.");
-        // }
+    async ruralProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO): Promise<void> {
+        console.log("FUTURA MINUTA RURAL")
     }
 
     async loasProcessoSujo(informacoesProcessoLoas: IInformacoesProcessoLoasDTO): Promise<void> {

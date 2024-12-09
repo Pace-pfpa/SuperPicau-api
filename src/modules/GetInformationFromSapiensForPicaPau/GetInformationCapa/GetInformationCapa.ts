@@ -1,6 +1,10 @@
 import axios from "axios";
 require('dotenv').config();
 import { JSDOM } from 'jsdom';
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
+import { IRequerente } from "./dtos/IRequerente";
+import { buscarRequerente } from "./utils/buscarRequerente";
+import { buscarRequerido } from "./utils/buscarRequerido";
 
 type AdvogadoReturn = {
     encontrouAdvogado: boolean;
@@ -48,7 +52,16 @@ export class GetInformationCapa{
         }
     }
 
+    async buscarInformacoesForUpload(capa: JSDOMType): Promise<IRequerente> {
+        const requerente = buscarRequerente(capa);
+        const requerido = buscarRequerido(capa);
 
+        const infoCompleta: IRequerente = {
+            nome: requerente.nome,
+            cpf: requerente.cpf,
+            nome_requerido: requerido
+        }
+        
+        return infoCompleta;
+    }
 }
-
-

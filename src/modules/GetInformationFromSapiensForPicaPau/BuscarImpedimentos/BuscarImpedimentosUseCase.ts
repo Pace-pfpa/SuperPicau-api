@@ -10,7 +10,7 @@ import { etiquetarRenda } from "./calculoLoas/etiquetarRenda";
 import { montarObjetosEnvolvidos } from "./calculoLoas/montarObjetosEnvolvidos";
 import { impedimentosSislabraLOAS } from "./sislabraImpedimentos/impedimentosSislabraLOAS";
 import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
-import { IInformacoesProcessoDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge, IResponseSislabra, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas } from "../dto";
+import { IInformacoesProcessoDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas } from "../dto";
 
 export class BuscarImpedimentosUseCase {
 
@@ -31,11 +31,11 @@ export class BuscarImpedimentosUseCase {
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra: IResponseSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
         const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
             autor: impedimentosSislabra.autor,
             conjuge: impedimentosSislabra.conjuge,
-        } 
+        }
 
         if (tipo_triagem === 0) {
 

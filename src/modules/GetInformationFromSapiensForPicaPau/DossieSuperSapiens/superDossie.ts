@@ -83,7 +83,7 @@ export class SuperDossie {
 
             const processoJudicial: IImpeditivoLitispendencia = await buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
 
-            if(processoJudicial.haveLitispendencia){
+            if (processoJudicial.haveLitispendencia){
               objInfoImpeditivos.litispendencia = processoJudicial.litispendencia;
               ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m-";
             }
