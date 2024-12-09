@@ -6,7 +6,7 @@ export class AutenticarUsuarioFacade {
     private readonly loginUsuarioFacade = new LoginUsuarioFacade();
     private readonly getUsuarioFacade = new GetUsuarioFacade();
 
-    async autenicarUsuario(data: GetInformationsFromSapiensDTO): Promise<{ cookie: string; usuario: UsuarioResponseDTO[] }> {
+    async autenticarUsuario(data: GetInformationsFromSapiensDTO): Promise<{ cookie: string; usuario: UsuarioResponseDTO[] }> {
         try {
             const cookie = await this.loginUsuarioFacade.login(data.login);
             const usuario = await this.getUsuarioFacade.getUsuario(cookie);
