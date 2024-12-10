@@ -1,5 +1,5 @@
 import { createDocumentoUseCase } from "../../CreateDocumento";
-import { ImpeditivosHtmlMaternidade } from "../../CreateHtmlForMaternidade/impeditivosHtmlMaternidade";
+import { ImpeditivosHtmlMaternidade } from "../../CreateHtmlForRM/impeditivosHtmlMaternidade";
 import { uploadDocumentUseCase } from "../../UploadDocument";
 import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IMinutasDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../dto";
 import { gerarObjetoUploadRM } from "../helps/gerarObjetoUploadRM";
