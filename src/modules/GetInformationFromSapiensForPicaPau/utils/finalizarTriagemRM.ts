@@ -43,6 +43,16 @@ export async function finalizarTriagemRM(
         const impeditivosString = relevantes.join(' - ');
 
         if (isRural) {
+
+            if (informacoesProcessoRM.isUserAdmin) {
+                try {
+                    await minutaSujaClass.ruralProcessoSujo(informacoesProcessoRM, impeditivosDosprevRM, impeditivosLabrasRM, impeditivos);
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                } catch (error) {
+                    console.error("Erro na função finalizarTriagem ao subir a minuta suja (rural): ", error);
+                }
+            }
+
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `RURAL IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
         } else if (isMaternidade) {
 
