@@ -23,21 +23,13 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     async execute(data: GetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
 
         const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
-        const usuario_id = `${usuario[0].id}`;
-        const usuario_nome = usuario[0].nome;
-        const usuario_unidade = usuario[0].colaborador.lotacoes[0].setor.unidade.nome;
-        const usuario_setor = usuario[0].colaborador.lotacoes[0].setor.nome;
-        const usuario_setor_endereco = usuario[0].colaborador.lotacoes[0].setor.endereco;
-        const usuario_cargo = usuario[0].assinaturaHTML;
-        const partes = usuario_cargo?.split('\n');
-        const cargo = partes[1]?.trim();
         
         try {
 
             const tipo_triagem = data.readDosprevAge;
             const tarefaId = data.tarefa.id;
 
-            const tarefas = await getTarefaFacade.getTarefa(cookie, usuario_id, data.etiqueta);
+            const tarefas = await getTarefaFacade.getTarefa(cookie, usuario.id, data.etiqueta);
             
             if (!tarefas) {
                 return { warning: "TAREFA NÃO ENCONTRADA" };
@@ -105,8 +97,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             }
 
             const infoUpload: IInfoUploadDTO = {
-                usuario_id: usuario_id,
-                usuario_nome: usuario_nome,
+                usuario,
                 etiqueta: data.etiqueta,
                 numeroProcesso: tarefas[0].pasta.processoJudicial.numero,
                 nup: data.tarefa.pasta.NUP,
@@ -114,10 +105,6 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 pasta_id: tarefas[0].pasta.id,
                 usuario_setor: tarefas[0].setorResponsavel_id,
                 interessados: tarefas[0].pasta.interessados,
-                usuario_unidade: usuario_unidade,
-                usuario_setor_nome: usuario_setor,
-                usuario_setor_endereco: usuario_setor_endereco,
-                usuario_cargo: cargo,
                 infoMinuta: informacoesRequerenteRequerido,
             }
             

@@ -1,5 +1,6 @@
 import { createDocumentoUseCase } from "../../CreateDocumento";
 import { impeditivosHtmlMaternidade, impeditivosHtmlRural } from "../../CreateHtmlForRM";
+import { updateDocumentoUseCase } from "../../UpdateDocumento";
 import { uploadDocumentUseCase } from "../../UploadDocument";
 import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IMinutasDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../dto";
 import { gerarObjetoUploadRM } from "../helps/gerarObjetoUploadRM";
@@ -24,7 +25,7 @@ export class MinutaSuja {
         try {
             createDocument = await createDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
-                usuario_nome: informacoesProcesso.infoUpload.usuario_nome,
+                usuario_nome: informacoesProcesso.infoUpload.usuario.nome,
                 usuario_setor: informacoesProcesso.infoUpload.usuario_setor,
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
@@ -47,6 +48,19 @@ export class MinutaSuja {
             const processoNome = obterNomeInteressadoPrincipal(informacoesProcesso.infoUpload);    
             await uploadDocumentUseCase.execute(informacoesProcesso.cookie, `${processoNome}${documentoId}impeditivos.html`, minutas[0].conteudo, documentoId);
             console.log("MINUTA SUBIU!");
+
+            await updateDocumentoUseCase.execute({
+                cookie: informacoesProcesso.cookie,
+                dosprev_id: informacoesProcesso.dosprevPoloAtivo.documentoJuntado_id,
+                minuta_id: documentoId,
+                pasta_id: informacoesProcesso.infoUpload.pasta_id,
+                tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
+                tipoDocumento_id: '35',
+                usuario_nome: informacoesProcesso.infoUpload.usuario.nome,
+                usuario_setor: informacoesProcesso.infoUpload.usuario_setor,
+                tid: '10'
+            })
+            console.log("DOSSIÊ SUBIU");
         } catch (error) {
             console.error("Erro ao fazer upload do documento:", error);
             throw new Error("Falha no upload do documento. Verifique o processo e tente novamente.");
@@ -71,7 +85,7 @@ export class MinutaSuja {
         try {
             createDocument = await createDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
-                usuario_nome: informacoesProcesso.infoUpload.usuario_nome,
+                usuario_nome: informacoesProcesso.infoUpload.usuario.nome,
                 usuario_setor: informacoesProcesso.infoUpload.usuario_setor,
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
@@ -93,6 +107,20 @@ export class MinutaSuja {
             const processoNome = obterNomeInteressadoPrincipal(informacoesProcesso.infoUpload);    
             await uploadDocumentUseCase.execute(informacoesProcesso.cookie, `${processoNome}${documentoId}impeditivos.html`, minutas[0].conteudo, documentoId);
             console.log("MINUTA SUBIU!");
+
+            await updateDocumentoUseCase.execute({
+                cookie: informacoesProcesso.cookie,
+                dosprev_id: informacoesProcesso.dosprevPoloAtivo.documentoJuntado_id,
+                minuta_id: documentoId,
+                pasta_id: informacoesProcesso.infoUpload.pasta_id,
+                tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
+                tipoDocumento_id: '35',
+                usuario_nome: informacoesProcesso.infoUpload.usuario.nome,
+                usuario_setor: informacoesProcesso.infoUpload.usuario_setor,
+                tid: '10'
+            })
+            console.log("DOSSIÊ SUBIU!");
+
         } catch (error) {
             console.error("Erro ao fazer upload do documento:", error);
             throw new Error("Falha no upload do documento. Verifique o processo e tente novamente.");

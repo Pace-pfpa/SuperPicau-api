@@ -48,11 +48,11 @@ export class ImpeditivosHtmlMaternidade {
                     <br>
                     PROCURADORIA-GERAL FEDERAL
                     <br>
-                    <span>${infoUpload.usuario_unidade}</span>
+                    <span>${infoUpload.usuario.unidade}</span>
                     <br>
-                    <span>${infoUpload.usuario_setor_nome}</span>
+                    <span>${infoUpload.usuario.setor}</span>
                     <br>
-                    <span style="font-size:7pt">${infoUpload.usuario_setor_endereco}</span>
+                    <span style="font-size:7pt">${infoUpload.usuario.endereco}</span>
                 </div>
                 <hr>
                 <p><br></p>
@@ -140,8 +140,8 @@ export class ImpeditivosHtmlMaternidade {
                 <p class="data-hora">${currentDate}</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
-                <p class="centralizado username">${infoUpload.usuario_nome}</p>
-                <p class="centralizado usarrole">${infoUpload.usuario_cargo}</p>
+                <p class="centralizado username">${infoUpload.usuario.nome}</p>
+                <p class="centralizado usarrole">${infoUpload.usuario.cargo}</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
             </body>

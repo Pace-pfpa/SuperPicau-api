@@ -1,18 +1,13 @@
-import { ICreateDocumentDTO } from "../../modules/CreateDocumento/dtos/ICreateDocumentDTO";
+import { IUpdateDocumento } from "../../modules/UpdateDocumento/dtos/IUpdateDocumento";
 
-export class RequestCreateDocumento {
-    async execute(data: ICreateDocumentDTO): Promise<string> {
-        if(data.tipoDocumento_id == null || data.tipoDocumento_id == ""){
-            data.tipoDocumento_id = "35"
-        }
-        if(data.modelo_id == null || data.modelo_id == ""){
-            data.modelo_id = ""
-        }
-        const createDocumento = `{
+export class RequestUpdateDocumento {
+    async execute(data: IUpdateDocumento): Promise<string> {
+        const updateDocumento = `{
             "action":"SapiensAdministrativo_Documento",
-            "method":"createDocumento",
+            "method":"updateDocumento",
             "data":[
                {
+                  "id": ${data.minuta_id},  
                   "numeroFolhas":3,
                   "dataHoraProducao":"",
                   "localProducao":"",
@@ -24,7 +19,6 @@ export class RequestCreateDocumento {
                   "redator":"${data.usuario_nome}",
                   "procedencia_id":"",
                   "tipoDocumento_id":${data.tipoDocumento_id},
-                  "modelo_id":"${data.modelo_id}",
                   "comunicacaoRemessa_id":"",
                   "setorOrigem_id":${data.usuario_setor},
                   "tarefaOrigem_id":${data.tarefa_id},
@@ -36,9 +30,11 @@ export class RequestCreateDocumento {
                   "criadoPor_id":"",
                   "origemDados_id":"",
                   "atualizadoPor_id":"",
-                  "anexaCopia":"",
+                  "anexaCopia": [
+                    ${data.dosprev_id}
+                  ],
                   "descricaoOutros":"",
-                  "anexaCopiaVinculados":false,
+                  "anexaCopiaVinculados":true,
                   "parentId":null,
                   "leaf":false
                }
@@ -46,9 +42,7 @@ export class RequestCreateDocumento {
             "type":"rpc",
             "tid":${data.tid}
          }`
-
-        //console.log(createDocumento)
         
-        return createDocumento;
+        return updateDocumento;
     }
 }

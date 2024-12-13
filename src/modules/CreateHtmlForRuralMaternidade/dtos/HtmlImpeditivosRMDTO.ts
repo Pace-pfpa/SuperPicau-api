@@ -13,4 +13,12 @@ export interface HtmlIImpeditivosRuralMaternidadeDTO {
     empregoConjuge: boolean | null;
     imovelruralConjuge: boolean | null;
     empresaConjuge: boolean | null;
+    bensTSEAutor: boolean | null;
+    bensTSEConjuge: boolean | null;
+    imoveisSPAutor: boolean | null;
+    imoveisSPConjuge: boolean | null;
+    embarcacaoAutor: boolean | null;
+    embarcacaoConjuge: boolean | null;
+    aeronaveAutor: boolean | null;
+    aeronaveConjuge: boolean | null;
 }
