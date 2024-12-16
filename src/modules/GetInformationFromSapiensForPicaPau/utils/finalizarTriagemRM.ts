@@ -4,7 +4,6 @@ import { atualizarEtiquetaImpeditivo } from "./atualizarEtiquetaImpeditivo";
 import { atualizarEtiquetaProcessoLimpo } from "./atualizarEtiquetaProcessoLimpo";
 import { isProcessoLimpo } from "./isProcessoLimpo";
 
-// TODO: Tem que terminar essa finalização ainda
 export async function finalizarTriagemRM(
     impeditivos: string[], 
     impeditivosLabrasRM: IResponseLabraAutorConjuge,
@@ -16,7 +15,7 @@ export async function finalizarTriagemRM(
 
     if (isProcessoLimpo(impeditivos)) {
 
-        if (informacoesProcessoRM.isUserAdmin && isMaternidade) {
+        if (informacoesProcessoRM.isUserAdmin && isMaternidade && informacoesProcessoRM.infoUpload.subirMinuta) {
             try {
                 await minutaLimpaClass.maternidadeProcessoLimpo(informacoesProcessoRM);
                 await new Promise(resolve => setTimeout(resolve, 5000));    
@@ -24,7 +23,7 @@ export async function finalizarTriagemRM(
                 console.error("Erro na função finalizarTriagem ao subir a minuta limpa (maternidade): ", error);
             }
             
-        } else if (informacoesProcessoRM.isUserAdmin && isRural) {
+        } else if (informacoesProcessoRM.isUserAdmin && isRural && informacoesProcessoRM.infoUpload.subirMinuta) {
             try {
                 await minutaLimpaClass.ruralProcessoLimpo(informacoesProcessoRM);
                 await new Promise(resolve => setTimeout(resolve, 5000));
@@ -44,10 +43,9 @@ export async function finalizarTriagemRM(
 
         if (isRural) {
 
-            if (informacoesProcessoRM.isUserAdmin) {
+            if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
                     await minutaSujaClass.ruralProcessoSujo(informacoesProcessoRM, impeditivosDosprevRM, impeditivosLabrasRM, impeditivos);
-                    await new Promise(resolve => setTimeout(resolve, 5000));
                 } catch (error) {
                     console.error("Erro na função finalizarTriagem ao subir a minuta suja (rural): ", error);
                 }
@@ -56,10 +54,9 @@ export async function finalizarTriagemRM(
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `RURAL IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
         } else if (isMaternidade) {
 
-            if (informacoesProcessoRM.isUserAdmin) {
+            if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
                     await minutaSujaClass.maternidadeProcessoSujo(informacoesProcessoRM, impeditivosDosprevRM, impeditivosLabrasRM, impeditivos);
-                    await new Promise(resolve => setTimeout(resolve, 5000));
                 } catch (error) {
                     console.error("Erro na função finalizarTriagem ao subir a minuta suja (maternidade): ", error);
                 }

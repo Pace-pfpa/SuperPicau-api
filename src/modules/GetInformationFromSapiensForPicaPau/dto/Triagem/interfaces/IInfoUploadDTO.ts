@@ -12,4 +12,5 @@ export interface IInfoUploadDTO {
     usuario_setor: number;
     interessados: Interessado[];
     infoMinuta: IInfoMinutaDTO;
+    subirMinuta: boolean;
 }

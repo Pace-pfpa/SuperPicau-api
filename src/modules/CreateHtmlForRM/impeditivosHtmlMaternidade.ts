@@ -1,5 +1,5 @@
 import { HtmlIImpeditivosRuralMaternidadeDTO } from "../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
-import { IInfoUploadDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { IInfoUploadDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
 import { brasaoLogo, 
         estilos, 
         renderSecao, 
@@ -13,7 +13,7 @@ export class ImpeditivosHtmlMaternidade {
     async execute(
         data: HtmlIImpeditivosRuralMaternidadeDTO,
         infoUpload: IInfoUploadDTO,
-        impedimentosDosprev: IObjInfoImpeditivosRM, 
+        impedimentosDosprev: IObjInfoImpeditivosMaternidade, 
         impedimentosLabra: IResponseLabraAutorConjuge
     ): Promise<string> {
         const currentDate = new Date().toLocaleDateString("pt-BR", {

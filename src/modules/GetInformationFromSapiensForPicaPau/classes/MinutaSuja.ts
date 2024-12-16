@@ -48,6 +48,7 @@ export class MinutaSuja {
             const processoNome = obterNomeInteressadoPrincipal(informacoesProcesso.infoUpload);    
             await uploadDocumentUseCase.execute(informacoesProcesso.cookie, `${processoNome}${documentoId}impeditivos.html`, minutas[0].conteudo, documentoId);
             console.log("MINUTA SUBIU!");
+            await new Promise(resolve => setTimeout(resolve, 5000));
 
             await updateDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
@@ -92,6 +93,8 @@ export class MinutaSuja {
                 tid: '3',
                 tipoDocumento_id: '85'
             });
+
+            // 546274 -> Rural Sujo
     
             if (!createDocument || !Array.isArray(createDocument) || createDocument.length === 0 || !createDocument[0].id) {
                 throw new Error("Falha ao criar o documento ou ID não encontrado.");
@@ -107,6 +110,7 @@ export class MinutaSuja {
             const processoNome = obterNomeInteressadoPrincipal(informacoesProcesso.infoUpload);    
             await uploadDocumentUseCase.execute(informacoesProcesso.cookie, `${processoNome}${documentoId}impeditivos.html`, minutas[0].conteudo, documentoId);
             console.log("MINUTA SUBIU!");
+            await new Promise(resolve => setTimeout(resolve, 5000));
 
             await updateDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,

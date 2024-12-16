@@ -1,16 +1,17 @@
 import { HtmlIImpeditivosRuralMaternidadeDTO } from "../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
-import { IInfoUploadDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { IInfoUploadDTO, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { IObjInfoImpeditivosRural } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 
 export class ImpeditivosHtmlRural {
     async execute(
         data: HtmlIImpeditivosRuralMaternidadeDTO,
         infoUpload: IInfoUploadDTO,
-        impedimentosDosprev: IObjInfoImpeditivosRM, 
+        impedimentosDosprev: IObjInfoImpeditivosRural, 
         impedimentosLabra: IResponseLabraAutorConjuge
     ): Promise<string> {
 
         const html = `
-            CAVANI
+            EM CONSTRUÇÃO
         `;
 
         return html;

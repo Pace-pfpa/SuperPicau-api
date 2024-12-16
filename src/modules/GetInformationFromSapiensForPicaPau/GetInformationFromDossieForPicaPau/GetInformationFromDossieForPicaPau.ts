@@ -4,10 +4,13 @@ import { EmpregoDP,
          IImpeditivoLitispendencia,
          IImpeditivoRequerimentoAtivo,
          IObjInfoImpeditivosLoas, 
-         IObjInfoImpeditivosRM, 
+         IObjInfoImpeditivosMaternidade, 
          IReturnImpedimentosLOAS, 
-         IReturnImpedimentosRM } from "../dto";
+         IReturnImpedimentosMaternidade } from "../dto";
+import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
+import { IReturnImpedimentosRural } from "../dto/RuralMaternidade/interfaces/IReturnImpedimentosRural";
 import { loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
+import { calcularIdade } from "./DosprevBusiness/GetInformationIdade";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
 import {
   requerimentos,
@@ -20,11 +23,11 @@ export class GetInformationDossieForPicaPau {
   async impedimentosMaternidade(
     paginaDosprevFormatada: JSDOMType,
     parginaDosPrev: string
-    ): Promise<IReturnImpedimentosRM> {
+    ): Promise<IReturnImpedimentosMaternidade> {
     let ArrayImpedimentos: string = '';
 
     
-    const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
+    const objInfoImpeditivos: IObjInfoImpeditivosMaternidade = {} as IObjInfoImpeditivosMaternidade;
  
 
     try {
@@ -126,11 +129,17 @@ export class GetInformationDossieForPicaPau {
 
   async impeditivosRural(
     paginaDosprevFormatada: JSDOMType,
-    parginaDosPrev: string):Promise<IReturnImpedimentosRM> {
+    parginaDosPrev: string):Promise<IReturnImpedimentosRural> {
 
     let ArrayImpedimentos: string = '';
 
-    const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
+    const objInfoImpeditivos: IObjInfoImpeditivosRural = {} as IObjInfoImpeditivosRural;
+
+    const idade = await calcularIdade.calcIdade(paginaDosprevFormatada);
+    if (idade.idadeImpeditivo) {
+      ArrayImpedimentos += " IDADE -";
+      objInfoImpeditivos.idade = idade.idadeAutor;
+    }
 
     try {
 

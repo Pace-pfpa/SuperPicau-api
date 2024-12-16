@@ -106,6 +106,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 usuario_setor: tarefas[0].setorResponsavel_id,
                 interessados: tarefas[0].pasta.interessados,
                 infoMinuta: informacoesRequerenteRequerido,
+                subirMinuta: data.subirMinuta
             }
             
             if (tipo_triagem === 2) {

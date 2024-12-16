@@ -8,7 +8,7 @@ export class MinutaLimpa {
         try {
             createDocument = await createDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
-                usuario_nome: informacoesProcesso.infoUpload.usuario_nome,
+                usuario_nome: informacoesProcesso.infoUpload.usuario.nome,
                 usuario_setor: informacoesProcesso.infoUpload.usuario_setor,
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
@@ -31,7 +31,7 @@ export class MinutaLimpa {
         try {
             createDocument = await createDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
-                usuario_nome: informacoesProcesso.infoUpload.usuario_nome,
+                usuario_nome: informacoesProcesso.infoUpload.usuario.nome,
                 usuario_setor: informacoesProcesso.infoUpload.usuario_setor,
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
