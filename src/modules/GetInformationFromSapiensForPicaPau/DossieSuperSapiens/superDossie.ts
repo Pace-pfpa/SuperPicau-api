@@ -1,8 +1,12 @@
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { EmpregoDP, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo, IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../dto";
+import { EmpregoDP, IImpeditivoLitispendencia, IImpeditivoRequerimentoAtivo, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IReturnImpedimentosLOAS, IReturnImpedimentosMaternidade } from "../dto";
+import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
+import { IReturnImpedimentosRural } from "../dto/RuralMaternidade/interfaces/IReturnImpedimentosRural";
 import { seguradoEspecial } from "../GetInformationFromDossieForPicaPau/DosprevBusiness/GetInformationSeguradoEspecial";
 import { loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie, loasIdadeSuperDossie } from "../loas/Business";
 import { buscarTabelaRelacaoDeProcessos } from "./Help/BuscarTabelaRelacaoDeProcessos";
+import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
 import { datasRequerimentoAtivoNewDossie, datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformationRequerimento";
 
@@ -11,10 +15,10 @@ export class SuperDossie {
     async impedimentosMaternidade(
         paginaDosprevFormatada: any,
         parginaDosPrev: any
-      ): Promise<IReturnImpedimentosRM> {
+      ): Promise<IReturnImpedimentosMaternidade> {
         let ArrayImpedimentos: string = '';
 
-        const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
+        const objInfoImpeditivos: IObjInfoImpeditivosMaternidade = {} as IObjInfoImpeditivosMaternidade;
 
         try {
 
@@ -83,7 +87,7 @@ export class SuperDossie {
 
             const processoJudicial: IImpeditivoLitispendencia = await buscarTabelaRelacaoDeProcessos(paginaDosprevFormatada, numeroUnicoCnj.trim().replace(/\D/g, ''));
 
-            if(processoJudicial.haveLitispendencia){
+            if (processoJudicial.haveLitispendencia){
               objInfoImpeditivos.litispendencia = processoJudicial.litispendencia;
               ArrayImpedimentos = ArrayImpedimentos + " POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m-";
             }
@@ -110,12 +114,18 @@ export class SuperDossie {
 
 
 
-      async impeditivosRural(paginaDosprevFormatada: any,
+      async impeditivosRural(paginaDosprevFormatada: JSDOMType,
         parginaDosPrev: any
-      ): Promise<IReturnImpedimentosRM> {
+      ): Promise<IReturnImpedimentosRural> {
         let ArrayImpedimentos: string = '';
 
-        const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
+        const objInfoImpeditivos: IObjInfoImpeditivosRural = {} as IObjInfoImpeditivosRural;
+
+        const idade = await calcularIdadeNewDossie.calcIdade(paginaDosprevFormatada);
+        if (idade.idadeImpeditivo) {
+          ArrayImpedimentos += " IDADE -";
+          objInfoImpeditivos.idade = idade.idadeAutor;
+        }
 
         try {
 
@@ -161,7 +171,7 @@ export class SuperDossie {
 
         const xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss = "/html/body/div/div[5]/table/tbody/tr/td"
 
-          const NaoRelacaoDosProcessosMovidosPeloAutorContraOInss = getXPathText(paginaDosprevFormatada, xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss);
+        const NaoRelacaoDosProcessosMovidosPeloAutorContraOInss = getXPathText(paginaDosprevFormatada, xpathNaoRelacaoDosProcessosMovidosPeloAutorContraOInss);
 
 
           if(NaoRelacaoDosProcessosMovidosPeloAutorContraOInss !== null &&  NaoRelacaoDosProcessosMovidosPeloAutorContraOInss.trim() !== "Não há relação dos processos movidos pelo autor contra o INSS."){
@@ -182,7 +192,6 @@ export class SuperDossie {
 
           console.log('---OBJETO DE IMPEDIMENTOS RURAL SUPER')
           console.log(objInfoImpeditivos);
-
 
           ArrayImpedimentos = ArrayImpedimentos + " *RURAL* ";
 

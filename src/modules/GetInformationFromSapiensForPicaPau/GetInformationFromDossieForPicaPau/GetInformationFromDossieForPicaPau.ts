@@ -1,12 +1,16 @@
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 import { EmpregoDP, 
          IImpeditivoLitispendencia,
          IImpeditivoRequerimentoAtivo,
          IObjInfoImpeditivosLoas, 
-         IObjInfoImpeditivosRM, 
+         IObjInfoImpeditivosMaternidade, 
          IReturnImpedimentosLOAS, 
-         IReturnImpedimentosRM } from "../dto";
+         IReturnImpedimentosMaternidade } from "../dto";
+import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
+import { IReturnImpedimentosRural } from "../dto/RuralMaternidade/interfaces/IReturnImpedimentosRural";
 import { loasLitispendencia, restabelecimentoRequerimentosDossie, loasAtivoDossie, loasIdadeDossie } from "../loas/Business";
+import { calcularIdade } from "./DosprevBusiness/GetInformationIdade";
 import { seguradoEspecial } from "./DosprevBusiness/GetInformationSeguradoEspecial";
 import {
   requerimentos,
@@ -17,13 +21,13 @@ import { buscarTabelaRelacaoDeProcessosNormalDossie } from "./Help/BuscarTabelaR
 
 export class GetInformationDossieForPicaPau {
   async impedimentosMaternidade(
-    paginaDosprevFormatada: any,
-    parginaDosPrev: any
-    ): Promise<IReturnImpedimentosRM> {
+    paginaDosprevFormatada: JSDOMType,
+    parginaDosPrev: string
+    ): Promise<IReturnImpedimentosMaternidade> {
     let ArrayImpedimentos: string = '';
 
     
-    const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
+    const objInfoImpeditivos: IObjInfoImpeditivosMaternidade = {} as IObjInfoImpeditivosMaternidade;
  
 
     try {
@@ -124,12 +128,18 @@ export class GetInformationDossieForPicaPau {
 
 
   async impeditivosRural(
-    paginaDosprevFormatada: any,
-    parginaDosPrev: any):Promise<IReturnImpedimentosRM> {
+    paginaDosprevFormatada: JSDOMType,
+    parginaDosPrev: string):Promise<IReturnImpedimentosRural> {
 
     let ArrayImpedimentos: string = '';
 
-    const objInfoImpeditivos: IObjInfoImpeditivosRM = {} as IObjInfoImpeditivosRM;
+    const objInfoImpeditivos: IObjInfoImpeditivosRural = {} as IObjInfoImpeditivosRural;
+
+    const idade = await calcularIdade.calcIdade(paginaDosprevFormatada);
+    if (idade.idadeImpeditivo) {
+      ArrayImpedimentos += " IDADE -";
+      objInfoImpeditivos.idade = idade.idadeAutor;
+    }
 
     try {
 
@@ -244,25 +254,6 @@ export class GetInformationDossieForPicaPau {
         objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA"
         impeditivos = impeditivos + " LITISPENDÊNCIA -"
       }
-
-
-
-      /*
-      const loasEmprego: any = await loasEmpregoDossie.execute(paginaDosprevFormatada)
-        if(typeof(loasEmprego) == "boolean"){
-          if(loasEmprego){
-              impeditivos = impeditivos + " LOAS EMPREGO -"
-          }
-        }else if(typeof(loasEmprego) == "object"){
-          if(loasEmprego.valorBooleano){
-              impeditivos = impeditivos + loasEmprego.message
-          }else{
-              impeditivos = impeditivos + loasEmprego.message
-          }
-      }
-      */
-
-
 
 
       const loasAtivo = await loasAtivoDossie.handle(paginaDosprevFormatada)

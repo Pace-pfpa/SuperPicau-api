@@ -7,7 +7,7 @@ export class GetEditorMinutaUseCase {
     async execute(data: GetEditorMinutaDTO): Promise<any> {
         const requestHeaderUploadArquivo = new RequestHeaders;
         const headers = await requestHeaderUploadArquivo.execute(data.cookie);
-        const baseURL = `https://sapíens.agu.gov.br/editor?id=${data.documentoId}&c=${data.minutaId}`
+        const baseURL = `https://sapiens.agu.gov.br/editor?id=${data.documentoId}&c=${data.minutaId}`
         
         return await axios.get(baseURL, {headers}).then(response =>{
             return response.data;

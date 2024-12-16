@@ -14,7 +14,7 @@ export class GetTarefaFacade {
   async getMinutas(cookie: string, usuario_id: string, etiqueta: string): Promise<Minuta[]> {
     try {
         const tarefa = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta });
-        return tarefa[0].minutas;
+        return tarefa[0].minutas.reverse();
     } catch (error) {
         throw new Error(`Erro ao obter minutas: ${error.message}`);
     }

@@ -9,6 +9,7 @@ export interface GetInformationsFromSapiensDTO {
     readDosprevAge: number;
     loas: boolean;
     admin: boolean;
+    subirMinuta: boolean;
 }
 
 

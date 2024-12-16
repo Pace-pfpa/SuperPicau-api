@@ -1,4 +1,4 @@
-import { minutaClass } from "../classes";
+import { minutaLimpaClass } from "../classes";
 import { IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IResponseLabraAutorConjuge } from "../dto";
 import { atualizarEtiquetaImpeditivo } from "./atualizarEtiquetaImpeditivo";
 import { atualizarEtiquetaProcessoLimpo } from "./atualizarEtiquetaProcessoLimpo";
@@ -14,7 +14,7 @@ export async function finalizarTriagemLoas(
 
         if (informacoesProcessoLoas.isUserAdmin) {
             try {
-                await minutaClass.loasProcessoLimpo(informacoesProcessoLoas);
+                await minutaLimpaClass.loasProcessoLimpo(informacoesProcessoLoas);
                 await new Promise(resolve => setTimeout(resolve, 5000));    
             } catch (error) {
                 console.error("Erro na função finalizarTriagem ao subir a minuta:", error);

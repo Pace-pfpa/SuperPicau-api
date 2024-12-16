@@ -6,7 +6,7 @@ import { calcularIdadeIdoso } from "../Help/CalcularIdadeIdoso";
 import { correçaoDoErroDeFormatoDoSapiens } from "../../../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
 
 export class LoasIdadeSuperDossie {
-    async handle(parginaDosPrevFormatada: any):Promise<any>{
+    async handle(parginaDosPrevFormatada: any):Promise<any> {
 
         const dataNascXpath: string = "/html/body/div/div[4]/table/tbody/tr[8]/td";
         const dataNascFormatado: string = correçaoDoErroDeFormatoDoSapiens(getXPathText(parginaDosPrevFormatada, dataNascXpath));

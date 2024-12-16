@@ -8,4 +8,8 @@ export interface IImpedimentos {
     empregos: Emprego[];
     imoveisRurais: ImovelRural[];
     empresas: Empresa[];
+    bensTSE: string | null;
+    imoveisSP: string | null;
+    embarcacao: string | null;
+    aeronave: string | null;
 }

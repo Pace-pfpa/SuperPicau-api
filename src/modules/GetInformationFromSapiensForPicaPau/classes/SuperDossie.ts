@@ -1,31 +1,37 @@
 const { JSDOM } = require('jsdom');
+import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { superDossie } from "../DossieSuperSapiens";
-import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosRM, IReturnImpedimentosLOAS, IReturnImpedimentosRM } from "../dto";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IReturnImpedimentosLOAS } from "../dto";
+import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 
 export class SuperDossie {
-    async buscarImpedimentosForRural(dosprevPoloAtivo: any, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
+    async buscarImpedimentosForRural(
+        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
 
-        const impeditivosRural: IReturnImpedimentosRM = await superDossie.impeditivosRural(paginaDosPrevFormatada, paginaDosPrev);
+        const impeditivosRural = await superDossie.impeditivosRural(paginaDosPrevFormatada, paginaDosPrev);
 
-        const impedimentos: string[] = impeditivosRural.arrayDeImpedimentos.split('-');
-        const objImpedimentos: IObjInfoImpeditivosRM = impeditivosRural.objImpedimentosRM;
+        const impedimentos = impeditivosRural.arrayDeImpedimentos.split('-');
+        const objImpedimentos = impeditivosRural.objImpedimentosRM;
 
         return { impedimentos, objImpedimentos };
     }
 
-    async buscarImpedimentosForMaternidade(dosprevPoloAtivo: any, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM }> {
+    async buscarImpedimentosForMaternidade(
+        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
 
-        const impeditivosMaternidade: IReturnImpedimentosRM = await superDossie.impedimentosMaternidade(paginaDosPrevFormatada, paginaDosPrev);
+        const impeditivosMaternidade = await superDossie.impedimentosMaternidade(paginaDosPrevFormatada, paginaDosPrev);
 
-        const impedimentos: string[] = impeditivosMaternidade.arrayDeImpedimentos.split('-');
-        const objImpedimentos: IObjInfoImpeditivosRM = impeditivosMaternidade.objImpedimentosRM;
+        const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
+        const objImpedimentos = impeditivosMaternidade.objImpedimentosRM;
 
         return { impedimentos, objImpedimentos };
     }

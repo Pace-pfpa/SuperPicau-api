@@ -10,14 +10,16 @@ import { etiquetarRenda } from "./calculoLoas/etiquetarRenda";
 import { montarObjetosEnvolvidos } from "./calculoLoas/montarObjetosEnvolvidos";
 import { impedimentosSislabraLOAS } from "./sislabraImpedimentos/impedimentosSislabraLOAS";
 import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
-import { IInformacoesProcessoDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge, IResponseSislabra, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas } from "../dto";
+import { IInformacoesProcessoDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas } from "../dto";
+import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 
 export class BuscarImpedimentosUseCase {
 
-    async procurarImpedimentos(informacoesProcesso: IInformacoesProcessoDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRM, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
+    async procurarImpedimentosMaternidade(
+        informacoesProcesso: IInformacoesProcessoDTO
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
         const {
             cookie,
-            tipo_triagem,
             capaFormatada,
             dosprevPoloAtivo,
             isDosprevPoloAtivoNormal,
@@ -27,54 +29,76 @@ export class BuscarImpedimentosUseCase {
 
         const impedimentoCapa: string[] = [];
         const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
-        if(!informationcapa.encontrouAdvogado){
+        if (!informationcapa.encontrouAdvogado) {
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra: IResponseSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
         const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
             autor: impedimentosSislabra.autor,
             conjuge: impedimentosSislabra.conjuge,
-        } 
+        }
 
-        if (tipo_triagem === 0) {
+        if (isDosprevPoloAtivoNormal) {
+            const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-            if (isDosprevPoloAtivoNormal) {
-                const impedimentosBusca = await normalDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
+            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            console.log("MATERNIDADE NORMAL")
+            console.log(impedimentos)
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
-                console.log("RURAL NORMAL")
-                console.log(impedimentos)
-
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
-            } else {
-                const impedimentosBusca = await superDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
-
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
-                console.log("RURAL SUPER")
-                console.log(impedimentos)
-
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
-            }
+            return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
         } else {
+            const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-            if (isDosprevPoloAtivoNormal) {
-                const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
+            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            console.log("MATERNIDADE SUPER")
+            console.log(impedimentos)
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
-                console.log("MATERNIDADE NORMAL")
-                console.log(impedimentos)
+            return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
+        }
+        
+    }
 
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
-            } else {
-                const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
+    async procurarImpedimentosRural(
+        informacoesProcesso: IInformacoesProcessoDTO
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
+        const {
+            cookie,
+            capaFormatada,
+            dosprevPoloAtivo,
+            isDosprevPoloAtivoNormal,
+            sislabraPoloAtivo,
+            sislabraConjuge
+        } = informacoesProcesso;
 
-                const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
-                console.log("MATERNIDADE SUPER")
-                console.log(impedimentos)
+        const impedimentoCapa: string[] = [];
+        const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
+        if (!informationcapa.encontrouAdvogado) {
+            impedimentoCapa.push("ADVOGADO");
+        }
 
-                return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
-            }
+        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
+            autor: impedimentosSislabra.autor,
+            conjuge: impedimentosSislabra.conjuge
+        }
+        
+        if (isDosprevPoloAtivoNormal) {
+            const impedimentosBusca = await normalDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
+
+            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            console.log("RURAL NORMAL")
+            console.log(impedimentos)
+
+            return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
+        } else {
+            const impedimentosBusca = await superDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
+
+            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            console.log("RURAL SUPER")
+            console.log(impedimentos)
+
+            return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
         }
     }
 
