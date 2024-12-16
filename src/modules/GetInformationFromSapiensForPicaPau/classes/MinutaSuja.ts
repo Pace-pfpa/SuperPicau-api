@@ -2,12 +2,13 @@ import { createDocumentoUseCase } from "../../CreateDocumento";
 import { impeditivosHtmlMaternidade, impeditivosHtmlRural } from "../../CreateHtmlForRM";
 import { updateDocumentoUseCase } from "../../UpdateDocumento";
 import { uploadDocumentUseCase } from "../../UploadDocument";
-import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IMinutasDTO, IObjInfoImpeditivosRM, IResponseLabraAutorConjuge } from "../dto";
+import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IMinutasDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../dto";
+import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { gerarObjetoUploadRM } from "../helps/gerarObjetoUploadRM";
 import { obterNomeInteressadoPrincipal } from "../utils";
 
 export class MinutaSuja {
-    async maternidadeProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosRM, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
+    async maternidadeProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosMaternidade, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
         let htmlUpload: string;
 
         const objetoUpload = gerarObjetoUploadRM(impeditivos);
@@ -68,7 +69,7 @@ export class MinutaSuja {
         }
     }
 
-    async ruralProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosRM, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
+    async ruralProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosRural, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
         let htmlUpload: string;
 
         const objetoUpload = gerarObjetoUploadRM(impeditivos);

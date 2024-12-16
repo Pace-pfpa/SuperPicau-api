@@ -29,7 +29,7 @@ export class ImpeditivosHtmlMaternidade {
             impedimentosDosprev.litispendencia
         );
 
-        const tabelaTipo3 = await this.renderTabelaTipo3(impedimentosLabra);
+        const tabelaTipo3 = await this.renderTabelaTipo3(impedimentosLabra, impedimentosDosprev);
 
         const html = `
             <!DOCTYPE html>
@@ -202,7 +202,7 @@ export class ImpeditivosHtmlMaternidade {
     `;
     }
 
-    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjuge): Promise<string> {
+    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> {
         const { autor, conjuge } = impedimentosLabra;
 
         const atividadeEmpresarial = renderSecao(
@@ -227,6 +227,16 @@ export class ImpeditivosHtmlMaternidade {
           "Empregos do Cônjuge"
         );
 
+        const empregoDosprev = renderSecao(
+          "EMPREGO AUTOR",
+          `A parte autora possui diversos vínculos privados/públicos no período de carência, em total desacordo com os limites estabelecidos pela Lei e pela jurisprudência pacífica, conforme informações no dossiê previdenciário anexado.`,
+          impedimentosDosprev?.emprego,
+          null,
+          ["vinculo", "dataInicio", "dataFim", "filiacao", "ocupacao"],
+          "Empregos do Autor (Dossiê)",
+          "SEM INFORMAÇÕES"
+        )
+
 
         const patrimonioIncompativel = renderPatrimonioImcompativel(autor, conjuge);
 
@@ -235,6 +245,7 @@ export class ImpeditivosHtmlMaternidade {
         if (
             !atividadeEmpresarial &&
             !emprego &&
+            !empregoDosprev &&
             !patrimonioIncompativel &&
             !imovelRural
         ) {
@@ -254,6 +265,7 @@ export class ImpeditivosHtmlMaternidade {
               <td>
                 ${atividadeEmpresarial}
                 ${emprego}
+                ${empregoDosprev}
                 ${patrimonioIncompativel}
                 ${imovelRural}
               </td>

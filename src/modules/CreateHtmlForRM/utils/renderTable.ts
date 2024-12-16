@@ -23,6 +23,10 @@ export const renderTable = (items: any[], label: string, columns: string[]): str
         distrito: "DISTRITO",
         cep: "CEP",
         uf: "UF",
+        vinculo: "VÍNCULO",
+        dataInicio: "DATA DE INÍCIO",
+        dataFim: "DATA FIM",
+        filiacao: "FILIAÇÃO",
     };
 
     const headers = columns

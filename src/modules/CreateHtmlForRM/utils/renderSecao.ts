@@ -13,6 +13,22 @@ export const renderSecao = (
 
     if (!hasDados) {
         return "";
+    } else if ((dadosAutor?.length ?? 0) === 0) {
+        return `
+        <p>
+            <strong><span>${titulo}</span></strong>:
+            ${mensagem}
+        </p>
+        ${renderTable(dadosConjuge ?? [], tituloConjuge, colunas)}
+        `;
+    } else if ((dadosConjuge?.length ?? 0) === 0) {
+        return `
+        <p>
+            <strong><span>${titulo}</span></strong>:
+            ${mensagem}
+        </p>
+        ${renderTable(dadosAutor ?? [], tituloAutor, colunas)}
+        `;
     }
 
     return `

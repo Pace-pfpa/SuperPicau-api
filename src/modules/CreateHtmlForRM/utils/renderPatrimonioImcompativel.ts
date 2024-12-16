@@ -28,6 +28,48 @@ export const renderPatrimonioImcompativel = (autor: IImpedimentos, conjuge: IImp
     const aeronaveAutor = renderCampoPatrimonioImcompativel("AERONAVE AUTOR", autor?.aeronave);
     const aeronaveConjuge = renderCampoPatrimonioImcompativel("AERONAVE CONJUGE", conjuge?.aeronave);
 
+    if ((autor?.veiculos.length ?? 0) === 0) {
+      return `
+        <p>
+            <strong><span>PATRIMÔNIO INCOMPATÍVEL</span></strong>: 
+              A parte autora, seu (sua) cônjuge ou companheiro(a) possui(em) patrimônio incompatível com o regime de economia familiar no curso do período de carência previsto em lei.
+        </p>
+        ${renderTable(
+        conjuge?.veiculos ?? [],
+        "Veículos do Cônjuge",
+        ["marca", "tipo", "valorEstipulado", "placa", "renavam", "anoFabricacao", "municipio", "restricao"]
+        )}
+        ${bensTseAutor}
+        ${bensTseConjuge}
+        ${imoveisSpAutor}
+        ${imoveisSpConjuge}
+        ${embarcacaoAutor}
+        ${embarcacaoConjuge}
+        ${aeronaveAutor}
+        ${aeronaveConjuge}
+      `;
+    } else if ((conjuge?.veiculos.length ?? 0) === 0) {
+      return `
+        <p>
+            <strong><span>PATRIMÔNIO INCOMPATÍVEL</span></strong>: 
+              A parte autora, seu (sua) cônjuge ou companheiro(a) possui(em) patrimônio incompatível com o regime de economia familiar no curso do período de carência previsto em lei.
+        </p>
+        ${renderTable(
+        autor?.veiculos ?? [],
+        "Veículos do Autor",
+        ["marca", "tipo", "valorEstipulado", "placa", "renavam", "anoFabricacao", "municipio", "restricao"]
+        )}
+        ${bensTseAutor}
+        ${bensTseConjuge}
+        ${imoveisSpAutor}
+        ${imoveisSpConjuge}
+        ${embarcacaoAutor}
+        ${embarcacaoConjuge}
+        ${aeronaveAutor}
+        ${aeronaveConjuge}
+      `;
+    }
+
     return `
         <p>
             <strong><span>PATRIMÔNIO INCOMPATÍVEL</span></strong>: 
