@@ -14,6 +14,7 @@ export function gerarObjetoUploadRM (impeditivos: string[]): HtmlIImpeditivosRur
         vinculoAberto: impeditivos.some(imp => imp.trim() === "VÍNCULO ABERTO"),
         concessaoAnterior: impeditivos.some(imp => imp.trim() === "CONCESSÃO ANTERIOR"),
         litispendencia: impeditivos.some(imp => imp.trim() === "POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r" || imp.trim() === "POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m"),
+        idade: impeditivos.some(imp => imp.trim() === "IDADE"),
         veiculoAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "VEICULO AUTOR"),
         empregoAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "EMPREGO AUTOR"),
         imovelruralAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "IMOVEIS RURAIS AUTOR"),
