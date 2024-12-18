@@ -5,6 +5,7 @@ export interface HtmlIImpeditivosRuralMaternidadeDTO {
     vinculoAberto: boolean;
     concessaoAnterior: boolean;
     litispendencia: boolean;
+    idade: boolean;
     veiculoAutor: boolean | null;
     empregoAutor: boolean | null;
     imovelruralAutor: boolean | null;

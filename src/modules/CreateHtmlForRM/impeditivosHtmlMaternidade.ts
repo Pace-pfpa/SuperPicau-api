@@ -72,69 +72,34 @@ export class ImpeditivosHtmlMaternidade {
                 <p><br></p>
                 <p><strong>INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS</strong>, pessoa jurídica de direito público, representado(a) pelo membro da Advocacia-Geral da União infra assinado(a), vem, respeitosamente, à presença de Vossa Excelência, apresentar</p>
                 <p><br></p>
+                <p class="centralizado"><strong>CONTESTAÇÃO</strong></p>
                 <p><br></p>
-                <table border="1" cellpadding="1" cellspacing="1" style="height:64px; width:790px">
-                    <tbody>
-                        <tr>
-                            <td style="background-color: rgb(204, 204, 204);">
-                                <p class="centralizado"><strong><span style="color:black">TIPO 1: PROPOSTA DE ACORDO</span></strong></p>
-                                <p class="centralizado"><strong>(DA AUSÊNCIA DE INTERESSE DO ENTE PÚBLICO&nbsp;EM CONTRAPROPOSTA EVENTUALMENTE FORMULADA PELA PARTE AUTORA)</strong></p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p><br></p>
-                <p>1. O INSS se compromete a conceder/manter ativo o benefício postulado à parte autora, nos seguintes moldes:</p>
-                <p><br></p>
-                <table align="center" border="1" cellpadding="1" cellspacing="1" style="height:500px; width:800px">
-                    <tbody>
-                        <tr>
-                            <td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>BENEFÍCIO</strong></td><td colspan="3" style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>SALÁRIO-MATERNIDADE - SEGURADO&nbsp;ESPECIAL</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>NOME DA PARTE AUTORA / CPF</strong></td>
-                            <td colspan="3">${infoUpload.infoMinuta.infoRequerente.nome} (${infoUpload.infoMinuta.infoRequerente.cpf})</td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(204, 204, 204);"><p class="centralizado"><strong>DIB</strong></p><p class="centralizado"><strong>(data de início do benefício)</strong></p></td><td colspan="3" class="centralizado"><strong>DATA DO NASCIMENTO DA CRIANÇA</strong></td>
-                        </tr>
-                        <tr>
-                            <td rowspan="3" style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>COMPOSIÇÃO DOS VALORES ATRASADOS</strong></td><td style="background-color: rgb(204, 204, 204);"><p class="centralizado"><strong>EXERCÍCIOS ANTERIORES</strong></p><p class="centralizado"><strong>(A)</strong></p></td><td style="background-color: rgb(204, 204, 204);"><p class="centralizado"><strong>EXERCÍCIO</strong></p><p class="centralizado"><strong>ATUAL</strong></p><p class="centralizado"><strong>(B)</strong></p></td><td style="background-color: rgb(204, 204, 204);"><p class="centralizado"><strong>TOTAL DE ATRASADOS DEVIDOS</strong></p><p class="centralizado"><strong>(A+B)</strong></p></td>
-                        </tr>
-                        <tr>
-                            <td class="centralizado"><strong>R$ 5.500,00</strong></td>
-                            <td class="centralizado"><strong>----------</strong></td>
-                            <td class="centralizado"><strong>R$ 5.500,00</strong></td>
-                        </tr>
-                        <tr>
-                            <td class="centralizado"><strong><span style="color:black">04 </span></strong>PARCELAS</td>
-                            <td class="centralizado"><strong>----------</strong></td>
-                            <td class="centralizado"><strong>----------</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>ATRASADOS</strong></td>
-                            <td colspan="3">O valor total do acordo acima indicado, corresponde aproximadamente a 100% dos valores devidos, sem a inclusão de 13º salário proporcional, a serem pagos por meio de RPV (requisição de pequeno valor), abatidas as parcelas de benefícios inacumuláveis recebidos no interregno.</td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>HONORÁRIOS ADVOCATÍCIOS</strong></td>
-                            <td colspan="3">&nbsp;Não haverá pagamento de honorários advocatícios nos casos em trâmite&nbsp;perante o Juizado Especial Federal; tratando-se de ação ordinária, propõe-se o pagamento de <u><strong>10%</strong></u> sobre o valor do acordo.&nbsp;</td>
-                        </tr>
-                        </tbody>
-                </table>
-                <p><br></p>
-                <p>
-                    *A presente proposta de acordo somente será válida caso todos os parâmetros necessários para a implantação, revisão ou reativação do benefício em questão sejam devidamente preenchidos pelas partes. Na hipótese de ausência de qualquer parâmetro, ainda que haja manifestação favorável da parte contrária, o INSS deverá ser intimado para corrigir a petição incompleta, sob pena de sua nulidade.
-                </p>
-                <p><br></p>
-                <p><br></p>
-                <p class="centralizado"><strong>PROCURADORIA FEDERAL</strong></p>
-                <p class="centralizado"><strong>EQUIPE DE SEGURADOS ESPECIAIS E ASSISTÊNCIA SOCIAL DA 1ª REGIÃO</strong></p>
-                <p class="centralizado"><br></p>
                 ${tabelaTipo4}
-                <p class="centralizado"><br></p>
-                <hr>
-                <p class="centralizado"><br></p>
                 ${tabelaTipo3}
+                <p class="centralizado"><br></p>
+                <p class="centralizado"><br></p>
+                <table border="1" cellpadding="1" cellspacing="1" style="height:23px; width:793px">
+                <tbody>
+                <tr>
+                <td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>FUNDAMENTOS JURÍDICOS</strong></td>
+                </tr>
+                <tr>
+                <td><p>Para a concessão de benefício previdenciário ao trabalhador rural (salário-maternidade de segurada especial), no valor de um salário mínimo, exige-se a comprovação do exercício de trabalho rural, ainda que forma descontínua, <strong><u>mas no período imediatamente anterior ao fato gerador do benefício</u></strong>. No caso concreto, não houve a demonstração dos requisitos necessários à concessão do benefício. Considerando os motivos acima elencados, o pedido formulado deve ser julgado improcedente.</p></td>
+                </tr>
+                </tbody>
+                </table>
+                <p><br></p>
+                <table border="1" cellpadding="1" cellspacing="1" style="height:46px; width:789px"><tbody><tr><td style="background-color: rgb(204, 204, 204);" class="centralizado">
+                <strong>PREQUESTIONAMENTO</strong></td></tr><tr><td><p>Ficam prequestionados&nbsp;os art. 11,&nbsp;VII, §1º&nbsp;;&nbsp; 25, III, 39, p.u;&nbsp;71, 71-A , § 1º, 2º, 3º;&nbsp;<span style="display:inline !important"><span style="background-color:#ffffff"><span style="color:#000000">71-C</span></span></span>&nbsp;; 72, § 1º, 2º, 3º; 73, I, II, III;&nbsp; e art. 201, II da CF.</p></td></tr></tbody>
+                </table>
+                <p><br></p>
+                <table border="1" cellpadding="1" cellspacing="1" style="height:45px; width:788px">
+                  <tbody>
+                    <tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>DOS PEDIDOS</strong></td></tr><tr><td><p><br></p><p><span style="color:black">Ante o exposto, requer o&nbsp;</span>INSS o acolhimento das preliminares eventualmente levantadas. No mérito, requer que os <span style="color:#242424">pedidos julgados <strong>totalmente improcedentes, </strong>condenando a parte autora no pagamento das custas do processo e da verba honorária, com fulcro no art. 85, §§2º e 6º, do CPC, </span>sendo indevidos nas hipóteses da Lei 9.099/95, bem como que seja deferida a <span style="color:#242424">produção de todas as provas admitidas em direito</span></p><p><br></p><p><span style="color:#242424">Caso sejam julgados procedentes os pedidos da parte autora, &nbsp;o INSS <u><strong>requer</strong></u>: a) a</span> observância da prescrição quinquenal; b) a intimação da&nbsp;parte autora para firmar e juntar aos autos a autodeclaração prevista no anexo XXIV da Instrução Normativa PRES/INSS nº 128, de 28 de março de 2022, em observância às regras de acumulação de benefícios estabelecida no art. 24, §§ 1.º e 2.º da Emenda Constitucional 103/2019; c) nas hipóteses da Lei n. 9.099/95, caso inexista nos autos declaração com esse teor, a intimação da parte autora para renúncia&nbsp;expressa&nbsp;dos valores que excedam o teto de 60 (sessenta) salários mínimos na data da propositura da ação e que eventualmente venham a ser identificados ao longo do processo, inclusive em sede de execução; d) a fixação dos honorários advocatícios nos termos da Súmula 111 do STJ, sendo indevidos nas hipóteses da Lei 9.099/95; e) a declaração de isenção de custas e outras taxas judiciárias; f) o desconto dos valores já pagos administrativamente ou de qualquer benefício inacumulável recebido no período e a&nbsp;cobrança&nbsp;de eventuais valores pagos em sede de antecipação dos efeitos da tutela posteriormente revogada; g) a atualização monetária, de remuneração do capital e de compensação da mora, que seja adotada a SELIC a partir de dezembro/2021, conforme a&nbsp;&nbsp;EC n. 113/2021; h) o prequestionamento de todas as matérias de defesa para fins recursais.</p></td></tr>
+                  </tbody>
+                </table>
+                <p><br></p>
+                <p>Nesses termos, pede deferimento.</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
                 <p class="data-hora">${currentDate}</p>
@@ -199,10 +164,13 @@ export class ImpeditivosHtmlMaternidade {
           </tr>
         </tbody>
       </table>
+      <p class="centralizado"><br></p>
+      <hr>
     `;
     }
 
-    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> {
+    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> 
+    {
         const { autor, conjuge } = impedimentosLabra;
 
         const atividadeEmpresarial = renderSecao(
@@ -254,6 +222,7 @@ export class ImpeditivosHtmlMaternidade {
 
 
         return `
+        <p class="centralizado"><br></p>
         <table border="1" cellpadding="1" cellspacing="1" style="height:48px; width:786px">
           <tbody>
             <tr>

@@ -100,7 +100,7 @@ export class MinutaSuja {
             if (!createDocument || !Array.isArray(createDocument) || createDocument.length === 0 || !createDocument[0].id) {
                 throw new Error("Falha ao criar o documento ou ID não encontrado.");
             }
-        } catch (error) {
+        } catch (error) { 
             console.error("Erro ao criar o documento:", error);
             throw new Error("Falha na criação do documento. Verifique os dados e tente novamente.");
         }

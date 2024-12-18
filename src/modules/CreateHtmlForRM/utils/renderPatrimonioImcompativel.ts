@@ -32,7 +32,7 @@ export const renderPatrimonioImcompativel = (autor: IImpedimentos, conjuge: IImp
       return `
         <p>
             <strong><span>PATRIMÔNIO INCOMPATÍVEL</span></strong>: 
-              A parte autora, seu (sua) cônjuge ou companheiro(a) possui(em) patrimônio incompatível com o regime de economia familiar no curso do período de carência previsto em lei.
+              A parte autora, seu (sua) cônjuge ou companheiro(a) possui(em) patrimônio incompatível com o regime de economia familiar no curso do período de carência previsto em lei (Lei 8.213/91, art. 11, VII, “a”, “1” e § 1º).
         </p>
         ${renderTable(
         conjuge?.veiculos ?? [],
@@ -94,4 +94,4 @@ export const renderPatrimonioImcompativel = (autor: IImpedimentos, conjuge: IImp
         ${aeronaveAutor}
         ${aeronaveConjuge}
     `;
-  }
+}
