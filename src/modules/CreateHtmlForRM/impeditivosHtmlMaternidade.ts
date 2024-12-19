@@ -7,7 +7,7 @@ import { brasaoLogo,
         renderLitispendencia, 
         renderPatrimonioImcompativel,
         renderConcessao, 
-        renderRequerimento} from "./utils";
+        renderRequerimento } from "./utils";
 
 export class ImpeditivosHtmlMaternidade {
     async execute(
@@ -105,8 +105,11 @@ export class ImpeditivosHtmlMaternidade {
                 <p class="data-hora">${currentDate}</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
-                <p class="centralizado username">${infoUpload.usuario.nome}</p>
-                <p class="centralizado usarrole">${infoUpload.usuario.cargo}</p>
+                <p class="centralizado username">PROCURADORIA FEDERAL</p>
+                <p class="centralizado usarrole">EQUIPE DE SEGURADOS ESPECIAIS E ASSISTÊNCIA SOCIAL DA 1ª REGIÃO</p>
+                <p class="centralizado"><br></p>
+                <p class="centralizado"><br></p>
+                <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
             </body>
@@ -246,7 +249,7 @@ export class ImpeditivosHtmlMaternidade {
               <td>
                 <p>
                   Para provar a existência da preliminar acima, além de outras provas específicas identificadas na própria minuta, o INSS demonstra da seguinte forma:
-                  a) atividade empresarial (dados cadastrais e documentais); b) emprego (registros formais); c) patrimônio incompatível (informações financeiras); d) imóvel rural (cadastro de imóveis).
+                  a) atividade empresarial (informações da atividade empresarial na minuta de contestação); b) emprego (juntada de dossiê previdenciário e/ou informações na minuta de contestação); c) patrimônio incompatível (informações na minuta de contestação); d) imóvel rural (informações na minuta de contestação).
                 </p>
               </td>
             </tr>

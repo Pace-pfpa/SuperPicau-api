@@ -108,8 +108,8 @@ export class ImpeditivosHtmlRural {
                 <p class="data-hora">${currentDate}</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
-                <p class="centralizado username">${infoUpload.usuario.nome}</p>
-                <p class="centralizado usarrole">${infoUpload.usuario.cargo}</p>
+                <p class="centralizado username">PROCURADORIA FEDERAL</p>
+                <p class="centralizado usarrole">EQUIPE DE SEGURADOS ESPECIAIS E ASSISTÊNCIA SOCIAL DA 1ª REGIÃO</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
