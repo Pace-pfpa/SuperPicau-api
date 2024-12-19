@@ -15,12 +15,26 @@ export class CalcularIdade {
         console.log("generoFormatado: ",generoFormatado)
         if(generoFormatado ==  null){
             console.error("ENTROU GENERO NULL")
-            return null;
+            return {
+                idadeImpeditivo: false,
+                idadeAutor: {
+                    dataAjuizamento: null,
+                    dataNascimento: null,
+                    idade: null
+                }
+            }
         }
 
         if(generoFormatado.length == 0){
             console.error("ENTROU IDADE NULL")
-            return null;    
+            return {
+                idadeImpeditivo: false,
+                idadeAutor: {
+                    dataAjuizamento: null,
+                    dataNascimento: null,
+                    idade: null
+                }
+            }
         }
         
         let dataAjuizArray = dataAjuizFormatado.split("/");

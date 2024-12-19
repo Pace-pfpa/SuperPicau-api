@@ -4,7 +4,7 @@ import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
 import { IIdadeDTO } from "./dtos/IIdadeDTO";
 
 export class CalcularIdadeNewDossie {
-    async calcIdade(parginaDosPrevFormatada: JSDOMType): Promise<{idadeImpeditivo: boolean; idadeAutor: IIdadeDTO}> {
+    async calcIdade(parginaDosPrevFormatada: JSDOMType): Promise<{ idadeImpeditivo: boolean; idadeAutor: IIdadeDTO }> {
         const dataNascXpath: string = "/html/body/div/div[4]/table/tbody/tr[8]/td";
         const dataAjuizXpath: string = "/html/body/div/div[4]/table/tbody/tr[2]/td";
         const generoXptah: string = "/html/body/div/div[4]/table/tbody/tr[11]/td"
@@ -14,12 +14,26 @@ export class CalcularIdadeNewDossie {
         
         if(generoFormatado == null){
             console.error("ENTROU IDADE NULL")
-            return null;
+            return {
+                idadeImpeditivo: false,
+                idadeAutor: {
+                    dataAjuizamento: null,
+                    dataNascimento: null,
+                    idade: null
+                }
+            }
         }
         
         if(generoFormatado.length == 0){
             console.error("ENTROU IDADE VAZIA")
-            return null;
+            return {
+                idadeImpeditivo: false,
+                idadeAutor: {
+                    dataAjuizamento: null,
+                    dataNascimento: null,
+                    idade: null
+                }
+            }
         }
         
         let dataAjuizArray = dataAjuizFormatado.split("/");
