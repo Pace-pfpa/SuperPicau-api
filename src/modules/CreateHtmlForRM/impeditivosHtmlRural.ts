@@ -67,43 +67,25 @@ export class ImpeditivosHtmlRural {
                 <p><br></p>
                 <p><strong>INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS</strong>, pessoa jurídica de direito público, representado(a) pelo membro da Advocacia-Geral da União infra assinado(a), vem, respeitosamente, à presença de Vossa Excelência, apresentar</p>
                 <p><br></p>
+                <p class="centralizado"><strong>CONTESTAÇÃO</strong></p>
                 <p><br></p>
-                <hr>
-                <p style="color:rgb(0, 0, 0)" class="centralizado">
-                <strong>CONTESTAÇÃO</strong>
-                </p>
-                <p>
-                <strong>TIPO 3 - PROVA DOCUMENTAL DESCARACTERIZA PLEITO AUTORAL - DESNECESSIDADE DE AUDIÊNCIA DE INSTRUÇÃO E JULGAMENTO - JULGAMENTO ANTECIPADO DA LIDE.</strong>
-                </p>
-                <p>
-                <strong>TIPO 4 - QUESTÕES PROCESSUAIS - EXTINÇÃO DO FEITO COM/SEM RESOLUÇÃO DO MÉRITO.</strong>
-                </p>
-                <hr>
-                <p><br></p>
-                <p>&nbsp;de acordo com as razões de fato e de direito que passa a aduzir.</p>
-                <p><br></p>
-                <hr>
-                <h1><strong><span style="color:black">SÍNTESE FÁTICA</span></strong></h1>
-                <p><br></p>
-                <p>Trata-se de ação através da qual pretende a parte autora que seja a autarquia ré condenada ao pagamento do benefício previdenciário de aposentadoria por idade para segurado especial/aposentadoria por idade híbrida, sob alegação de ter preenchido todas as condições legais para tanto.</p>
-                <p><br></p>
-                <p>Em que pesem as alegações da parte autora, seu pleito não merece guarida, haja vista ser fruto de evidente equívoco. É o que passa o INSS a demonstrar.</p>
-                <p><br></p>
-                <hr>
                 ${tabelaTipo4}
                 ${tabelaTipo3}
-                <h1><strong>DOS REQUERIMENTOS</strong></h1>
                 <p><br></p>
+                <table border="1" cellpadding="1" cellspacing="1" style="height:23px; width:793px">
+                    <tbody>
+                        <tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>FUNDAMENTOS JURÍDICOS</strong></td></tr><tr><td><p>Para a concessão de benefício previdenciário ao trabalhador rural (aposentadoria por idade de segurado especial / aposentadoria por idade híbrida), no valor de um salário mínimo, exige-se a comprovação do exercício de trabalho rural, ainda que forma descontínua, <strong><u>mas no período imediatamente anterior ao fato gerador do benefício</u></strong>. No caso concreto, não houve a demonstração dos requisitos necessários à concessão do benefício. Considerando os motivos acima elencados, o pedido formulado deve ser julgado improcedente.</p></td>
+                        </tr>
+                    </tbody>
+                </table>
                 <p><br></p>
-                <p><span style="color:black"><span><span>Ante o exposto, requer o&nbsp;</span></span></span><span><span>INSS, <span style="color:#242424">sem prejuízo do acolhimento das preliminares, sejam os pedidos julgados <strong>totalmente improcedentes, </strong>condenando a parte autora no pagamento das custas do processo e da verba honorária, com fulcro no art. 85, §§2º e 6º, do CPC, </span>sendo indevidos nas hipóteses da Lei 9.099/95.</span></span></p>
+                <table border="1" cellpadding="1" cellspacing="1" style="height:46px; width:789px"><tbody><tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>PREQUESTIONAMENTO</strong></td></tr><tr><td><p>Ficam prequestionados os&nbsp;artigos 11, VII, a, 1; 11, "c", VII, §1º, §9º, inciso III;<span style="display:inline !important"><span style="color:#000000">&nbsp;15&nbsp;§4º,&nbsp;16; 38-B, §2º;&nbsp;</span></span>39;&nbsp;48; 55, §3º;74, 80, 106 e&nbsp;143 da Lei 8.213/91;&nbsp;§1º do artigo 3º da Lei nº 10.666/2003.</p></td></tr></tbody></table>
                 <p><br></p>
-                <p><span style="color:#242424"><span><span>Caso sejam julgados procedentes os pedidos da parte autora, a matéria de defesa fica desde já <strong>prequestionada</strong> para fins recursais.&nbsp;</span></span></span><span style="color:#242424"><span><span>Requer ainda</span></span></span><span style="color:#242424"><span><span>:</span></span></span></p>
-                <ol><li><span><span>A observância da prescrição quinquenal;</span></span></li><li>Na hipótese de concessão&nbsp;de aposentadoria, a intimação da<span><span>&nbsp;parte autora para firmar e juntar aos autos a autodeclaração prevista no anexo XXIV da </span></span>Instrução Normativa PRES/INSS nº 128, de 28 de março de 2022<span><span>, em observância às regras de acumulação de benefícios estabelecida no art. 24, §§ 1.º e 2.º da Emenda Constitucional 103/2019;</span></span></li><li><span><span>Nas hipóteses da Lei n. 9.099/95</span></span><span><span>, caso inexista nos autos declaração com esse teor, a intimação da parte autora para renúncia&nbsp;expressa&nbsp;dos valores que excedam o teto de 60 (sessenta) salários mínimos na data da propositura da ação e que eventualmente venham a ser identificados ao longo do processo, inclusive em sede de execução;</span></span></li><li><span><span>A fixação dos honorários advocatícios nos termos da Súmula 111 do STJ, sendo indevidos nas hipóteses da Lei 9.099/95;</span></span></li><li><span><span>A declaração de isenção de custas e outras taxas judiciárias;</span></span></li><li><span><span>O desconto dos valores já pagos administrativamente ou de qualquer benefício inacumulável recebido no período e a&nbsp;cobrança&nbsp;de eventuais valores pagos em sede de antecipação dos efeitos da tutela posteriormente revogada;</span></span></li><li><span style="color:#242424"><span><span>A produção de todas as provas admitidas em direito;</span></span></span></li><li>Por cautela, para fins de atualização monetária, de remuneração do capital e de compensação da mora, que seja adotada a SELIC a partir de dezembro/2021, conforme a&nbsp;&nbsp;EC n. 113/2021.</li></ol>
-                <p>Por fim, o&nbsp;INSS informa que não tem&nbsp;interesse na audiência de conciliação prevista no art. 334 do CPC e que concorda com o Juízo 100% digital, se for o caso.&nbsp;</p>
+                
+                <table border="1" cellpadding="1" cellspacing="1" style="height:45px; width:788px"><tbody><tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>DOS PEDIDOS</strong></td></tr><tr><td><p><br></p><p><span style="color:black">Ante o exposto, requer o&nbsp;</span>INSS o acolhimento das preliminares eventualmente levantadas. No mérito, requer que os <span style="color:#242424">pedidos julgados <strong>totalmente improcedentes, </strong>condenando a parte autora no pagamento das custas do processo e da verba honorária, com fulcro no art. 85, §§2º e 6º, do CPC, </span>sendo indevidos nas hipóteses da Lei 9.099/95, bem como que seja deferida a <span style="color:#242424">produção de todas as provas admitidas em direito</span></p><p><br></p><p><span style="color:#242424">Caso sejam julgados procedentes os pedidos da parte autora, &nbsp;o INSS <u><strong>requer</strong></u>: a) a</span> observância da prescrição quinquenal; b) a intimação da&nbsp;parte autora para firmar e juntar aos autos a autodeclaração prevista no anexo XXIV da Instrução Normativa PRES/INSS nº 128, de 28 de março de 2022, em observância às regras de acumulação de benefícios estabelecida no art. 24, §§ 1.º e 2.º da Emenda Constitucional 103/2019; c) nas hipóteses da Lei n. 9.099/95, caso inexista nos autos declaração com esse teor, a intimação da parte autora para renúncia&nbsp;expressa&nbsp;dos valores que excedam o teto de 60 (sessenta) salários mínimos na data da propositura da ação e que eventualmente venham a ser identificados ao longo do processo, inclusive em sede de execução; d) a fixação dos honorários advocatícios nos termos da Súmula 111 do STJ, sendo indevidos nas hipóteses da Lei 9.099/95; e) a declaração de isenção de custas e outras taxas judiciárias; f) o desconto dos valores já pagos administrativamente ou de qualquer benefício inacumulável recebido no período e a&nbsp;cobrança&nbsp;de eventuais valores pagos em sede de antecipação dos efeitos da tutela posteriormente revogada; g) a atualização monetária, de remuneração do capital e de compensação da mora, que seja adotada a SELIC a partir de dezembro/2021, conforme a&nbsp;&nbsp;EC n. 113/2021; h) o prequestionamento de todas as matérias de defesa para fins recursais.</p></td></tr></tbody></table>
+
                 <p><br></p>
                 <p><span style="color:black"><span><span>Nesses termos, pede&nbsp;deferimento.</span></span></span></p>
-                <p><br></p>
-                <p><br></p>
                 <p><br></p>
                 <p class="data-hora">${currentDate}</p>
                 <p class="centralizado"><br></p>
@@ -133,9 +115,6 @@ export class ImpeditivosHtmlRural {
         const requerimentoContent = renderRequerimento(requerimento);
 
         return `
-            <h1><strong>PRELIMINARES</strong></h1>
-            <p><br></p>
-            <p><br></p>
             <table border="1" cellpadding="1" cellspacing="1" style="height:20px; width:786px">
                 <tbody>
                 <tr>
@@ -187,7 +166,7 @@ export class ImpeditivosHtmlRural {
             "ATIVIDADE EMPRESARIAL",
             `A parte autora, o(a) cônjuge ou companheiro(a) possui (ou possuiu) participação em sociedade empresária, sociedade simples, empresa individuaou empresa individual de responsabilidade limitada, em atividade 
             <u><strong>dentro do período de carência previsto em Lei</strong></u>, 
-            <u><strong>em desacordo com as limitações legais</strong></u>, o que descaracteriza a qualidade de segurado especial (Lei 8.213/91, art. 11, VII, § 1º, §10, I, “d”, e §12).`,
+            <u><strong>em desacordo com as limitações legais</strong></u>, o que descaracteriza a qualidade de segurado especial. <strong>PREQUESTIONAMENTO</strong>: Lei 8.213/91, art. 11, VII, § 1º, §10, I, “d”, e §12.`,
             autor?.empresas,
             conjuge?.empresas,
             ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"],
@@ -196,8 +175,8 @@ export class ImpeditivosHtmlRural {
         );
 
         const emprego = renderSecao(
-            "EMPREGO",
-            `A parte autora, seu (sua) cônjuge ou companheiro(a) possui(em) diversos vínculos privados/públicos anteriores ao nascimento, com percepção de salário incompatível com a agricultura de subsistência, o que descaracteriza a qualidade de segurado especial da parte autora.`,
+            "EMPREGO LABRA",
+            `A parte autora, seu (sua) cônjuge ou companheiro(a) possui(em) diversos vínculos privados/públicos no período de carência, com percepção de salário incompatível com a agricultura de subsistência, sem direito à aposentadoria por idade rural ou híbrida.`,
             autor?.empregos,
             conjuge?.empregos,
             ["salarioContrato", "ocupacao", "empresa"],
@@ -206,8 +185,8 @@ export class ImpeditivosHtmlRural {
         );
 
         const empregoDosprev = renderSecao(
-            "EMPREGO AUTOR",
-            `A parte autora possui diversos vínculos privados/públicos no período de carência, em total desacordo com os limites estabelecidos pela Lei e pela jurisprudência pacífica, conforme informações no dossiê previdenciário anexado.`,
+            "EMPREGO",
+            `A parte autora com vínculos urbanos no período de carência, sem direito à aposentadoria por idade rural ou híbrida. Há registro de atividade(s) laboral(is) urbana(s) sujeita(s) ao RGPS ou RPPS, dentro do período de carência e por intervalo superior ao limite legal (120 dias), sem comprovação do retorno ao trabalho rural após a cessação dessa(s) atividade(s) e sem cumprimento do requisito etário para a aposentadoria híbrida. Além disso, não existem provas de períodos rurais intercalados que somem 180 meses(Tema 301/TNU). Não podem ser computados os períodos em que: (i) o(a) autor(a) tinha menos de 12 anos, à míngua de comprovação de sua contribuição efetiva e indispensável para a produção em regime de economia familiar (Tema 219/TNU e Pedido de Uniformização de Interpretação de Lei 5005222-04.2018.4.04.7009 - Presidência -, Min. Paulo de Tarso Sanseverino, TNU, publicado em 29/08/2019). (ii) houve vínculo trabalhista como tratorista (Súmula 70/TNU), operador de colheitadeira, capataz, administrador de fazenda, caseiro, ou outras atividades relacionadas no art. 6º, parágrafo único da IN INSS 128/2022 que não estejam diretamente vinculadas ao efetivo trabalho rural, mesmo que o empregador ou tomador de serviços se dedique à atividade rural (Tema 115/TNU). <strong>PREQUESTIONAMENTO</strong>: Lei 8.213/1991, artigo 11, VII, e § 1º.`,
             impedimentosDosprev?.emprego,
             null,
             ["vinculo", "dataInicio", "dataFim", "filiacao", "ocupacao"],
@@ -231,11 +210,6 @@ export class ImpeditivosHtmlRural {
         }
 
         return `
-        <h1><strong>DO MÉRITO</strong></h1>
-        <p><br></p>
-        <p class="centralizado"><strong>DO CASO CONCRETO </strong></p>
-        <p><br></p>
-        <p>No presente caso, restou demonstrado que:</p>
         <p><br></p>
         <table border="1" cellpadding="1" cellspacing="1" style="height:48px; width:786px">
             <tbody>
@@ -246,12 +220,12 @@ export class ImpeditivosHtmlRural {
             </tr>
             <tr>
               <td>
-                ${idade}
-                ${atividadeEmpresarial}
-                ${emprego}
-                ${empregoDosprev}
-                ${patrimonioIncompativel}
-                ${imovelRural}
+              ${atividadeEmpresarial}
+              ${empregoDosprev}
+              ${emprego}
+              ${patrimonioIncompativel}
+              ${imovelRural}
+              ${idade}
               </td>
             </tr>
             <tr>
@@ -261,16 +235,13 @@ export class ImpeditivosHtmlRural {
               <td>
                 <p>
                   Para provar a existência da preliminar acima, além de outras provas específicas identificadas na própria minuta, o INSS demonstra da seguinte forma:
-                  a) atividade empresarial (dados cadastrais e documentais); b) emprego (registros formais); c) patrimônio incompatível (informações financeiras); d) imóvel rural (cadastro de imóveis).
+                  a) a) atividade empresarial (informações da atividade empresarial na minuta de contestação); b) emprego (juntada de dossiê previdenciário e/ou informações na minuta de contestação);  c) patrimônio incompatível (informações na minuta de contestação); d) imóvel rural (informações na minuta de contestação); e) idade mínima (juntada de dossiê previdenciário e/ou informações na minuta de contestação); f) benefício ativo (juntada de dossiê previdenciário e/ou informações na minuta de contestação).
                 </p>
               </td>
             </tr>
           </tbody>
         </table>
         <p><br></p>
-        <p>Ante ao exposto, requer a improcedência do pedido.</p>
-        <p><br></p>
-        <hr>
         `;
     }
 }
