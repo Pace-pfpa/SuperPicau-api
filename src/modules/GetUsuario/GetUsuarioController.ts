@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { GetUsuarioUseCase } from './GetUsuarioUseCase';
 
 export class GetUsuarioController {
-    constructor(private GetUsuarioUseCase: GetUsuarioUseCase,) { }
+    constructor(private readonly GetUsuarioUseCase: GetUsuarioUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
         const { Coockie } = request.body;
         try {

@@ -1,5 +1,3 @@
-
-import { RequestGetTarefa } from '../../sapiensOperations/resquest/RequestGetTarefa';
 import { RequestGetTarefaNup } from '../../sapiensOperations/resquest/RequestGetTarefaNup';
 import { GetTarefaNupController } from './GetTarefaNupController';
 import { GetTarefaNupUseCase } from './GetTarefaNupUseCase';

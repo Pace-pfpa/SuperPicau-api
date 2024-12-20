@@ -7,3 +7,6 @@ const getUsuarioUseCase = new GetUsuarioUseCase(requestGetUsuario);
 const getUsuarioController = new GetUsuarioController(getUsuarioUseCase);
 
 export { getUsuarioUseCase, getUsuarioController };
+
+export * from './dtos/UsuarioResponseDTO';
+export * from './facades/GetUsuarioFacade';

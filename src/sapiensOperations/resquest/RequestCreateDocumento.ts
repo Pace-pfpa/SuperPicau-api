@@ -1,4 +1,4 @@
-import { ICreateDocumentDTO } from "../../DTO/CreateDocumentDTO";
+import { ICreateDocumentDTO } from "../../modules/CreateDocumento/dtos/ICreateDocumentDTO";
 
 export class RequestCreateDocumento {
     async execute(data: ICreateDocumentDTO): Promise<string> {

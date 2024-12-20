@@ -1,4 +1,3 @@
-import { IGetInformationsFromSapiensDTO } from "../../DTO/GetInformationsFromSapiensDTO";
 import { getTarefaUseCase } from "../GetTarefa";
 import { getUsuarioUseCase } from "../GetUsuario";
 import { loginUseCase } from "../LoginUsuario";
@@ -6,10 +5,11 @@ import { solicitarDossiePrevidenciarioUseCase } from '../SolicitarDossiePreviden
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { processoEhAdministrativo } from "./helps/processoEhAdministrativo"
 import { getPastaDoProcessoAdministrativo } from "./helps/getPastaDoProcessoAdministrativo"
+import { GetInformationsFromSapiensDTO } from "../GetInformationFromSapiensForPicaPau";
 
 export class AtualizacaoDossiePrevidenciarioUseCase {
 
-    async execute(data: IGetInformationsFromSapiensDTO): Promise<Array<string>> {
+    async execute(data: GetInformationsFromSapiensDTO): Promise<Array<string>> {
         return new Promise(async (resolve, reject) => {
 
             const cookie = await loginUseCase.execute(data.login);
@@ -18,7 +18,7 @@ export class AtualizacaoDossiePrevidenciarioUseCase {
             const usuario_id = `${usuario[0].id}`;
 
             let response: Array<any> = [];
-            data.etiqueta = await data.etiqueta.toUpperCase()
+            data.etiqueta = data.etiqueta.toUpperCase()
             const etiquetaInvalida = data.etiqueta.includes("FALHA") || data.etiqueta.includes("ATUALIZAÇAO")
 
             if (etiquetaInvalida) {
@@ -27,12 +27,12 @@ export class AtualizacaoDossiePrevidenciarioUseCase {
             }
             //console.log("data.etiqueta", data.etiqueta, "usuario_id", usuario_id);
             const qunatidadeDeProcesso = 50;
-            var tarefas: any[]
+            let tarefas: any[]
             do {
                 tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta, qunatidadeDeProcesso })
                 for (const tarefa of tarefas) {
 
-                    var pessoaId: number;
+                    let pessoaId: number;
                     for (let j = 0; j < tarefa.pasta.interessados.length; j++) {
                         if ((tarefa.pasta.interessados[j].pessoa.nome !== "MINIST�RIO P�BLICO fEDERAL (PROCURADORIA)" &&
                             tarefa.pasta.interessados[j].pessoa.nome !== "MINISTERIO PUBLICO FEDERAL (PROCURADORIA)" &&
@@ -46,7 +46,7 @@ export class AtualizacaoDossiePrevidenciarioUseCase {
 
                     const tarefaId = tarefa.id;
                     try {
-                        var pastaId: number;
+                        let pastaId: number;
                         if (await processoEhAdministrativo(tarefa, cookie)) {
                             pastaId = await getPastaDoProcessoAdministrativo(tarefa.pasta.NUP, cookie);
                         } else {
@@ -64,7 +64,7 @@ export class AtualizacaoDossiePrevidenciarioUseCase {
                 }
             } while (tarefas.length >= qunatidadeDeProcesso);
 
-            resolve(await response)
+            resolve(response)
         })
 
     }

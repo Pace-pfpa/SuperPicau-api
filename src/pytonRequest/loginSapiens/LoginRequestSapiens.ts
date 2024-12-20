@@ -1,9 +1,8 @@
-import axios, { AxiosRequestHeaders } from "axios";
+import axios from "axios";
 import { ILoginDTO } from "../../DTO/LoginDTO";
 import { parse, HTMLElement } from 'node-html-parser';
 import { RequestHeaders } from "../../sapiensOperations/resquest/RequestHeaders";
 import { RequestHeadersLogingCheck } from '../../sapiensOperations/resquest/RequestHeadersLoginCheck';
-var querystring = require('querystring');
 
 interface heards {
     token: string;
@@ -26,7 +25,6 @@ export class RequestLoginSapiens {
         cookie = (await this.getCookie(headers.arrayCookie));
         this.headers = requestHeadersLogingCheck.execute(cookie);
         cookie = await this.getCookie(await this.getLoginCookies());
-        // console.log("cookie: ", cookie);
 
         return cookie
     }
@@ -35,8 +33,7 @@ export class RequestLoginSapiens {
         const htmlPageLogin = getSapiensExternalPage.data;
         const root: HTMLElement = parse(htmlPageLogin);
         const token = root.querySelector('input')!.getAttribute('value')!;
-        // console.log(getSapiensExternalPage.headers["set-cookie"][0] + "; " + getSapiensExternalPage.headers["set-cookie"][1])
-        // console.log("set-cookie token: ",getSapiensExternalPage)
+
         return { token, arrayCookie: getSapiensExternalPage.headers["set-cookie"] };
     }
     private async getLoginCookies(): Promise<string[]> {
@@ -46,12 +43,9 @@ export class RequestLoginSapiens {
             "_password": `${this.login.senha}`,
             "_submit": 'Login',
         };
-        //console.log(querystring.stringify(dictPost))
+
         const request = await this.sessao.post(`${this.extesionUrlSapiens_loginCheck}`, (dictPost), { headers: this.headers });
         const cookiesLogado = request.headers["set-cookie"];
-        // console.log("request: " + request.data);
-        //console.log("Cookie: ", cookiesLogado)
-        // console.log("data: ",request.data)
         return cookiesLogado;
     }
     private async getCookie(Arraycookie: string[]): Promise<string> {
@@ -67,9 +61,3 @@ export class RequestLoginSapiens {
     }
 
 }
-
-// PHPSESSID=514d4d7f8e3ae643dff948c87776f557; dtCookie=1$DD6ACE967EFB9B97B92868C8E39403FE
-// PHPSESSID=fd59a248d862616d0887f928045ba978; dtCookie=1$D4AF598446FF6B952A1A728F3DEF1824
-
-// n
-// _csrf_token=IoHhknhdPjHYDQfs-892XNc6dNqaOynWpxftcIstKrs&_username=2127337298&_password=Senhasenh4&_submit=Login

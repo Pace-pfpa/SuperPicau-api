@@ -1,31 +1,37 @@
 const { JSDOM } = require('jsdom');
-import { IinteressadosDTO } from "../../DTO/InteressadosDTO";
 import { loginUseCase } from "../LoginUsuario";
 import { getUsuarioUseCase } from "../GetUsuario";
 import { getTarefaUseCase } from "../GetTarefa";
 import { GetPessoa_id } from "./RequisicaoAxiosTarefas/GetPessoa_id";
 import { CreateTarefa } from "./RequisicaoAxiosTarefas/CreateTarefa";
 import { GetInteressadosReq } from "./RequisicaoAxiosTarefas/GetInteressadosReq";
-import { IGetArvoreDocumentoDTO } from "../../DTO/GetArvoreDocumentoDTO";
-import { getArvoreDocumentoUseCase } from "../GetArvoreDocumento";
+import { GetArvoreDocumentoDTO, 
+         getArvoreDocumentoUseCase, 
+         ResponseArvoreDeDocumentoDTO } from "../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../GetDocumento";
-import { ResponseArvoreDeDocumento } from "../../sapiensOperations/response/ResponseArvoreDeDocumento";
 import { BuscarTabelaGrupoFamiliar } from "./Helps/BuscarTabelaGrupoFamiliar";
 import { getCapaDoPassivaUseCase } from "../GetCapaDoPassiva";
-import { verificarCapaTrue } from "../GetInformationFromSapienForSamir/helps/verificarCapaTrue";
-import { getXPathText } from "../../helps/GetTextoPorXPATH";
-import { buscarTableCpf } from "../GetInformationFromSapienForSamir/helps/procurarTableCpf";
+import { getXPathText } from "../../shared/utils/GetTextoPorXPATH";
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
 import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
+import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
+import { IinteressadosDTO } from "./dtos/InteressadosDTO";
 
-export class CreateInterestedUseCase{
+export class CreateInterestedUseCase {
 
 
-    async execute(data: IinteressadosDTO){
-        console.log(data.login)
+    async execute(data: IinteressadosDTO) {
+        
+        const resultado = {
+            totalTarefas: 0,
+            envolvidosCadastrados: 0,
+            cpfNaoConstaNaReceita: 0,
+            erroAoCadastrarEnvolvidos: [] as string[],
+        };
+
         const cookie = await loginUseCase.execute(data.login);
         const usuario = (await getUsuarioUseCase.execute(cookie));
         const usuario_id = `${usuario[0].id}`;
@@ -33,7 +39,8 @@ export class CreateInterestedUseCase{
         let cpfCapa;
 
         let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
-        let arrayDeDocumentos: ResponseArvoreDeDocumento[];
+        resultado.totalTarefas = tarefas.length;
+        let arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[];
 
         
         
@@ -43,19 +50,11 @@ export class CreateInterestedUseCase{
                 
 
                 const tarefaId = tarefas[i].id
-                const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
+                const objectGetArvoreDocumento: GetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
                 arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
-
-                //console.log(arrayDeDocumentos[47])
-        
         
         
                 const dossieSocial = arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
-
-                // BUSCAR DOSSIÊ SOCIAL COMO OUTROS
-
-
-                console.log(dossieSocial)
             
                 const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
                 const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
@@ -68,7 +67,7 @@ export class CreateInterestedUseCase{
                 const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
                 const tcapaFormatada = new JSDOM(tcapaParaVerificar)
 
-                const tinfoClasseExist = await verificarCapaTrue(tcapaFormatada)
+                await verificarCapaTrue(tcapaFormatada)
                 try{
 
                
@@ -96,8 +95,7 @@ export class CreateInterestedUseCase{
                     cpfCapa = buscarTableCpf(novaCapa);
                     if(!cpfCapa){
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
-                       /*  return {erro: ` CPF NÃO ENCONTRADO -`} */
-                      /*  return new Error("error no cpf capa") */
+                        resultado.cpfNaoConstaNaReceita++;
                       continue;
                     }
 
@@ -113,7 +111,6 @@ export class CreateInterestedUseCase{
     
                 let InputArray = await GetInteressadosReq(tarefas[i].pasta_id, cookie)
                 console.log('--RESPOSTA:')
-                console.log(InputArray)
                 let ArrayEnvolvidos = arrayInteressados(InputArray)
                 
                 
@@ -121,7 +118,7 @@ export class CreateInterestedUseCase{
                 const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocialFormatada); 
                  
                 let cpfInvalidoEncontrado = false
-                let arrayDeCpfInválido = []
+                let arrayDeCpfInvalido = []
 
                 try {
                     for (let j = 0; j < arrayCpfsInteressados.length; j++ ) {
@@ -155,10 +152,11 @@ export class CreateInterestedUseCase{
                             
 
                         } catch (error) {
-                            arrayDeCpfInválido.push(" " + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
+                            arrayDeCpfInvalido.push(" " + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
                             cpfInvalidoEncontrado = true
                             if (error.message === 'CPF NÃO CONSTA NA RECEITA') {
-                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInválido} NÃO CONSTA NA RECEITA`, tarefaId })
+                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInvalido} NÃO CONSTA NA RECEITA`, tarefaId })
+                                resultado.cpfNaoConstaNaReceita++;
                             }
                         }
 
@@ -172,24 +170,24 @@ export class CreateInterestedUseCase{
 
                     if (!cpfInvalidoEncontrado) {
                         await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ENVOLVIDOS CADASTRADOS`, tarefaId })
+                        resultado.envolvidosCadastrados++;
                     }
 
 
                 } catch (error) {
                     await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ERRO AO CADASTRAR ENVOLVIDOS`, tarefaId })
+                    resultado.erroAoCadastrarEnvolvidos.push(tarefas[i].pasta.NUP);
                 }
 
     
             }catch(e){
                 console.log(e)
-                return e
+                resultado.erroAoCadastrarEnvolvidos.push(tarefas[i].pasta.NUP);
             }
         }
 
+        return resultado;
 
     }
 
 }
-
-
-//ENVOLVIDOS CADASTRADOS

@@ -1,20 +1,18 @@
 const { JSDOM } = require('jsdom');
-import { IGetArvoreDocumentoDTO } from "../../DTO/GetArvoreDocumentoDTO";
-import { IGetInformationsFromSapiensDTO } from "../../DTO/GetInformationsFromSapiensDTO";
-import { ResponseArvoreDeDocumento } from "../../sapiensOperations/response/ResponseArvoreDeDocumento";
 import { getTarefaUseCase } from "../GetTarefa";
 import { getUsuarioUseCase } from "../GetUsuario";
 import { loginUseCase } from "../LoginUsuario";
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
-import { getArvoreDocumentoUseCase } from '../GetArvoreDocumento/index';
-import { coletarArvoreDeDocumentoDoPassivo } from "../GetInformationFromSapienForSamir/helps/coletarArvoreDeDocumentoDoPassivo";
+import { GetArvoreDocumentoDTO, getArvoreDocumentoUseCase, ResponseArvoreDeDocumentoDTO } from '../GetArvoreDocumento';
+import { coletarArvoreDeDocumentoDoPassivo } from "../GetInformationFromSapiensForPicaPau/helps/coletarArvoreDeDocumentoDoPassivo";
 import { getDocumentoUseCase } from '../GetDocumento/index';
-import { getXPathText } from '../../helps/GetTextoPorXPATH';
-import { VerificaçaoDaQuantidadeDeDiasParaInspirarODossie } from "../../helps/VerificaçaoDaQuantidadeDeDiasParaInspirarODossie";
+import { getXPathText } from '../../shared/utils/GetTextoPorXPATH';
+import { GetInformationsFromSapiensDTO } from "../GetInformationFromSapiensForPicaPau";
+import { VerificacaoDaQuantidadeDeDiasParaInspirarODossie } from "../../shared/utils/VerificacaoDaQuantidadeDeDiasParaInspirarODossie";
 
 export class VerificadorValidadeDossiePrevidenciarioUseCase {
 
-    async execute(data: IGetInformationsFromSapiensDTO): Promise<Array<string>> {
+    async execute(data: GetInformationsFromSapiensDTO): Promise<Array<string>> {
         return new Promise(async (resolve, reject) => {
 
             const cookie = await loginUseCase.execute(data.login);
@@ -27,18 +25,17 @@ export class VerificadorValidadeDossiePrevidenciarioUseCase {
             const etiquetaInvalida = data.etiqueta.includes("PROCESSO") || data.etiqueta.includes("DOSPREV")
 
             if (etiquetaInvalida) {
-                //console.log(etiquetaInvalida)
                 reject(new Error("etiqueta não pode ter as palavras PROCESSO e/ou DOSPREV"))
             }
-            //console.log("data.etiqueta", data.etiqueta, "usuario_id", usuario_id);
+
             const qunatidadeDeProcesso = 50;
             var tarefas: any[]
             do {
                 tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta, qunatidadeDeProcesso })
                 for (const tarefa of tarefas) {
                     const tarefaId = tarefa.id;
-                    const objectGetArvoreDocumento: IGetArvoreDocumentoDTO = { nup: tarefa.pasta.NUP, chave: tarefa.pasta.chaveAcesso, cookie, tarefa_id: tarefa.id }
-                    let arrayDeDocumentos: ResponseArvoreDeDocumento[];
+                    const objectGetArvoreDocumento: GetArvoreDocumentoDTO = { nup: tarefa.pasta.NUP, chave: tarefa.pasta.chaveAcesso, cookie, tarefa_id: tarefa.id }
+                    let arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[];
 
                     try {
                         arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
@@ -84,7 +81,8 @@ export class VerificadorValidadeDossiePrevidenciarioUseCase {
                         continue
                     }
                     // ative quando for para produçao
-                    const diasParaInpirarDossie =  VerificaçaoDaQuantidadeDeDiasParaInspirarODossie(informacaoDeCabeçalho);
+                    const diasParaInpirarDossie =  VerificacaoDaQuantidadeDeDiasParaInspirarODossie(informacaoDeCabeçalho);
+                    
                     if (0 > diasParaInpirarDossie) {
                         console.log("DOSPREV FORA DO PRAZO DO PRAZO DE VALIDADE");
                         (await updateEtiquetaUseCase.execute({ cookie, etiqueta: "DOSPREV FORA DO PRAZO DO PRAZO DE VALIDADE", tarefaId }))

@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { getInformationFromSapienForSamirController } from "../modules/GetInformationFromSapienForSamir";
+import { getInformationFromSapiensForPicaPauControllerRefactor } from "../modules/GetInformationFromSapiensForPicaPau";
 import { atualizacaoDossiePrevidenciarioController } from "../modules/AtualizacaoDossiePrevidenciario";
 import { verificadorValidadeDossiePrevidenciarioController } from '../modules/VerificadorValidadeDossiePrevidenciario/index';
 import { verificadorDeDupliciadeController } from "../modules/VerificadorDeDupliciade";
 import { createInterestedController } from "../modules/CreateInterested";
 
-//const sessao = request.session();
 
 export const routerGetInformationsForSamir = Router();
 
@@ -37,7 +36,7 @@ export const routerGetInformationsForSamir = Router();
 
 
 routerGetInformationsForSamir.post("/getInformationFromSapienForSamir", async (req, res) => {
-    return getInformationFromSapienForSamirController.handle(req, res);
+    return getInformationFromSapiensForPicaPauControllerRefactor.handle(req, res);
 })
 
 /**
@@ -135,7 +134,6 @@ routerGetInformationsForSamir.post("/verificadorDeDupliciade", async (req, res) 
 
 
 routerGetInformationsForSamir.post("/createInteressados", async (req, res) => {
-    console.log(req.body)
     return createInterestedController.handle(req, res);
 })
 

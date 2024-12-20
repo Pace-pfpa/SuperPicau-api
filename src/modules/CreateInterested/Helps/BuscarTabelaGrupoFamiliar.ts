@@ -1,10 +1,11 @@
-import { getXPathText } from "../../../helps/GetTextoPorXPATH";
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
+import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 
 export class BuscarTabelaGrupoFamiliar{
 
     
     
-    async execute(paginaCadUnico: any){
+    async execute(paginaCadUnico: JSDOMType){
         const armazenamentoDeCpf = [];
         const procurarporTabelaCorretaDiv = 15;
         for(let i = 1; i <= procurarporTabelaCorretaDiv; i++){

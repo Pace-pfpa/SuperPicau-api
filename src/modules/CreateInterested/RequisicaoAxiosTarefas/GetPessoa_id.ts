@@ -1,6 +1,5 @@
 import axios from "axios";
 import { RequestTarefas } from "../../../sapiensOperations/resquest/RequestTarefas";
-import { resolve } from "url";
 import { RequestHeaders } from "../../../sapiensOperations/resquest/RequestHeaders";
 
 export async function GetPessoa_id(cpf: string, cookie: string){

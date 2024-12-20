@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { InsertSapiensMinutasUseCase } from './InsertSapiensMinutasUseCase';
-import { IInserirMemoriaCalculoDTO } from '../../DTO/InserirMemoriaCalculoDTO';
+import { IInserirMemoriaCalculoDTO } from './dtos/InserirMemoriaCalculoDTO';
 
 export class InsertSapiensMinutasController {
-    constructor(private requestInformationForSamir: InsertSapiensMinutasUseCase,) { }
+    constructor(private readonly requestInformationForSamir: InsertSapiensMinutasUseCase,) { }
     async handle(request: Request, response: Response): Promise<Response> {
         //console.log("re chegou")
         const data: IInserirMemoriaCalculoDTO = request.body;

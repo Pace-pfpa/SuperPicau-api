@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { IinteressadosDTO } from "../../DTO/InteressadosDTO";
 import { CreateInterestedUseCase } from "./CreateInterestedUseCase";
-
+import { IinteressadosDTO } from "./dtos/InteressadosDTO";
 
 export class CreateInterestedController{
-    constructor(private createInterestedUseCase: CreateInterestedUseCase){}
+    constructor(private readonly createInterestedUseCase: CreateInterestedUseCase) {}
 
 
     async handle(req: Request, resp: Response){
@@ -12,6 +11,7 @@ export class CreateInterestedController{
 
         try{
             const created = await this.createInterestedUseCase.execute(data);
+            console.log(created)
 
             resp.status(200).json(created);
         }catch(error){
