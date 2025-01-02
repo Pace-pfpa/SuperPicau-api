@@ -1,5 +1,7 @@
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 import { correçaoDoErroDeFormatoDoSapiens } from "../../../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
 import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { IImpeditivoLitispendencia } from "../../../dto";
 import { arrayExisteCessadoOuSuspenso } from "../Help/ArrayExisteCessaoOuSuspenso";
 import { buscardatasLoas } from "../Help/BuscarDatas";
 import { buscaNumeroProcesso } from "../Help/BuscarNumeroProcesso";
@@ -7,16 +9,13 @@ import { EncontrarDataCesSusMaisAtual } from "../Help/EncontrarCesSusMaisAtual";
 import { EncontrarDataMaisAtual } from "../Help/EncontrarDataMaisAtual";
 
 export class LoasLitispendencia {
-    async handle(parginaDosPrevFormatada: any):Promise<any>{
-
-        // FICHA SINTÉTICA DO PROCESSO
-
+    async handle(parginaDosPrevFormatada: JSDOMType): Promise<IImpeditivoLitispendencia> {
+        let impeditivoLitispendencia: string[] = [];
 
         const xPathNumeroUnico = '/html/body/div/div[1]/table/tbody/tr[1]/td'
         const numeroUnicoMain = correçaoDoErroDeFormatoDoSapiens(getXPathText(parginaDosPrevFormatada, xPathNumeroUnico));
     
-        if(!numeroUnicoMain) new Error("Número único não encontrado");
-        if(numeroUnicoMain.length == 0) new Error("Número único não encontrado");
+        if(!numeroUnicoMain && numeroUnicoMain.length === 0) throw new Error("Número único não encontrado");
 
         console.log('----NÚMERO DO PROCESSO: ')
         console.log(numeroUnicoMain.replace(/\D/g, ''))
@@ -28,7 +27,6 @@ export class LoasLitispendencia {
         let verificarWhileLitis = true;
         while (verificarWhileLitis) {
             if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[2]/table/tbody/tr[${tamanhoColunaLitis}]`)) == 'object'){
-                verificarWhileLitis = false; 
                 break;
             }
             tamanhoColunaLitis++;
@@ -51,7 +49,8 @@ export class LoasLitispendencia {
                             data: new Date(parseInt(dataAjuizamento[0].split("/")[2]), parseInt(dataAjuizamento[0].split("/")[1]) - 1, parseInt(dataAjuizamento[0].split("/")[0]))
                         }
     
-                        processosEncontradosParaVerificar.push(processo)
+                        processosEncontradosParaVerificar.push(processo);
+                        impeditivoLitispendencia.push(numeroProcessoJudicial);
                     }
                 }
 
@@ -63,7 +62,10 @@ export class LoasLitispendencia {
 
         if (processosEncontradosParaVerificar.length == 0) {
             // Sem possibilidade de litispendência
-            return false
+            return {
+                haveLitispendencia: false,
+                litispendencia: impeditivoLitispendencia
+            }
         }
 
         const maisAtual = EncontrarDataMaisAtual(processosEncontradosParaVerificar)
@@ -75,7 +77,6 @@ export class LoasLitispendencia {
         let verificarWhileRequerimentos = true;
         while(verificarWhileRequerimentos) {
             if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[3]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object'){
-                verificarWhileRequerimentos = false; 
                 break;
             }
             tamanhoColunasRequerimentos++;
@@ -91,7 +92,7 @@ export class LoasLitispendencia {
 
                             if(xpathCoulaFormatadoRequerimentos.indexOf("CESSADO") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("SUSPENSO") !== -1) {
                                 const buscarDataCessaoOuSuspenso = buscardatasLoas(xpathCoulaFormatadoRequerimentos);
-                                if(!buscarDataCessaoOuSuspenso) return new Error("beneficio sem data")
+                                if(!buscarDataCessaoOuSuspenso) throw new Error("beneficio sem data")
                                 const requerimento = {
                                     beneficio: "cessaoOuSuspenso",
                                     data: new Date(parseInt(buscarDataCessaoOuSuspenso[2].split("/")[2]), parseInt(buscarDataCessaoOuSuspenso[2].split("/")[1]) - 1, parseInt(buscarDataCessaoOuSuspenso[2].split("/")[0]))
@@ -102,7 +103,7 @@ export class LoasLitispendencia {
 
                             if(xpathCoulaFormatadoRequerimentos.indexOf("INDEFERIDO") !== -1) {
                                 const buscarDataIndeferido = buscardatasLoas(xpathCoulaFormatadoRequerimentos);
-                                if(!buscarDataIndeferido) return new Error("beneficio sem data")
+                                if(!buscarDataIndeferido) throw new Error("beneficio sem data")
                                 const requerimento = {
                                     beneficio: "indeferido",
                                     data: new Date(parseInt(buscarDataIndeferido[0].split("/")[2]), parseInt(buscarDataIndeferido[0].split("/")[1]) - 1, parseInt(buscarDataIndeferido[0].split("/")[0]))
@@ -125,7 +126,10 @@ export class LoasLitispendencia {
 
             // Verificar se LITIS é mais atual que REQ -> LITISPENDÊNCIA
             if (dataLitis > dataReq) {
-                return true
+                return {
+                    haveLitispendencia: true,
+                    litispendencia: impeditivoLitispendencia
+                }
             } 
 
                 
@@ -135,12 +139,17 @@ export class LoasLitispendencia {
             const dataLitis = maisAtual.data
                 
             if (dataLitis > dataReqIndef) {
-                return true
+                return {
+                    haveLitispendencia: true,
+                    litispendencia: impeditivoLitispendencia
+                }
             }
         }
 
-        return false
-       
+        return {
+            haveLitispendencia: false,
+            litispendencia: impeditivoLitispendencia
+        }
     }
     
 }

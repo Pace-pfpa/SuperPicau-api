@@ -2,7 +2,7 @@ const { JSDOM } = require('jsdom');
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
-import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IReturnImpedimentosLOAS } from "../dto";
+import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { getInformationDossieForPicaPau } from "../GetInformationFromDossieForPicaPau";
 
@@ -38,10 +38,10 @@ export class NormalDossie {
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev);
 
-        const impeditivosLoas: IReturnImpedimentosLOAS = await getInformationDossieForPicaPau.impeditivoLoas(paginaDosPrevFormatada);
+        const impeditivosLoas = await getInformationDossieForPicaPau.impeditivoLoas(paginaDosPrevFormatada);
 
-        const impedimentos: string[] = impeditivosLoas.arrayDeImpedimentos.split('-');
-        const objImpedimentos: IObjInfoImpeditivosLoas = impeditivosLoas.objImpedimentosLoas;
+        const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
+        const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
 
         return { impedimentos, objImpedimentos };
     }

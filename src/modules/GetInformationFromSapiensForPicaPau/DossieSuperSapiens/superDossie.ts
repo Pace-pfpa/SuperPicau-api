@@ -10,11 +10,10 @@ import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
 import { datasRequerimentoAtivoNewDossie, datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformationRequerimento";
 
-
 export class SuperDossie {
     async impedimentosMaternidade(
-        paginaDosprevFormatada: any,
-        parginaDosPrev: any
+        paginaDosprevFormatada: JSDOMType,
+        parginaDosPrev: string
       ): Promise<IReturnImpedimentosMaternidade> {
         let ArrayImpedimentos: string = '';
 
@@ -115,7 +114,7 @@ export class SuperDossie {
 
 
       async impeditivosRural(paginaDosprevFormatada: JSDOMType,
-        parginaDosPrev: any
+        parginaDosPrev: string
       ): Promise<IReturnImpedimentosRural> {
         let ArrayImpedimentos: string = '';
 
@@ -211,8 +210,7 @@ export class SuperDossie {
 
 
 
-      async impeditivosLoas(paginaDosprevFormatada: any,
-        parginaDosPrev: any): Promise<IReturnImpedimentosLOAS> {
+      async impeditivosLoas(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosLOAS> {
           let ArrayImpedimentos: string = ''; 
           const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
@@ -220,51 +218,49 @@ export class SuperDossie {
           try{
             
             const restabelecimentoRequerimentos = await restabelecimentoRequerimentosSuperDossie.handle(paginaDosprevFormatada)
-            console.log('RESTAB SUPER: ' + restabelecimentoRequerimentos)
   
             if (restabelecimentoRequerimentos instanceof Error) {
-              ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
-            } else if (restabelecimentoRequerimentos.valorBooleano) {
-              objInfoImpeditivos.requerimento = "IMPEDITIVO SOBRE REQUERIMENTO ENCONTRADO";
-              ArrayImpedimentos = ArrayImpedimentos + restabelecimentoRequerimentos.impeditivo
+              ArrayImpedimentos += " erro estabelecimento -"
+            } else if(restabelecimentoRequerimentos.valorBooleano) {
+              objInfoImpeditivos.requerimento = restabelecimentoRequerimentos.impeditivo;
+              ArrayImpedimentos += restabelecimentoRequerimentos.impeditivo;
+            } else if (!restabelecimentoRequerimentos.valorBooleano && restabelecimentoRequerimentos.impeditivo === " RESTABELECIENTO -") {
+              ArrayImpedimentos += restabelecimentoRequerimentos.impeditivo;
             }
-
-  
-  
   
             const loasLitispendencia = await loasLitispendenciaSuperDossie.handle(paginaDosprevFormatada);
   
-  
-            if(loasLitispendencia instanceof Error){
-              ArrayImpedimentos = ArrayImpedimentos + " erro estabelecimento -"
-              }else if(loasLitispendencia){
-                objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA";
-                ArrayImpedimentos = ArrayImpedimentos + " LITISPENDÊNCIA -"
-              }
+            if (loasLitispendencia instanceof Error) {
+              ArrayImpedimentos += " erro estabelecimento -"
+            } else if(loasLitispendencia.haveLitispendencia) {
+              objInfoImpeditivos.litispendencia = loasLitispendencia.litispendencia;
+              ArrayImpedimentos += " LITISPENDÊNCIA -"
+            }
 
 
             const loasAtivo = await loasAtivoSuperDossie.handle(paginaDosprevFormatada)
-            console.log('----TA ATIVO: ')
-            console.log(loasAtivo)
 
-            if (typeof(loasAtivo) == "object") {
-              if (loasAtivo.valorBooleano) {
-                objInfoImpeditivos.bpc = "BENEFÍCIO ATIVO ENCONTRADO";
-                ArrayImpedimentos = ArrayImpedimentos + loasAtivo.impeditivo
-              }
+            if (loasAtivo.valorBooleano && loasAtivo.tipo === 1) {
+              objInfoImpeditivos.bpc = loasAtivo.nomeImpeditivo;
+              ArrayImpedimentos += loasAtivo.impeditivo;
+            } else if (loasAtivo.valorBooleano && loasAtivo.tipo === 2) {
+              objInfoImpeditivos.beneficio = loasAtivo.nomeImpeditivo;
+              ArrayImpedimentos += loasAtivo.impeditivo;
             }
 
 
 
             const loasIdade = await loasIdadeSuperDossie.handle(paginaDosprevFormatada)
 
-            if (!loasIdade) {
-              objInfoImpeditivos.idade = "IDADE INFERIOR"
+            if (loasIdade.idadeImpeditivo) {
+              objInfoImpeditivos.idade = loasIdade.idadeAutor;
               ArrayImpedimentos += " IDADE -"
             }
 
-
             ArrayImpedimentos += " *LOAS* ";
+
+            console.log("---OBJETO IMPEDITIVOS LOAS SUPER");
+            console.log(objInfoImpeditivos);
 
             return {
               arrayDeImpedimentos: ArrayImpedimentos,
@@ -274,12 +270,5 @@ export class SuperDossie {
           }catch(e){
             console.error(e)
           }
-
-
-
-
-
-
       }
-
 }

@@ -6,11 +6,23 @@ import { getBensTSE } from "./SislabraBusiness/GetBensTSE";
 import { getEmbarcacoes } from "./SislabraBusiness/GetEmbarcacoesSislabra";
 import { getAeronaves } from "./SislabraBusiness/GetAeronavesSislabra";
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
+import { IImpedimentos } from "../dto";
 
 export class GetDocumentSislabraFromSapiensLoas {
-    async execute(paginaformatada: JSDOMType, isPoloAtivo: boolean): Promise<string>{
+    async execute(paginaformatada: JSDOMType, isPoloAtivo: boolean): Promise<{ impedimentos: string, objImpedimentos: any }> {
        try{
         let response = "";
+
+        const ObjImpedimentos: IImpedimentos = {
+            veiculos: [],
+            empregos: [],
+            imoveisRurais: [],
+            empresas: [],
+            bensTSE: null,
+            imoveisSP: null,
+            embarcacao: null,
+            aeronave: null
+        };
         
         const GetEmpresaSislabra = await getEmpresa(paginaformatada)
         if(GetEmpresaSislabra && isPoloAtivo) {

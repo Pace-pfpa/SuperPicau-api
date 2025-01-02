@@ -1,7 +1,8 @@
+import { JSDOMType } from "../../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../../shared/utils/GetTextoPorXPATH";
 import { IImpeditivoLitispendencia } from "../../dto";
 
-export async function buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada: any, numeroUnicoCnj: string): Promise<IImpeditivoLitispendencia> {
+export async function buscarTabelaRelacaoDeProcessosNormalDossie(paginaDosprevFormatada: JSDOMType, numeroUnicoCnj: string): Promise<IImpeditivoLitispendencia> {
     let impeditivoLitispendencia: string[] = [];
 
 
