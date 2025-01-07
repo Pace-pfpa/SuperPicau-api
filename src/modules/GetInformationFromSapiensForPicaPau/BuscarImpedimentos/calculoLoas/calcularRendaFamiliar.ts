@@ -1,3 +1,4 @@
+import { IPicaPauCalculeDTO } from "../../dto";
 import { calcularMediaAjuizamento } from "../../helps/calcularMediaAjuizamento";
 import { calcularMediaRequerimento } from "../../helps/calcularMediaRequerimento";
 import { removeDayMonthFromDate } from "../../helps/removeDayMonthFromDate";
@@ -5,7 +6,7 @@ import { removeDayYearFromDate } from "../../helps/removeDayYearFromDate";
 import { compararPrioridade } from "../../loas/Business/Help/compareRenda";
 import { getSalarioMinimo } from "../../loas/Business/Help/getSalarioMinimo";
 
-export async function calcularRendaFamiliar(arrayObjetosEnvolvidos: any[], numMembrosFamilia: number, infoRequerente: any) {
+export async function calcularRendaFamiliar(arrayObjetosEnvolvidos: IPicaPauCalculeDTO[], numMembrosFamilia: number, infoRequerente: IPicaPauCalculeDTO) {
     let salarioMinimoAjz: number = 0;
     let salarioMinimoReq: number = 0;
 

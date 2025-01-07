@@ -16,7 +16,7 @@ export interface IInformacoesProcessoLoasDTO {
     isDosprevPoloAtivoNormal: boolean,
     sislabraPoloAtivo: ResponseArvoreDeDocumentoDTO[],
     sislabraGF: ResponseArvoreDeDocumentoDTO[],
-    dossieSocialInfo: IDossieSocialInfo;
+    dossieSocialInfo: IDossieSocialInfo | null;
     arrayDeDossiesNormais: ResponseArvoreDeDocumentoDTO[],
     arrayDeDossiesSuper: ResponseArvoreDeDocumentoDTO[]
 }

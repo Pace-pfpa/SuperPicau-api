@@ -10,7 +10,7 @@ export class NormalDossie {
     async buscarImpedimentosForRural(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev);
+        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
 
         const impeditivosRural = await getInformationDossieForPicaPau.impeditivosRural(paginaDosPrevFormatada, paginaDosPrev);
 
@@ -23,7 +23,7 @@ export class NormalDossie {
     async burcarImpedimentosForMaternidade(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev); 
+        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
 
         const impeditivosMaternidade = await getInformationDossieForPicaPau.impedimentosMaternidade(paginaDosPrevFormatada, paginaDosPrev);
 
@@ -36,7 +36,7 @@ export class NormalDossie {
     async buscarImpedimentosForLoas(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada: JSDOMType = new JSDOM(paginaDosPrev);
+        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
 
         const impeditivosLoas = await getInformationDossieForPicaPau.impeditivoLoas(paginaDosPrevFormatada);
 

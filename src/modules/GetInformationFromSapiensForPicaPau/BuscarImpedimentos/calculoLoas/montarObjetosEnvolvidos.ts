@@ -1,13 +1,15 @@
+import { ResponseArvoreDeDocumentoDTO } from "../../../GetArvoreDocumento";
+import { IPicaPauCalculeDTO } from "../../dto";
 import { getInfoEnvDossieNormal } from "../../helps/getInfoEnvDossieNormal";
 import { getInfoEnvDossieSuper } from "../../helps/getInfoEnvDossieSuper";
 
 export async function montarObjetosEnvolvidos(
-    arrayDossieEnvolvidosNormal: any[], 
-    arrayDossieEnvolvidosSuper: any[], 
-    infoRequerente: any, 
+    arrayDossieEnvolvidosNormal: ResponseArvoreDeDocumentoDTO[], 
+    arrayDossieEnvolvidosSuper: ResponseArvoreDeDocumentoDTO[], 
+    infoRequerente: IPicaPauCalculeDTO, 
     cookie: string
-) {
-    let arrayObjetosEnvolvidos = [];
+): Promise<IPicaPauCalculeDTO[]> {
+    let arrayObjetosEnvolvidos: IPicaPauCalculeDTO[] = [];
 
     for (let dossie of arrayDossieEnvolvidosNormal) {
         const objectEnvolvido = await getInfoEnvDossieNormal(cookie, dossie, infoRequerente.dataRequerimento);

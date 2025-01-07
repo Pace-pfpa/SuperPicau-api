@@ -3,6 +3,7 @@ import { getDocumentoUseCase } from "../../../GetDocumento";
 import { getDocumentSislabraFromSapiensLoas } from "../../GetDocumentSislabraFromSapiens";
 import { ResponseArvoreDeDocumentoDTO } from '../../../GetArvoreDocumento';
 
+// Ajustar o retorno da função para o tipo correto
 export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: any, cookie: string): Promise<string[] | null> {
     let response = '';
 
