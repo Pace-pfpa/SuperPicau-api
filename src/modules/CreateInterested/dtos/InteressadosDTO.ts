@@ -1,6 +1,6 @@
-import { ILoginDTO } from "../../../DTO/LoginDTO";
+import { LoginDTO } from "../../LoginUsuario";
 
 export interface IinteressadosDTO{
-    login: ILoginDTO;
+    login: LoginDTO;
     etiqueta: string;
 }
