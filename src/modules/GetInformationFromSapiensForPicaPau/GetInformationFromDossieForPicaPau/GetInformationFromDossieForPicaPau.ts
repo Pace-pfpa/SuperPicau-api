@@ -121,12 +121,6 @@ export class GetInformationDossieForPicaPau {
 
 
 
-
-
-
-
-
-
   async impeditivosRural(
     paginaDosprevFormatada: JSDOMType,
     parginaDosPrev: string):Promise<IReturnImpedimentosRural> {
@@ -226,54 +220,53 @@ export class GetInformationDossieForPicaPau {
 
 
 
-  async impeditivoLoas(paginaDosprevFormatada: any): Promise<IReturnImpedimentosLOAS>{
+  async impeditivoLoas(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosLOAS>{
     let impeditivos = "";
     const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
     try{
 
-
       const restabelecimentoRequerimento = await restabelecimentoRequerimentosDossie.handle(paginaDosprevFormatada)
 
-
-
-      if(restabelecimentoRequerimento instanceof Error){
-        impeditivos = impeditivos + " erro estabelecimento -"
-      }else if(restabelecimentoRequerimento.valorBooleano){
-        objInfoImpeditivos.requerimento = "IMPEDITIVO SOBRE REQUERIMENTO ENCONTRADO"
-        impeditivos = impeditivos + restabelecimentoRequerimento.impeditivo
+      if (restabelecimentoRequerimento instanceof Error) {
+        impeditivos += " erro estabelecimento -"
+      } else if(restabelecimentoRequerimento.valorBooleano) {
+        objInfoImpeditivos.requerimento = restabelecimentoRequerimento.impeditivo;
+        impeditivos += restabelecimentoRequerimento.impeditivo;
+      } else if (!restabelecimentoRequerimento.valorBooleano && restabelecimentoRequerimento.impeditivo === " RESTABELECIENTO -") {
+        impeditivos += restabelecimentoRequerimento.impeditivo;
       }
-
 
       const litispendenciaLoas =  await loasLitispendencia.handle(paginaDosprevFormatada);
 
-
-      if(litispendenciaLoas instanceof Error){
-        impeditivos = impeditivos + " erro estabelecimento -"
-      }else if(litispendenciaLoas){
-        objInfoImpeditivos.litispendencia = "LITISPENDÊNCIA ENCONTRADA"
-        impeditivos = impeditivos + " LITISPENDÊNCIA -"
+      if (litispendenciaLoas instanceof Error) {
+        impeditivos += " erro estabelecimento -"
+      } else if(litispendenciaLoas.haveLitispendencia) {
+        objInfoImpeditivos.litispendencia = litispendenciaLoas.litispendencia;
+        impeditivos += " LITISPENDÊNCIA -"
       }
-
 
       const loasAtivo = await loasAtivoDossie.handle(paginaDosprevFormatada)
 
-      if (typeof (loasAtivo) == "object") {
-        if (loasAtivo.valorBooleano) {
-          objInfoImpeditivos.bpc = "BENEFÍCIO ATIVO ENCONTRADO";
-          impeditivos = impeditivos + loasAtivo.impeditivo
-        }
+      if (loasAtivo.valorBooleano && loasAtivo.tipo === 1) {
+        objInfoImpeditivos.bpc = loasAtivo.nomeImpeditivo;
+        impeditivos += loasAtivo.impeditivo;
+      } else if (loasAtivo.valorBooleano && loasAtivo.tipo === 2) {
+        objInfoImpeditivos.beneficio = loasAtivo.nomeImpeditivo;
+        impeditivos += loasAtivo.impeditivo;
       }
-
 
       const loasIdade = await loasIdadeDossie.handle(paginaDosprevFormatada)
 
-      if (!loasIdade) {
-        objInfoImpeditivos.idade = "IDADE INFERIOR"
+      if (loasIdade.idadeImpeditivo) {
+        objInfoImpeditivos.idade = loasIdade.idadeAutor;
         impeditivos += " IDADE -"
       }
 
       impeditivos += " *LOAS* "
+
+      console.log("---OBJETO IMPEDITIVOS LOAS NORMAL");
+      console.log(objInfoImpeditivos);
 
       return {
         arrayDeImpedimentos: impeditivos,
@@ -286,7 +279,3 @@ export class GetInformationDossieForPicaPau {
     
   }
 }
-
-
-
-

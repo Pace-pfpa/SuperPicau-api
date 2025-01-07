@@ -1,14 +1,15 @@
 import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfComZeros";
+import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getCPFDosPrevNormal } from "./getCPFDosPrevNormal";
 import { getCPFDosPrevSuper } from "./getCPFDosPrevSuper";
 
 // Função auxiliar para validar se o dossiê tem componentes digitais válidos
-function validarDossie(dossie: any): boolean {
+function validarDossie(dossie: ResponseArvoreDeDocumentoDTO): boolean {
     return dossie.documentoJuntado?.componentesDigitais?.length > 0 && !!dossie.documentoJuntado.componentesDigitais[0].id;
 }
 
 // Função auxiliar para buscar o CPF no dossiê normal ou super
-async function buscarCpfNoDossie(dossie: any, tipo: 'normal' | 'super', cookie: string): Promise<string | null> {
+async function buscarCpfNoDossie(dossie: ResponseArvoreDeDocumentoDTO, tipo: 'normal' | 'super', cookie: string): Promise<string | null> {
     if (tipo === 'normal') {
         return getCPFDosPrevNormal(dossie, cookie);
     } else {
@@ -17,18 +18,18 @@ async function buscarCpfNoDossie(dossie: any, tipo: 'normal' | 'super', cookie: 
 }
 
 // Função auxiliar para verificar se o CPF do dossiê corresponde ao CPF fornecido
-async function verificarCpfCorrespondente(dossie: any, cpf: string, tipo: 'normal' | 'super', cookie: string): Promise<boolean> {
+async function verificarCpfCorrespondente(dossie: ResponseArvoreDeDocumentoDTO, cpf: string, tipo: 'normal' | 'super', cookie: string): Promise<boolean> {
     const cpfDossie = await buscarCpfNoDossie(dossie, tipo, cookie);
     if (!cpfDossie) return false;
     return cpf.trim() === CorrigirCpfComZeros(cpfDossie.trim());
 }
 
 // Função auxiliar para comparar dossiês pela numeração sequencial
-function compararDossiesPorSequencial(dossieNormal: any, dossieSuper: any): number {
+function compararDossiesPorSequencial(dossieNormal: ResponseArvoreDeDocumentoDTO, dossieSuper: ResponseArvoreDeDocumentoDTO): number {
     return dossieNormal.numeracaoSequencial - dossieSuper.numeracaoSequencial;
 }
 
-export async function verificarDossieMaisAtual(cpf: string, cookie:string, normalDossie?: any[], superDossie?: any[]): Promise<any> {
+export async function verificarDossieMaisAtual(cpf: string, cookie:string, normalDossie?: ResponseArvoreDeDocumentoDTO[], superDossie?: ResponseArvoreDeDocumentoDTO[]): Promise<[ResponseArvoreDeDocumentoDTO, number] | Error> {
     
  try {
      // 1. Verifica apenas dossiês normais

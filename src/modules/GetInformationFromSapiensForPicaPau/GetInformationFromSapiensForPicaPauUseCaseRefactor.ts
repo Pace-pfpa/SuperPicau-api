@@ -111,7 +111,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             
             if (tipo_triagem === 2) {
                 
-                const { sislabraPoloAtivo, sislabraGF } = await buscarSislabraLOAS(arrayDeDocumentos);
+                const { sislabraPoloAtivo, sislabraGFInfo } = await buscarSislabraLOAS(arrayDeDocumentos, dossieSocialInfo);
                 if (!sislabraPoloAtivo) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
                     return { warning: "SISLABRA NÃO EXISTE" }
@@ -129,7 +129,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     dosprevPoloAtivo,
                     isDosprevPoloAtivoNormal,
                     sislabraPoloAtivo,
-                    sislabraGF,
+                    sislabraGFInfo,
                     dossieSocialInfo,
                     arrayDeDossiesNormais,
                     arrayDeDossiesSuper

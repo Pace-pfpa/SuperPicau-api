@@ -4,14 +4,12 @@ import { RequestHeaders } from "../../../sapiensOperations/resquest/RequestHeade
 
 export async function GetPessoa_id(cpf: string, cookie: string){
 
-
-
     const requestTarefasPessoa = new RequestTarefas
     const requestHeaders = new RequestHeaders
     const payload = await requestTarefasPessoa.execute(cpf);
-    const UrlRequest = "https://sapiens.agu.gov.br/route"
+    const UrlRequest = "https://sapiens.agu.gov.br/route";
+    const headers = await requestHeaders.execute(cookie)
 
-        const headers = await requestHeaders.execute(cookie)
     try{
         console.log("chegou " + cpf)
         console.log(cookie)
@@ -29,21 +27,6 @@ export async function GetPessoa_id(cpf: string, cookie: string){
 
     }catch(e){
         console.log("nesse erro aqui")
-        console.log(e);
+        throw new Error(e);
     }
-
-        /* return await axios.post(baseURL, data, {headers}).then(response =>{
-            return response.status;
-        }).catch(error =>{
-            console.log(error)
-            return new Error(error);
-        }) */
-
-
-
-
-
-
-
-
 }

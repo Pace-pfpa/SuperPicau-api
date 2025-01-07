@@ -1,14 +1,15 @@
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { ILoasAtivo } from "../../dtos/ILoasAtivo";
 
 export class LoasAtivoSuperDossie {
-    async handle(parginaDosPrevFormatada: any): Promise<any> {
+    async handle(parginaDosPrevFormatada: JSDOMType): Promise<ILoasAtivo> {
         // IDENTIFICAR BENEFÍCIO ATIVO
         let tamanhoColunasRequerimentos = 1;
         let verificarWhileRequerimentos = true;
 
         while (verificarWhileRequerimentos) {
             if(typeof (getXPathText(parginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object'){
-                verificarWhileRequerimentos = false; 
                 break;
             }
             tamanhoColunasRequerimentos++;
@@ -22,21 +23,34 @@ export class LoasAtivoSuperDossie {
 
                         if (xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("88 - ") !== -1) {
                             
-        
-                            return {
-                                valorBooleano: true,
-                                impeditivo: " BPC ATIVO -"
-                            }
-                        } else {
+                            const nomeBeneficio = getXPathText(parginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${t}]/td[2]`);
 
                             return {
                                 valorBooleano: true,
-                                impeditivo: " BENEFÍCIO ATIVO -"
+                                impeditivo: " BPC ATIVO -",
+                                tipo: 1,
+                                nomeImpeditivo: nomeBeneficio || "NOME DO BENEFÍCIO NÃO ENCONTRADO"
+                            }
+
+                        } else {
+
+                            const nomeBeneficio = getXPathText(parginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${t}]/td[2]`);
+
+                            return {
+                                valorBooleano: true,
+                                impeditivo: " BENEFÍCIO ATIVO -",
+                                tipo: 2,
+                                nomeImpeditivo: nomeBeneficio || "NOME DO BENEFÍCIO NÃO ENCONTRADO"
                             }
                         }
                       
                     }
                 }
+            }
+
+            return {
+                valorBooleano: false,
+                impeditivo: ""
             }
             
     }
