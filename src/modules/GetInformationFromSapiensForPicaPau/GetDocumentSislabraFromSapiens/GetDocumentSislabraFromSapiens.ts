@@ -104,9 +104,9 @@ export class GetDocumentSislabraFromSapiens {
 
         return { impedimentos: response, objImpedimentos: ObjImpedimentos }
 
-       }catch(e){
-        console.error("Erro ao buscar sislabra" + e)
-        }
+       } catch(e) {
+            console.error("Erro ao buscar sislabra" + e)
+       }
         
     }
 }

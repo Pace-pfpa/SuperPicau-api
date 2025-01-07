@@ -9,6 +9,7 @@ import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IOb
 import { getGrupoFamiliarCpfs } from "./utils/getGrupoFamiliarCpfs";
 import { getArrayObjetosEnvolvidos } from "./utils/getArrayObjetosEnvolvidos";
 import { informationRenda } from "./utils/informationRenda";
+import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
 
 export class BuscarImpedimentosUseCase {
 
@@ -39,7 +40,7 @@ export class BuscarImpedimentosUseCase {
         if (isDosprevPoloAtivoNormal) {
             const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("MATERNIDADE NORMAL")
             console.log(impedimentos)
 
@@ -47,7 +48,7 @@ export class BuscarImpedimentosUseCase {
         } else {
             const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("MATERNIDADE SUPER")
             console.log(impedimentos)
 
@@ -83,7 +84,7 @@ export class BuscarImpedimentosUseCase {
         if (isDosprevPoloAtivoNormal) {
             const impedimentosBusca = await normalDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("RURAL NORMAL")
             console.log(impedimentos)
 
@@ -91,7 +92,7 @@ export class BuscarImpedimentosUseCase {
         } else {
             const impedimentosBusca = await superDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("RURAL SUPER")
             console.log(impedimentos)
 
@@ -99,7 +100,7 @@ export class BuscarImpedimentosUseCase {
         }
     }
 
-    async procurarImpedimentosLOAS(informacoesProcesso: IInformacoesProcessoLoasDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
+    async procurarImpedimentosLOAS(informacoesProcesso: IInformacoesProcessoLoasDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas, objImpedimentosLabra: IResponseLabraAutorGF }> {
         const {
             tarefaPastaID,
             cookie,
@@ -108,7 +109,7 @@ export class BuscarImpedimentosUseCase {
             dosprevPoloAtivo,
             isDosprevPoloAtivoNormal,
             sislabraPoloAtivo,
-            sislabraGF,
+            sislabraGFInfo,
             arrayDeDossiesNormais,
             arrayDeDossiesSuper,
             dossieSocialInfo
@@ -125,7 +126,11 @@ export class BuscarImpedimentosUseCase {
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra = await impedimentosSislabraLOAS(sislabraPoloAtivo, sislabraGF, cookie);
+        const impedimentosSislabra = await impedimentosSislabraLOAS(sislabraPoloAtivo, sislabraGFInfo, cookie);
+        const ObjImpedimentosLabraAutorGF: IResponseLabraAutorGF = {
+            autor: impedimentosSislabra.autor,
+            gf: impedimentosSislabra.gf
+        }
 
         if (isDosprevPoloAtivoNormal) {
             impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(dosprevPoloAtivo, cookie);
@@ -144,11 +149,10 @@ export class BuscarImpedimentosUseCase {
             impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: 'Impedimento' };
         }
 
-        const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra, ...(impedimentoRenda || [])];
+        const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos, ...impedimentoRenda];
         console.log("LOAS")
         console.log(impedimentos)
-        console.log(impedimentosBusca.objImpedimentos)
 
-        return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
+        return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorGF }
     }
 }

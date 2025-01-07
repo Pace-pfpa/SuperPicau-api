@@ -1,5 +1,6 @@
 import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
+import { ISislabraGF } from "../../Sislabra/interfaces/ISislabraGF";
 import { IDossieSocialInfo } from "./IDossieSocialInfo";
 import { IInfoUploadDTO } from "./IInfoUploadDTO";
 
@@ -15,7 +16,7 @@ export interface IInformacoesProcessoLoasDTO {
     dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO,
     isDosprevPoloAtivoNormal: boolean,
     sislabraPoloAtivo: ResponseArvoreDeDocumentoDTO[],
-    sislabraGF: ResponseArvoreDeDocumentoDTO[],
+    sislabraGFInfo: ISislabraGF,
     dossieSocialInfo: IDossieSocialInfo | null;
     arrayDeDossiesNormais: ResponseArvoreDeDocumentoDTO[],
     arrayDeDossiesSuper: ResponseArvoreDeDocumentoDTO[]
