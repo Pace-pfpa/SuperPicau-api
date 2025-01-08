@@ -13,7 +13,7 @@ export class RequestTarefas {
                 ],
                 "limit": 25,
                 "page": 1,
-                "query": ${cpf},
+                "query": "${cpf}",
                 "start": 0
               }
             ],

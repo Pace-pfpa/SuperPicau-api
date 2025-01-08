@@ -120,6 +120,10 @@ export class CreateInterestedUseCase {
         return capa;
     }
 
+    async delay(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async processInteressados(tarefa: any, paginaDossieSocial: any, cpfCapa: string, cookie: string) {
         const buscarTabelaGrupoFamiliar = new BuscarTabelaGrupoFamiliar();
         const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocial);
@@ -134,12 +138,27 @@ export class CreateInterestedUseCase {
             if (cpfCorrigido === cpfCapa || interessadosExistentes.includes(cpfCorrigido)) continue;
 
             try {
-                const pessoa_id = await GetPessoa_id(cpfCorrigido, cookie);
+                let pessoa_id: any = null;
+
+                try {
+                    pessoa_id = await GetPessoa_id(cpfCorrigido, cookie);
+                } catch (error) {
+                    console.warn(`Erro ao buscar pessoa_id para CPF ${cpfCorrigido}. Tentando novamente após 5 segundos...`);
+                    await this.delay(5000);
+
+                    try {
+                        pessoa_id = await GetPessoa_id(cpfCorrigido, cookie);
+                    } catch (secondError) {
+                        console.error(`Erro persistente para CPF ${cpfCorrigido}:`, secondError);
+                        throw secondError;
+                    }
+                }
+
                 if (!pessoa_id) throw new Error("CPF NÃO CONSTA NA RECEITA");
 
                 await CreateTarefa(tarefa.pasta_id, pessoa_id, cookie);
             } catch (error) {
-                console.error(error);
+                console.error(`Erro final para CPF ${cpfCorrigido}:`, error);
                 invalidCpfs.push(cpfCorrigido);
             }
         }
