@@ -6,7 +6,6 @@ import { IImpedimentos } from '../../dto';
 import { IResponseSislabraLoas } from '../../dto/Sislabra/interfaces/IResponseSislabraLoas';
 import { ISislabraGF } from '../../dto/Sislabra/interfaces/ISislabraGF';
 
-// Ajustar o retorno da função para o tipo correto
 export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: ISislabraGF, cookie: string): Promise<IResponseSislabraLoas> {
     let response = '';
     let impedimentosAutor: IImpedimentos;

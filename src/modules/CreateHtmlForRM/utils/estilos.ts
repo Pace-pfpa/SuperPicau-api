@@ -1,6 +1,6 @@
 export const estilos = (): string => {
     return `
-        <style>
+        <style type="text/css">
                     body { font-family: "Times New Roman, Times", sans-serif; font-size: 11pt; counter-reset: H1 numerado; margin-top: 5%; margin-right: auto; margin-left: auto; max-width: 210mm; line-height: 1.2em; }
                     .centralizado { text-align: center; text-indent: 0; }
                     .direita { text-align: right; text-indent: 0; }

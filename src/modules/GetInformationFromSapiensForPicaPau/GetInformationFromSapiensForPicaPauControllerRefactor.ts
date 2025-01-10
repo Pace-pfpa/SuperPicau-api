@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInformationFromSapiensForPicaPauUseCaseRefactor';
 import { BuscarImpedimentosUseCase } from './BuscarImpedimentos/BuscarImpedimentosUseCase';
-import { finalizarTriagemLoas } from './utils';
 import { GetInformationsFromSapiensDTO } from '.';
-import { IFinalizarTriagem, IObjInfoImpeditivosLoas, IResponseLabraAutorConjuge } from './dto';
+import { IFinalizarTriagem, IResponseLabraAutorConjuge } from './dto';
 import { finalizarTriagem } from './classes';
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
@@ -29,15 +28,14 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     let impedimentos: string[];
 
                     let impedimentosLabraRM: IResponseLabraAutorConjuge;
-                    let impedimentosLabraLoas: any;
-
-                    let impedimentosDosprevLoas: IObjInfoImpeditivosLoas;
 
                     if (result[1] === 'LOAS') {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
                         impedimentos = buscaDeImpedimentos.impedimentos;
+                        let impedimentosLabraLoas = buscaDeImpedimentos.objImpedimentosLabra;
+                        let impedimentosDosprevLoas = buscaDeImpedimentos.objImpedimentos;
 
-                        processo = await finalizarTriagemLoas(
+                        processo = await finalizarTriagem.loas(
                             impedimentos,
                             impedimentosLabraLoas,
                             impedimentosDosprevLoas,

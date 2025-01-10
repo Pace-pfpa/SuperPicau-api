@@ -17,6 +17,8 @@ import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
 import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
 import { IinteressadosDTO } from "./dtos/InteressadosDTO";
+import { ITarefaResponse } from "../GetTarefa/dtos";
+import { JSDOMType } from "../../shared/dtos/JSDOM";
 
 export class CreateInterestedUseCase {
 
@@ -50,16 +52,16 @@ export class CreateInterestedUseCase {
         };
     }
 
-    async authenticate(login: LoginDTO) {
+    async authenticate(login: LoginDTO): Promise<string> {
         return await loginUseCase.execute(login);
     }
 
-    async getUsuarioId(cookie: string) {
+    async getUsuarioId(cookie: string): Promise<string> {
         const usuario = await getUsuarioUseCase.execute(cookie);
         return `${usuario[0].id}`;
     }
 
-    async processTarefa(tarefa: any, cookie: string, resultado: any) {
+    async processTarefa(tarefa: ITarefaResponse, cookie: string, resultado: any): Promise<void> {
         const { tarefaId, arrayDeDocumentos } = await this.fetchTarefaData(tarefa, cookie);
 
         const dossieSocial = this.getDossieSocial(arrayDeDocumentos);
@@ -87,7 +89,10 @@ export class CreateInterestedUseCase {
         }
     }
 
-    async fetchTarefaData(tarefa: any, cookie: string) {
+    async fetchTarefaData(tarefa: ITarefaResponse, cookie: string): Promise<{
+        tarefaId: number;
+        arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[];
+    }> {
         const tarefaId = tarefa.id;
         const objectGetArvoreDocumento: GetArvoreDocumentoDTO = { nup: tarefa.pasta.NUP, chave: tarefa.pasta.chaveAcesso, cookie, tarefa_id: tarefa.id };
         const arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
@@ -95,7 +100,7 @@ export class CreateInterestedUseCase {
         return { tarefaId, arrayDeDocumentos };
     }
 
-    getDossieSocial(arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[]) {
+    getDossieSocial(arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[]): ResponseArvoreDeDocumentoDTO {
         return arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
     }
 
@@ -105,7 +110,7 @@ export class CreateInterestedUseCase {
         return new JSDOM(pagina);
     }
 
-    async verifyCapa(tarefa: any, cookie: string) {
+    async verifyCapa(tarefa: ITarefaResponse, cookie: string) {
         const capaContent = await getCapaDoPassivaUseCase.execute(tarefa.pasta.NUP, cookie);
         const capa = new JSDOM(capaContent);
 
@@ -124,7 +129,7 @@ export class CreateInterestedUseCase {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async processInteressados(tarefa: any, paginaDossieSocial: any, cpfCapa: string, cookie: string) {
+    async processInteressados(tarefa: ITarefaResponse, paginaDossieSocial: JSDOMType, cpfCapa: string, cookie: string) {
         const buscarTabelaGrupoFamiliar = new BuscarTabelaGrupoFamiliar();
         const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocial);
 

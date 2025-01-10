@@ -2,10 +2,10 @@ import { getArvoreDocumentoUseCase,
          GetArvoreDocumentoDTO, 
          ResponseArvoreDeDocumentoDTO } from "..";
 
-export async function GetArvoreDocumentoFacade(objectGetArvoreDocumento: GetArvoreDocumentoDTO): Promise<ResponseArvoreDeDocumentoDTO[] | Error> {
+export async function GetArvoreDocumentoFacade(objectGetArvoreDocumento: GetArvoreDocumentoDTO): Promise<ResponseArvoreDeDocumentoDTO[]> {
     try {
         return (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
     } catch (error) {
-        return new Error("DOSPREV COM FALHA NA PESQUISA");
+        throw new Error("DOSPREV COM FALHA NA PESQUISA");
     }
 }

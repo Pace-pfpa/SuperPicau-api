@@ -38,7 +38,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return { warning: "TAREFA NÃO ENCONTRADA" };
             }
 
-            const tarefaPastaID = tarefas[0].pasta_id
+            const tarefaPastaID = tarefas[0].pasta_id;
             
             console.log("SÓ OS LOUCOS SABEM");
 
@@ -50,7 +50,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             };
 
             const arrayDeDocumentos = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
-            if (arrayDeDocumentos instanceof Error) {
+            if (!arrayDeDocumentos) {
                 await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
                 return { warning: "DOSPREV COM FALHA NA PESQUISA" }
             }
@@ -72,7 +72,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
 
             const response = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
 
-            if ('warning' in response) {
+            if (!response) {
                 await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
                 return { warning: `DOSPREV NÃO EXISTE` };
             }
@@ -214,7 +214,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             return { dosprevPoloAtivo, isDosprevPoloAtivoNormal };
         } catch (error) {
             console.error("Erro na identificação do Dossiê" + error);
-            return { warning: error.message || "Erro desconhecido" };
+            throw new Error('DOSPREV NÃO EXISTE');
         }
 
     }

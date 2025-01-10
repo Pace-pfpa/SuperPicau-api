@@ -146,7 +146,7 @@ export class BuscarImpedimentosUseCase {
             grupoFamiliar = await getGrupoFamiliarCpfs(tarefaPastaID, cookie, cpfCapa, dossieSocialInfo);
             let arrayObjetosEnvolvidos = await getArrayObjetosEnvolvidos(grupoFamiliar, infoRequerente, cookie, arrayDeDossiesNormais, arrayDeDossiesSuper);
             impedimentoRenda = await informationRenda(arrayObjetosEnvolvidos, grupoFamiliar, infoRequerente);
-            impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: 'Impedimento' };
+            impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: impedimentoRenda.length > 0 ? 'Impedimento' : null };
         }
 
         const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos, ...impedimentoRenda];
