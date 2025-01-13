@@ -46,8 +46,6 @@ export class RequestCreateDocumento {
             "type":"rpc",
             "tid":${data.tid}
          }`
-
-        //console.log(createDocumento)
         
         return createDocumento;
     }

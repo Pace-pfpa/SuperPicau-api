@@ -1,6 +1,7 @@
 import { minutaLimpaClass, minutaSujaClass } from ".";
-import { IInformacoesProcessoDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../dto";
+import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
+import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
 import { atualizarEtiquetaImpeditivo, atualizarEtiquetaProcessoLimpo, isProcessoLimpo } from "../utils";
 
 export class FinalizarTriagem {
@@ -58,7 +59,6 @@ export class FinalizarTriagem {
                 } catch (error) {
                     console.error("Erro na função finalizarTriagem ao subir a minuta limpa (maternidade): ", error);
                 }
-                
             }
 
             await atualizarEtiquetaProcessoLimpo(informacoesProcessoRM.cookie, informacoesProcessoRM.tarefaId);
@@ -77,6 +77,44 @@ export class FinalizarTriagem {
             }
 
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `MATERNIDADE IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
+            return { impeditivos: false }
+        }
+    }
+
+    async loas(
+        impeditivos: string[],
+        impeditivosLabrasLoas: IResponseLabraAutorGF,
+        impeditivosDosprevLoas: IObjInfoImpeditivosLoas,
+        informacoesProcessoLoas: IInformacoesProcessoLoasDTO
+    ): Promise<{ impeditivos: boolean }> {
+
+        if (isProcessoLimpo(impeditivos)) {
+
+            if (informacoesProcessoLoas.isUserAdmin && informacoesProcessoLoas.infoUpload.subirMinuta) {
+                try {
+                    await minutaLimpaClass.loasProcessoLimpo(informacoesProcessoLoas);
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                } catch (error) {
+                    console.error("Erro na função finalizarTriagem ao subir a minuta limpa (loas): ", error);
+                }
+            }
+
+            await atualizarEtiquetaProcessoLimpo(informacoesProcessoLoas.cookie, informacoesProcessoLoas.tarefaId);
+            return { impeditivos: true }
+        } else {
+
+            const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*LOAS*'));
+            const impeditivosString = relevantes.join(' - ');
+
+            if (informacoesProcessoLoas.isUserAdmin && informacoesProcessoLoas.infoUpload.subirMinuta) {
+                try {
+                    await minutaSujaClass.loasProcessoSujo(informacoesProcessoLoas, impeditivosDosprevLoas, impeditivosLabrasLoas, impeditivos);
+                } catch (error) {
+                    console.error("Erro na função finalizarTriagem ao subir a minuta suja (loas): ", error);
+                }
+            }
+
+            await atualizarEtiquetaImpeditivo(informacoesProcessoLoas.cookie, `LOAS IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoLoas.tarefaId);
             return { impeditivos: false }
         }
     }

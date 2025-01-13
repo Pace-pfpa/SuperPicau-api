@@ -1,5 +1,5 @@
 export interface GetEditorMinutaDTO {
     cookie: string,
-    documentoId: string;
+    documentoId: number;
     minutaId: number;
 }

@@ -37,22 +37,21 @@ export class ImpeditivosHtmlMaternidade {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Relatório de Impeditivos</title>
                 ${estilos()}
             </head>
             <body>
-                <div class="centralizado">
+                <div style="text-align: center;">
                     ${brasaoLogo()}
                     <br>
-                    ADVOCACIA GERAL DA UNIÃO
+                    <span style="text-indent: 0;">ADVOCACIA GERAL DA UNIÃO</span>
                     <br>
-                    PROCURADORIA-GERAL FEDERAL
+                    <span style="center; text-indent: 0;">PROCURADORIA-GERAL FEDERAL</span>
                     <br>
-                    <span>${infoUpload.usuario.unidade}</span>
+                    <span style="text-indent: 0;">${infoUpload.usuario.unidade}</span>
                     <br>
-                    <span>${infoUpload.usuario.setor}</span>
+                    <span style="text-indent: 0;">${infoUpload.usuario.setor}</span>
                     <br>
-                    <span style="font-size:7pt">${infoUpload.usuario.endereco}</span>
+                    <span style="font-size:7pt; text-indent: 0">${infoUpload.usuario.endereco}</span>
                 </div>
                 <hr>
                 <p><br></p>
@@ -66,9 +65,9 @@ export class ImpeditivosHtmlMaternidade {
                 <p><br></p>
                 <p><br></p>
                 <p><br></p>
-                <p class="esquerda"><strong>NÚMERO:</strong> ${infoUpload.numeroProcesso}</p>
-                <p class="esquerda"><strong>REQUERENTE(S):</strong> ${infoUpload.infoMinuta.infoRequerente.nome}</p>
-                <p class="esquerda"><strong>REQUERIDO(S):</strong> ${infoUpload.infoMinuta.infoRequerente.nome_requerido}</p>
+                <p class="esquerda"><strong>NÚMERO: ${infoUpload.numeroProcesso}</strong></p>
+                <p class="esquerda"><strong>REQUERENTE(S): ${infoUpload.infoMinuta.infoRequerente.nome}</strong></p>
+                <p class="esquerda"><strong>REQUERIDO(S): ${infoUpload.infoMinuta.infoRequerente.nome_requerido}</strong></p>
                 <p><br></p>
                 <p><strong>INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS</strong>, pessoa jurídica de direito público, representado(a) pelo membro da Advocacia-Geral da União infra assinado(a), vem, respeitosamente, à presença de Vossa Excelência, apresentar</p>
                 <p><br></p>
@@ -107,9 +106,6 @@ export class ImpeditivosHtmlMaternidade {
                 <p class="centralizado"><br></p>
                 <p class="centralizado username">PROCURADORIA FEDERAL</p>
                 <p class="centralizado usarrole">EQUIPE DE SEGURADOS ESPECIAIS E ASSISTÊNCIA SOCIAL DA 1ª REGIÃO</p>
-                <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
             </body>
