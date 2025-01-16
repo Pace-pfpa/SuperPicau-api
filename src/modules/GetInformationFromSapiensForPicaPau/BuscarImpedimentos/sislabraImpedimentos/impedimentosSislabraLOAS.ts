@@ -9,7 +9,7 @@ import { ISislabraGF } from '../../dto/Sislabra/interfaces/ISislabraGF';
 export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: ISislabraGF, cookie: string): Promise<IResponseSislabraLoas> {
     let response = '';
     let impedimentosAutor: IImpedimentos;
-    let impedimentosGF: IImpedimentos[];
+    let impedimentosGF: IImpedimentos[] = [];
 
     if (labrasPoloAtivo.length > 0) {
         for (let labra of labrasPoloAtivo) {

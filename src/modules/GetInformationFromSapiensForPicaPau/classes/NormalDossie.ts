@@ -1,5 +1,4 @@
 const { JSDOM } = require('jsdom');
-import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";

@@ -126,6 +126,7 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
 
 
             if (seqIntervaloAjuizamento && seqIntervaloRequerimento) {
+                console.log('BOYS FROM LIVERPOOL')
                 // ACHANDO AS RELAÇÕES PARA AS DUAS DATAS, É POSSÍVEL COLETAR AS REMUNERAÇÕES
                 const remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
                 
@@ -144,8 +145,11 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
                 }
 
             } else if (!seqIntervaloAjuizamento && seqIntervaloRequerimento) {
+                console.log('LOS HERMANOS')
 
                 let remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(seqIntervaloRequerimento, paginaDosPrevFormatadaDossieSuper, reqFormatado)
+                console.log('NITSOM REQUERIMENTO')
+                console.log(remuneracaoRequerimento)
 
                 if (remuneracaoRequerimento === undefined) {
                     remuneracaoRequerimento = await getRemuneracaoAjuizamentoSuper(mostRecentSeq, paginaDosPrevFormatadaDossieSuper, mostRecentDataFormatada)
@@ -161,6 +165,7 @@ export async function getValueCalcDossieSuper(cookie:string, superDossie: any, d
                 }
 
             } else if (seqIntervaloAjuizamento && !seqIntervaloRequerimento) {
+                console.log('GREEN DAY')
 
                 let remuneracaoAjuizamento = await getRemuneracaoAjuizamentoSuper(seqIntervaloAjuizamento, paginaDosPrevFormatadaDossieSuper, ajzFormatado)
 

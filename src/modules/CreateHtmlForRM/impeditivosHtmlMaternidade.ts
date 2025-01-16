@@ -1,4 +1,4 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
+import { HtmlIImpeditivosRuralMaternidadeDTO } from "./dto/HtmlImpeditivosRMDTO";
 import { IInfoUploadDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
 import { brasaoLogo, 
         estilos, 

@@ -3,8 +3,8 @@ import { createDocumentoUseCase } from "../../CreateDocumento";
 import { ImpeditivosHtmlLoas } from "../../CreateHtmlForLoas/impeditivosLoas";
 import { ImpeditivosHtmlRuralMaternidade } from "../../CreateHtmlForRuralMaternidade/impeditivosRuralMaternidade";
 import { uploadDocumentUseCase } from "../../UploadDocument";
-import { gerarObjetoUpload } from "../helps/gerarObjetoUpload";
-import { gerarObjetoUploadRM } from "../helps/gerarObjetoUploadRM";
+import { gerarObjetoUpload } from "../../CreateHtmlForRM/utils/gerarObjetoUploadLoas";
+import { gerarObjetoUploadRM } from "../../CreateHtmlForRM/utils/gerarObjetoUploadRM";
 import { obterNomeInteressadoPrincipal } from "./obterNomeInteressadoPrincipal";
 import { IInformacoesProcessoDTO, 
         IInformacoesProcessoLoasDTO, 

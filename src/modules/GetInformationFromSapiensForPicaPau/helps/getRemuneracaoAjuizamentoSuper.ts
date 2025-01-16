@@ -20,8 +20,11 @@ export async function getRemuneracaoAjuizamentoSuper (seq: string, dosprev: stri
             tamanhoDivsCompetencias++;
         }
 
+        // /html/body/div/div[10]/div[3]/table[2]/tbody/tr[11]/td[1]
+
 
         if (tamanhoDivsCompetencias === 0) {
+            console.log('O CERTO É CAIR AQUI NILTOM')
             supostoxpath = 10
             verificarWhileCompetencias = true
             while (verificarWhileCompetencias) {

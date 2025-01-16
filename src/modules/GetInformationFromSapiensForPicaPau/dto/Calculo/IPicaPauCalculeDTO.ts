@@ -5,5 +5,10 @@ export interface IPicaPauCalculeDTO {
     dataNascimento: string,
     dataRequerimento: string,
     remuneracaoAjuizamento: number,
-    remuneracaoRequerimento: number
-}
+    remuneracaoRequerimento: number,
+    isFallback: boolean,
+    fallbackInfo: {
+        fallbackRemuneracao: number,
+        fallbackDate: string
+    } | null
+};

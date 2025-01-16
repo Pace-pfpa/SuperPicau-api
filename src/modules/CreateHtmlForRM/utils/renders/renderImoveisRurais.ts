@@ -1,5 +1,5 @@
-import { IImpedimentos } from "../../GetInformationFromSapiensForPicaPau/dto";
-import { renderTable } from "./renderTable";
+import { renderTable } from "..";
+import { IImpedimentos } from "../../../GetInformationFromSapiensForPicaPau/dto";
 
 export const renderImoveisRurais = (autor: IImpedimentos, conjuge: IImpedimentos): string => {
     const autorImoveis = autor?.imoveisRurais ?? [];

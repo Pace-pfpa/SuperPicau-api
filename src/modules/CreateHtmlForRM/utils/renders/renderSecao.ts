@@ -1,4 +1,4 @@
-import { renderTable } from "./renderTable";
+import { renderTable } from "..";
 
 export const renderSecao = (
     titulo: string,

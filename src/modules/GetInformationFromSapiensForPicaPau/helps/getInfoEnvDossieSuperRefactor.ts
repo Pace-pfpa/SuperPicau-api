@@ -4,10 +4,9 @@ import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { correçaoDoErroDeFormatoDoSapiens } from "../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
 import { convertToDate } from "./createFormatDate";
-import { getDERorDCBSuper } from "./getDERorDCBSuper";
 import { IPicaPauCalculeDTO } from "../dto/Calculo/IPicaPauCalculeDTO";
-import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getValueCalcDossieSuperRefactor } from "./getValueCalcDossieSuperRefactor";
 
 async function extractField(dom: JSDOMType, xpath: string, errorMessage: string): Promise<string> {
@@ -28,12 +27,11 @@ async function validateDate(dateString: string, errorMessage: string): Promise<D
     return date;
 }
 
-export async function getInfoReqDossieSuper(cookie:string, superDossie: ResponseArvoreDeDocumentoDTO): Promise<IPicaPauCalculeDTO> {
+export async function getInfoEnvDossieSuperRefactor(cookie: string, superDossie: ResponseArvoreDeDocumentoDTO, dataReq: string) {
     try {
-
         const idDosprevParaPesquisaDossieSuper = superDossie.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrevDossieSuper = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieSuper });
-        const paginaDosPrevFormatadaDossieSuper = new JSDOM(paginaDosPrevDossieSuper); 
+        const dom = new JSDOM(paginaDosPrevDossieSuper);
 
         const xpathMap = {
             dataAjuizamento: "/html/body/div/div[4]/table/tbody/tr[2]/td",
@@ -42,22 +40,22 @@ export async function getInfoReqDossieSuper(cookie:string, superDossie: Response
             dataNascimento: "/html/body/div/div[4]/table/tbody/tr[8]/td",
         };
 
-        const dateAjuizamentoRaw = await extractField(paginaDosPrevFormatadaDossieSuper, xpathMap.dataAjuizamento, "Data de ajuizamento não encontrada");
+        console.log("Extracting data fields...");
+        const dateAjuizamentoRaw = await extractField(dom, xpathMap.dataAjuizamento, "Data de ajuizamento não encontrada");
         await validateDate(dateAjuizamentoRaw, "Pegou xpath errado do ajuizamento");
 
         let nomeCerto: string;
-        const nomeDosPrev = await extractField(paginaDosPrevFormatadaDossieSuper, xpathMap.nome, "Nome não encontrado");
-        if (nomeDosPrev) nomeCerto = getXPathText(paginaDosPrevFormatadaDossieSuper, xpathMap.nome);
+        const nomeDosPrev = await extractField(dom, xpathMap.nome, "Nome não encontrado");
+        if (nomeDosPrev) nomeCerto = getXPathText(dom, xpathMap.nome);
 
-        const cpfDosprevRaw = await extractField(paginaDosPrevFormatadaDossieSuper, xpathMap.cpf, "CPF não encontrado");
+        const cpfDosprevRaw = await extractField(dom, xpathMap.cpf, "CPF não encontrado");
         const cpfFormatado = CorrigirCpfComZeros(cpfDosprevRaw);
 
-        const dateNascimentoRaw = await extractField(paginaDosPrevFormatadaDossieSuper, xpathMap.dataNascimento, "Data de nascimento não encontrada");
+        const dateNascimentoRaw = await extractField(dom, xpathMap.dataNascimento, "Data de nascimento não encontrada");
         await validateDate(dateNascimentoRaw, "Pegou xpath errado do nascimento");
-
-        const dataReq = await getDERorDCBSuper(paginaDosPrevFormatadaDossieSuper, dateAjuizamentoRaw)
         
-        const valoresCalcule = await getValueCalcDossieSuperRefactor(cookie, superDossie, dateAjuizamentoRaw, dataReq)
+        console.log("Fetching remuneration values...");
+        const valoresCalcule = await getValueCalcDossieSuperRefactor(cookie, superDossie, dateAjuizamentoRaw, dataReq);
 
         const objeto: IPicaPauCalculeDTO = {
             nome: nomeCerto,
@@ -73,6 +71,7 @@ export async function getInfoReqDossieSuper(cookie:string, superDossie: Response
 
         return objeto;
     } catch (error) {
-        console.error(error.message)
+        console.error(error.message);
+        throw error;
     }
 }

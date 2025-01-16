@@ -38,7 +38,6 @@ export class RestabelecimentoRequerimentosSuperDossie{
                         if(xpathCoulaFormatadoRequerimentos.indexOf("87 - ") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("88 - ") !== -1){
                             if(xpathCoulaFormatadoRequerimentos.indexOf("CESSADO") !== -1 || xpathCoulaFormatadoRequerimentos.indexOf("SUSPENSO") !== -1){
                                 const buscarDataCessaoOuSuspenso = buscardatasLoas(xpathCoulaFormatadoRequerimentos);
-                                console.log("---DATA RESTABELECIMENTO: " + buscarDataCessaoOuSuspenso[2])
                                 if(!buscarDataCessaoOuSuspenso) return new Error("beneficio sem data")
                                 const restabelecimento = {
                                     beneficio: "cessaoOuSuspenso",

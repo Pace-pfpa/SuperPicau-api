@@ -145,8 +145,9 @@ export class BuscarImpedimentosUseCase {
         } else {
             grupoFamiliar = await getGrupoFamiliarCpfs(tarefaPastaID, cookie, cpfCapa, dossieSocialInfo);
             let arrayObjetosEnvolvidos = await getArrayObjetosEnvolvidos(grupoFamiliar, infoRequerente, cookie, arrayDeDossiesNormais, arrayDeDossiesSuper);
-            impedimentoRenda = await informationRenda(arrayObjetosEnvolvidos, grupoFamiliar, infoRequerente);
-            impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: impedimentoRenda.length > 0 ? 'Impedimento' : null };
+            const { impeditivo, objImpeditivoRenda} = await informationRenda(arrayObjetosEnvolvidos, grupoFamiliar, infoRequerente);
+            impedimentoRenda = impeditivo;
+            impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: impedimentoRenda.length > 0 ? objImpeditivoRenda : null };
         }
 
         const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos, ...impedimentoRenda];

@@ -10,7 +10,7 @@ import { IInformacoesProcessoDTO,
         IResponseLabraAutorConjuge } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
-import { gerarObjetoUploadRM } from "../helps/gerarObjetoUploadRM";
+import { gerarObjetoUploadRM } from "../../CreateHtmlForRM/utils/gerarObjetoUploadRM";
 import { atualizarHtmlEditor } from "../utils/atualizarHtmlEditor";
 import { getComponenteDigitalIDRM } from "../utils/getComponenteDigitalIDRM";
 import { obterHtmlETicketEditor } from "../utils/obterHtmlETicketEditor";
