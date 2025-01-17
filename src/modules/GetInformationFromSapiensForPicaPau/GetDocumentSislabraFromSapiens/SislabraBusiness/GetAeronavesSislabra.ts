@@ -13,7 +13,7 @@ export async function getAeronaves (paginaSislabra: JSDOMType) {
             return true
 
         } catch(e) {
-            console.log('Erro leitura Xpath Aeronave (Sislabra)')
+            console.error('Erro leitura Xpath Aeronave (Sislabra)')
             return true
         }
         

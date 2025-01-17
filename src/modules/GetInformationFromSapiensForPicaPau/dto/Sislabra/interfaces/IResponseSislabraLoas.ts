@@ -1,7 +1,7 @@
-import { IImpedimentos } from "./IImpedimentos";
+import { IImpedimentosLoas } from "./IImpedimentosLoas";
 
 export interface IResponseSislabraLoas {
     impedimentos: string[];
-    autor: IImpedimentos;
-    gf: IImpedimentos[];
+    autor: IImpedimentosLoas;
+    gf: IImpedimentosLoas[];
 }

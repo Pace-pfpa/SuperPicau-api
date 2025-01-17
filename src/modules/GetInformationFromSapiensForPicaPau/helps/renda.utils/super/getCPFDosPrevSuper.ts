@@ -1,6 +1,7 @@
+import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { getDocumentoUseCase } from "../../../../GetDocumento";
 const { JSDOM } = require('jsdom');
-import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { getDocumentoUseCase } from "../../GetDocumento";
+
 
 export async function getCPFDosPrevSuper (superDossie: any, cookie: string): Promise<string> {
 

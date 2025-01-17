@@ -4,8 +4,6 @@ export * from './atualizarEtiquetaProcessoLimpo';
 export * from './buscarDossieSocial';
 export * from './buscarSislabraLOAS';
 export * from './buscarSislabraRuralMaternidade';
-export * from './finalizarTriagemLoas';
-export * from './finalizarTriagemRM';
 export * from './isProcessoLimpo';
 export * from './obterNomeInteressadoPrincipal';
 export * from './verificarEAtualizarDossie';

@@ -1,7 +1,7 @@
 import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfComZeros";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
-import { getCPFDosPrevNormal } from "./getCPFDosPrevNormal";
-import { getCPFDosPrevSuper } from "./getCPFDosPrevSuper";
+import { getCPFDosPrevNormal } from "./renda.utils/normal/getCPFDosPrevNormal";
+import { getCPFDosPrevSuper } from "./renda.utils/super/getCPFDosPrevSuper";
 
 // Função auxiliar para validar se o dossiê tem componentes digitais válidos
 function validarDossie(dossie: ResponseArvoreDeDocumentoDTO): boolean {

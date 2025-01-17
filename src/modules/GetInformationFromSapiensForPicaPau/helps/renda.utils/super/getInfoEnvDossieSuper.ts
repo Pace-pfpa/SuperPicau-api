@@ -1,13 +1,13 @@
 const { JSDOM } = require('jsdom');
-import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfComZeros";
-import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { getDocumentoUseCase } from "../../GetDocumento";
-import { correçaoDoErroDeFormatoDoSapiens } from "../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
-import { convertToDate } from "./createFormatDate";
-import { IPicaPauCalculeDTO } from "../dto/Calculo/IPicaPauCalculeDTO";
-import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
-import { JSDOMType } from "../../../shared/dtos/JSDOM";
-import { getValueCalcDossieSuperRefactor } from "./getValueCalcDossieSuperRefactor";
+import { CorrigirCpfComZeros } from "../../../../CreateInterested/Helps/CorrigirCpfComZeros";
+import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { getDocumentoUseCase } from "../../../../GetDocumento";
+import { correçaoDoErroDeFormatoDoSapiens } from "../../../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
+import { convertToDate } from "../../createFormatDate";
+import { IPicaPauCalculeDTO } from "../../../dto/Calculo/IPicaPauCalculeDTO";
+import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
+import { getValueCalcDossieSuper } from "./getValueCalcDossieSuper";
 
 async function extractField(dom: JSDOMType, xpath: string, errorMessage: string): Promise<string> {
     const value = getXPathText(dom, xpath);
@@ -27,7 +27,7 @@ async function validateDate(dateString: string, errorMessage: string): Promise<D
     return date;
 }
 
-export async function getInfoEnvDossieSuperRefactor(cookie: string, superDossie: ResponseArvoreDeDocumentoDTO, dataReq: string) {
+export async function getInfoEnvDossieSuper(cookie: string, superDossie: ResponseArvoreDeDocumentoDTO, dataReq: string) {
     try {
         const idDosprevParaPesquisaDossieSuper = superDossie.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrevDossieSuper = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieSuper });
@@ -55,7 +55,7 @@ export async function getInfoEnvDossieSuperRefactor(cookie: string, superDossie:
         await validateDate(dateNascimentoRaw, "Pegou xpath errado do nascimento");
         
         console.log("Fetching remuneration values...");
-        const valoresCalcule = await getValueCalcDossieSuperRefactor(cookie, superDossie, dateAjuizamentoRaw, dataReq);
+        const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamentoRaw, dataReq);
 
         const objeto: IPicaPauCalculeDTO = {
             nome: nomeCerto,

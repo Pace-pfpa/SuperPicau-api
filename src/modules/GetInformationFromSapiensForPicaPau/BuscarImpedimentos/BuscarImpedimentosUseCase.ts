@@ -1,6 +1,6 @@
 import { getInformationCapa } from "../GetInformationCapa";
-import { getInfoReqDossieNormal } from "../helps/getInfoReqDossieNormal";
-import { getInfoReqDossieSuper } from "../helps/getInfoReqDossieSuper";
+import { getInfoReqDossieNormal } from "../helps/renda.utils/normal/getInfoReqDossieNormal";
+import { getInfoReqDossieSuper } from "../helps/renda.utils/super/getInfoReqDossieSuper";
 import { normalDossieClass, superDossieClass } from "../classes";
 import { impedimentosSislabraLOAS } from "./sislabraImpedimentos/impedimentosSislabraLOAS";
 import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
@@ -100,7 +100,9 @@ export class BuscarImpedimentosUseCase {
         }
     }
 
-    async procurarImpedimentosLOAS(informacoesProcesso: IInformacoesProcessoLoasDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas, objImpedimentosLabra: IResponseLabraAutorGF }> {
+    async procurarImpedimentosLOAS(
+        informacoesProcesso: IInformacoesProcessoLoasDTO
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas, objImpedimentosLabra: IResponseLabraAutorGF }> {
         const {
             tarefaPastaID,
             cookie,

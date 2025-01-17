@@ -1,7 +1,7 @@
 import { ResponseArvoreDeDocumentoDTO } from "../../../GetArvoreDocumento";
 import { IPicaPauCalculeDTO } from "../../dto";
-import { getInfoEnvDossieNormal } from "../../helps/getInfoEnvDossieNormal";
-import { getInfoEnvDossieSuperRefactor } from "../../helps/getInfoEnvDossieSuperRefactor";
+import { getInfoEnvDossieNormal } from "../../helps/renda.utils/normal/getInfoEnvDossieNormal";
+import { getInfoEnvDossieSuper } from "../../helps/renda.utils/super/getInfoEnvDossieSuper";
 
 export async function montarObjetosEnvolvidos(
     arrayDossieEnvolvidosNormal: ResponseArvoreDeDocumentoDTO[], 
@@ -26,7 +26,7 @@ export async function montarObjetosEnvolvidos(
     console.log("Processing super dossiers...");
     for (const dossie of arrayDossieEnvolvidosSuper) {
         try {
-            const objectEnvolvido = await getInfoEnvDossieSuperRefactor(cookie, dossie, infoRequerente.dataRequerimento);
+            const objectEnvolvido = await getInfoEnvDossieSuper(cookie, dossie, infoRequerente.dataRequerimento);
             if (objectEnvolvido) {
                 arrayObjetosEnvolvidos.push(objectEnvolvido);
             }

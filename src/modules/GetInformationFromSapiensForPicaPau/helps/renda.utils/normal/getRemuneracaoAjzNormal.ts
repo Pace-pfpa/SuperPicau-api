@@ -1,5 +1,5 @@
-import { JSDOMType } from "../../../shared/dtos/JSDOM";
-import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
+import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
 
 function countChildElements(dom: JSDOMType, baseXPath: string): number {
     let count = 0;
@@ -42,9 +42,9 @@ function processCompetencyDiv(dom: JSDOMType, divXPath: string, seq: string, dat
     return null;
 }
 
-export async function getRemuneracaoAjzSuperRefactor(seq: string, dom: JSDOMType, data: string): Promise<number | null> {
+export async function getRemuneracaoAjzNormal(seq: string, dom: JSDOMType, data: string): Promise<number | null> {
     try {
-        const baseXPathOptions = [9, 10];
+        const baseXPathOptions = [6];
 
         for (const baseXPath of baseXPathOptions) {
             const baseDivXpath = `/html/body/div/div[${baseXPath}]/div`;
@@ -63,7 +63,7 @@ export async function getRemuneracaoAjzSuperRefactor(seq: string, dom: JSDOMType
         console.log(`No matching data found for seq: ${seq}, data: ${data}`);
         return null;
     } catch (error) {
-        console.error("Error in getRemuneracaoAjzSuperRefactor:", error.message);
+        console.error("Error in getRemuneracaoAjzNormalRefactor:", error.message);
         return null;
     }
 }

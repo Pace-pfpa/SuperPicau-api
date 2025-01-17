@@ -1,6 +1,6 @@
 import { IPicaPauCalculeDTO } from "../../dto";
-import { calcularMediaAjuizamento } from "../../helps/calcularMediaAjuizamento";
-import { calcularMediaRequerimento } from "../../helps/calcularMediaRequerimento";
+import { calcularMediaAjuizamento } from "../../helps/renda.utils/calcularMediaAjuizamento";
+import { calcularMediaRequerimento } from "../../helps/renda.utils/calcularMediaRequerimento";
 import { removeDayMonthFromDate } from "../../helps/removeDayMonthFromDate";
 import { removeDayYearFromDate } from "../../helps/removeDayYearFromDate";
 import { compararPrioridade } from "../../loas/Business/Help/compareRenda";
@@ -69,6 +69,22 @@ export async function calcularRendaFamiliar(
                 fallbackDate: membro.fallbackInfo.fallbackDate,
             });
         }
+    }
+
+    if (salarioMinimoAjz === 0 || salarioMinimoReq === 0) {
+        console.error("Erro: Salário mínimo inválido encontrado.");
+        return {
+            impeditivo: '',
+            detalhesRenda: {
+                numMembrosFamilia,
+                mediaAjuizamento,
+                mediaRequerimento,
+                salarioMinimoAjuizamento: salarioMinimoAjz,
+                salarioMinimoRequerimento: salarioMinimoReq,
+                isFallback: fallbackInfo.length > 0,
+                fallbackInfo: fallbackInfo.length > 0 ? fallbackInfo : null,
+            },
+        };
     }
 
     const impeditivo = compararPrioridadeRenda(

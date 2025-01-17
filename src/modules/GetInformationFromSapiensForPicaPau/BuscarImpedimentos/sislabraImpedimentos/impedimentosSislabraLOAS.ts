@@ -2,14 +2,14 @@ import { JSDOM } from 'jsdom';
 import { getDocumentoUseCase } from "../../../GetDocumento";
 import { getDocumentSislabraFromSapiensLoas } from "../../GetDocumentSislabraFromSapiens";
 import { ResponseArvoreDeDocumentoDTO } from '../../../GetArvoreDocumento';
-import { IImpedimentos } from '../../dto';
 import { IResponseSislabraLoas } from '../../dto/Sislabra/interfaces/IResponseSislabraLoas';
 import { ISislabraGF } from '../../dto/Sislabra/interfaces/ISislabraGF';
+import { IImpedimentosLoas } from '../../dto/Sislabra/interfaces/IImpedimentosLoas';
 
 export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: ISislabraGF, cookie: string): Promise<IResponseSislabraLoas> {
     let response = '';
-    let impedimentosAutor: IImpedimentos;
-    let impedimentosGF: IImpedimentos[] = [];
+    let impedimentosAutor: IImpedimentosLoas;
+    let impedimentosGF: IImpedimentosLoas[] = [];
 
     if (labrasPoloAtivo.length > 0) {
         for (let labra of labrasPoloAtivo) {

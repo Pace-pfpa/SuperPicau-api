@@ -1,12 +1,12 @@
-import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { getDocumentoUseCase } from "../../GetDocumento";
-import { parseDate } from "./parseDate";
-import { isDateInRange } from "./dataIsInRange";
-import { getRemuneracaoAjzSuperRefactor } from "./getRemuneracaoAjzSuperRefactor";
-import { removeDayFromDate } from "./removeDayFromDate";
-import { parseDateToString } from "./parseDateToString";
-import { JSDOMType } from "../../../shared/dtos/JSDOM";
-import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
+import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { getDocumentoUseCase } from "../../../../GetDocumento";
+import { parseDate } from "../../parseDate";
+import { isDateInRange } from "../../dataIsInRange";
+import { getRemuneracaoAjzSuper } from "./getRemuneracaoAjzSuper";
+import { removeDayFromDate } from "../../removeDayFromDate";
+import { parseDateToString } from "../../parseDateToString";
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
+import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
 const { JSDOM } = require('jsdom'); 
 
 type RelacaoPrevidenciaria = {
@@ -51,8 +51,8 @@ async function getRemuneracoes(
     fallbackSeq: string | null, 
     fallbackDate: string | null
 ) {
-    const remuneracaoAjuizamento = await getRemuneracaoAjzSuperRefactor(seqAjz, dom, dates.ajuizamento);
-    const remuneracaoRequerimento = await getRemuneracaoAjzSuperRefactor(seqReq, dom, dates.requerimento);
+    const remuneracaoAjuizamento = await getRemuneracaoAjzSuper(seqAjz, dom, dates.ajuizamento);
+    const remuneracaoRequerimento = await getRemuneracaoAjzSuper(seqReq, dom, dates.requerimento);
 
     console.log(`Remunerations found: Ajuizamento = ${remuneracaoAjuizamento}, Requerimento = ${remuneracaoRequerimento}`);
 
@@ -82,7 +82,7 @@ async function getRemuneracoes(
     }
 
     if (fallbackSeq && fallbackDate) {
-        const fallbackRemuneracao = await getRemuneracaoAjzSuperRefactor(fallbackSeq, dom, fallbackDate);
+        const fallbackRemuneracao = await getRemuneracaoAjzSuper(fallbackSeq, dom, fallbackDate);
         return {
             remuneracaoAjz: remuneracaoAjuizamento || fallbackRemuneracao || 0,
             remuneracaoReq: remuneracaoRequerimento || fallbackRemuneracao || 0,
@@ -110,7 +110,7 @@ function countChildElements(dom: JSDOMType, baseXPath: string): number {
     return count;
 }
 
-export async function getValueCalcDossieSuperRefactor(
+export async function getValueCalcDossieSuper(
     cookie: string, 
     superDossie: ResponseArvoreDeDocumentoDTO, 
     dataAjuizamento: string, 

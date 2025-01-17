@@ -1,14 +1,14 @@
 const { JSDOM } = require('jsdom');
-import { CorrigirCpfComZeros } from "../../CreateInterested/Helps/CorrigirCpfComZeros";
-import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { getDocumentoUseCase } from "../../GetDocumento";
-import { correçaoDoErroDeFormatoDoSapiens } from "../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
-import { convertToDate } from "./createFormatDate";
+import { CorrigirCpfComZeros } from "../../../../CreateInterested/Helps/CorrigirCpfComZeros";
+import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { getDocumentoUseCase } from "../../../../GetDocumento";
+import { correçaoDoErroDeFormatoDoSapiens } from "../../../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
+import { convertToDate } from "../../createFormatDate";
 import { getDERorDCBSuper } from "./getDERorDCBSuper";
-import { IPicaPauCalculeDTO } from "../dto/Calculo/IPicaPauCalculeDTO";
-import { JSDOMType } from "../../../shared/dtos/JSDOM";
-import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
-import { getValueCalcDossieSuperRefactor } from "./getValueCalcDossieSuperRefactor";
+import { IPicaPauCalculeDTO } from "../../../dto/Calculo/IPicaPauCalculeDTO";
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
+import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
+import { getValueCalcDossieSuper } from "./getValueCalcDossieSuper";
 
 async function extractField(dom: JSDOMType, xpath: string, errorMessage: string): Promise<string> {
     const value = getXPathText(dom, xpath);
@@ -57,7 +57,7 @@ export async function getInfoReqDossieSuper(cookie:string, superDossie: Response
 
         const dataReq = await getDERorDCBSuper(paginaDosPrevFormatadaDossieSuper, dateAjuizamentoRaw)
         
-        const valoresCalcule = await getValueCalcDossieSuperRefactor(cookie, superDossie, dateAjuizamentoRaw, dataReq)
+        const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamentoRaw, dataReq)
 
         const objeto: IPicaPauCalculeDTO = {
             nome: nomeCerto,
@@ -74,5 +74,18 @@ export async function getInfoReqDossieSuper(cookie:string, superDossie: Response
         return objeto;
     } catch (error) {
         console.error(error.message)
+        const objeto: IPicaPauCalculeDTO = {
+            nome: "SEM INFORMAÇÃO",
+            dataAjuizamento: "SEM INFORMAÇÃO",
+            dataNascimento: "SEM INFORMAÇÃO",
+            cpf: "SEM INFORMAÇÃO",
+            dataRequerimento: "SEM INFORMAÇÃO",
+            remuneracaoAjuizamento: 0,
+            remuneracaoRequerimento: 0,
+            isFallback: false,
+            fallbackInfo: null
+        }
+
+        return objeto;
     }
 }
