@@ -19,6 +19,8 @@ import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
 import { IinteressadosDTO } from "./dtos/InteressadosDTO";
 import { ITarefaResponse } from "../GetTarefa/dtos";
 import { JSDOMType } from "../../shared/dtos/JSDOM";
+import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
+import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
 
 export class CreateInterestedUseCase {
 
@@ -143,6 +145,14 @@ export class CreateInterestedUseCase {
             if (cpfCorrigido === cpfCapa || interessadosExistentes.includes(cpfCorrigido)) continue;
 
             try {
+                // ATIVAR O GHOST
+                const envolvidoGhost = await GetEnvolvidoGhost(cpfCorrigido, cookie);
+                console.log('--GHOST')
+                console.log(envolvidoGhost);
+                const pessoaFisica = await GetPessoaFisica(cpfCorrigido, cookie);
+                console.log('---PESSOA FÍSICA')
+                console.log(pessoaFisica)
+
                 let pessoa_id: any = null;
 
                 try {

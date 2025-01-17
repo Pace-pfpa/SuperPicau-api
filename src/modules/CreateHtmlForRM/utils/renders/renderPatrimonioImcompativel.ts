@@ -1,5 +1,6 @@
-import { IImpedimentos } from "../../GetInformationFromSapiensForPicaPau/dto";
-import { renderTable, verificarSeTodosSaoVazios, renderCampoPatrimonioImcompativel } from ".";
+import { renderCampoPatrimonioImcompativel, renderTable, verificarSeTodosSaoVazios } from "..";
+import { IImpedimentos } from "../../../GetInformationFromSapiensForPicaPau/dto";
+
 
 export const renderPatrimonioImcompativel = (autor: IImpedimentos, conjuge: IImpedimentos): string => {
     const valoresParaVerificar = [

@@ -1,6 +1,6 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
+import { HtmlIImpeditivosRuralMaternidadeDTO } from "../dto/HtmlImpeditivosRMDTO";
 
-export function gerarObjetoUploadRM (impeditivos: string[]): HtmlIImpeditivosRuralMaternidadeDTO {
+export function gerarObjetoUploadRM(impeditivos: string[]): HtmlIImpeditivosRuralMaternidadeDTO {
 
     const sislabraAutorPresente = impeditivos.some(imp => imp.trim() === "SISLABRA AUTOR NÃO EXISTE");
     const sislabraConjugePresente = impeditivos.some(imp => imp.trim() === "SISLABRA GF NÃO EXISTE");

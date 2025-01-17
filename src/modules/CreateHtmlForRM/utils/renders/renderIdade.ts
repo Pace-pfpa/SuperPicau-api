@@ -1,4 +1,5 @@
-import { IIdadeDTO } from "../../GetInformationFromSapiensForPicaPau/DossieSuperSapiens/SuperDossieBusiness/CalcularIdade/dtos/IIdadeDTO";
+import { IIdadeDTO } from "../../../GetInformationFromSapiensForPicaPau/DossieSuperSapiens/SuperDossieBusiness/CalcularIdade/dtos/IIdadeDTO";
+
 
 export const renderIdade = (idade: boolean, idadeInfo: IIdadeDTO): string => {
     if (!idade) return "";

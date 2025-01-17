@@ -1,6 +1,6 @@
-import { IImpedimentos } from "./IImpedimentos";
+import { IImpedimentosLoas } from "./IImpedimentosLoas";
 
 export interface IResponseLabraAutorGF {
-    autor: IImpedimentos;
-    gf: IImpedimentos[];
+    autor: IImpedimentosLoas;
+    gf: IImpedimentosLoas[];
 }

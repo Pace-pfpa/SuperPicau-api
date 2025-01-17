@@ -1,31 +1,31 @@
-import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { arrayExisteCessadoOuSuspenso } from "../loas/Business/Help/ArrayExisteCessaoOuSuspenso";
-import { buscardatasLoas } from "../loas/Business/Help/BuscarDatas";
-import { calcularIdadeIdoso } from "../loas/Business/Help/CalcularIdadeIdoso";
-import { EncontrarDataCesSusMaisAtual } from "../loas/Business/Help/EncontrarCesSusMaisAtual";
-import { EncontrarDataMaisAtual } from "../loas/Business/Help/EncontrarDataMaisAtual";
-import { formatDate } from "../loas/Business/Help/FormatarDataLoas";
+import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
+import { arrayExisteCessadoOuSuspenso } from "../../../loas/Business/Help/ArrayExisteCessaoOuSuspenso";
+import { buscardatasLoas } from "../../../loas/Business/Help/BuscarDatas";
+import { calcularIdadeIdoso } from "../../../loas/Business/Help/CalcularIdadeIdoso";
+import { EncontrarDataCesSusMaisAtual } from "../../../loas/Business/Help/EncontrarCesSusMaisAtual";
+import { EncontrarDataMaisAtual } from "../../../loas/Business/Help/EncontrarDataMaisAtual";
+import { formatDate } from "../../../loas/Business/Help/FormatarDataLoas";
 
-export async function getDERorDCBNormal(paginaDosPrevFormatada: any, dataAjuizamento: any): Promise<string> {
+
+export async function getDERorDCBSuper (paginaDosPrevFormatada: any, dataAjuizamento: any): Promise<string> {
 
     try {
         
-        let tamanhoColunasRequerimentos = 2;
+        let tamanhoColunasRequerimentos = 1;
         let verificarWhileRequerimentos = true;
         while (verificarWhileRequerimentos) {
-            if (typeof (getXPathText(paginaDosPrevFormatada, `/html/body/div/div[3]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object') {
+            if (typeof (getXPathText(paginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${tamanhoColunasRequerimentos}]`)) == 'object') {
                 verificarWhileRequerimentos = false; 
                 break;
             }
             tamanhoColunasRequerimentos++;
         } 
-
-        
+    
         const objetosEncontradosParaVerificar = []
-        for (let t = 2; t < tamanhoColunasRequerimentos; t++) {
+        for (let t = 1; t < tamanhoColunasRequerimentos; t++) {
 
-            if (typeof (getXPathText(paginaDosPrevFormatada, `/html/body/div/div[3]/table/tbody/tr[${t}]`)) === 'string') {
-                const xpathColunaRequerimentos = `/html/body/div/div[3]/table/tbody/tr[${t}]`;
+            if (typeof (getXPathText(paginaDosPrevFormatada, `/html/body/div/div[6]/table/tbody/tr[${t}]`)) === 'string') {
+                const xpathColunaRequerimentos = `/html/body/div/div[6]/table/tbody/tr[${t}]`;
                 const xpathCoulaFormatadoRequerimentos: string = getXPathText(paginaDosPrevFormatada, xpathColunaRequerimentos);
 
 
@@ -66,13 +66,12 @@ export async function getDERorDCBNormal(paginaDosPrevFormatada: any, dataAjuizam
 
             // Existem cessados/suspensos e o mais atual tem menos de 5 anos, independente do indeferido = Restabelecimento
             if (tempoCesSus < 5) {
-
                 return dataCessado
+
 
             } else {
                 const req = formatDate(EncontrarDataMaisAtual(objetosEncontradosParaVerificar))
                 return req
-                
                 
             }
 

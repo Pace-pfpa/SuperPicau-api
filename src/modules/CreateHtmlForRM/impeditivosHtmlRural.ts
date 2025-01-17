@@ -1,8 +1,7 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
+import { HtmlIImpeditivosRuralMaternidadeDTO } from "./dto/HtmlImpeditivosRMDTO";
 import { IInfoUploadDTO, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
 import { IObjInfoImpeditivosRural } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
-import { brasaoLogo, estilos, renderConcessao, renderImoveisRurais, renderLitispendencia, renderPatrimonioImcompativel, renderRequerimento, renderSecao } from "./utils";
-import { renderIdade } from "./utils/renderIdade";
+import { brasaoLogo, estilos, renderConcessao, renderImoveisRurais, renderLitispendencia, renderPatrimonioImcompativel, renderRequerimento, renderSecao, renderIdade } from "./utils";
 
 export class ImpeditivosHtmlRural {
     async execute(
@@ -35,18 +34,15 @@ export class ImpeditivosHtmlRural {
                 ${estilos()}
             </head>
             <body>
-                <div class="centralizado">
-                    ${brasaoLogo()}
-                    <br>
-                    ADVOCACIA GERAL DA UNIÃO
-                    <br>
-                    PROCURADORIA-GERAL FEDERAL
-                    <br>
-                    <span>${infoUpload.usuario.unidade}</span>
-                    <br>
-                    <span>${infoUpload.usuario.setor}</span>
-                    <br>
-                    <span style="font-size:7pt">${infoUpload.usuario.endereco}</span>
+                <div class="topo">
+                    <div style="text-align: center !important;">
+                        <p>${brasaoLogo()}</p>
+                        <p>ADVOCACIA GERAL DA UNIÃO</p>
+                        <p style="text-align: center !important;">PROCURADORIA-GERAL FEDERAL</p>
+                        <p style="text-align: center !important;">${infoUpload.usuario.unidade}</p>
+                        <p style="text-align: center !important;">${infoUpload.usuario.setor}</p>
+                        <p style="font-size: 7pt;">${infoUpload.usuario.endereco}</p>
+                    </div>
                 </div>
                 <hr>
                 <p><br></p>

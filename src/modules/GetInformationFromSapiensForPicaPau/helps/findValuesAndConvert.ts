@@ -1,5 +1,4 @@
 export function convertCurrencyStringsToNumbers(datesStr: string): number[] {
-    //const currencyRegex = /\b\d{1,3}(?:\.\d{3})*,\d{2}\b|\b\d+,\d{2}\b|\b(?![0-3][0-9]\/)\d{4}(?!\/\d{2})\b/g;
     const currencyRegexPart1 = /\b\d{1,3}(?:\.\d{3})*,\d{2}\b/;
     const currencyRegexPart2 = /\b\d+,\d{2}\b/;
     const yearRegex = /\b(?!\d{1,2}\/)\d{4}(?!\/\d{1,2})\b/;

@@ -1,5 +1,4 @@
-import { IPicaPauCalculeDTO } from "../dto/Calculo/IPicaPauCalculeDTO";
-
+import { IPicaPauCalculeDTO } from "../../dto";
 
 export function calcularMediaAjuizamento (objs: IPicaPauCalculeDTO[], total: number): number {
     
