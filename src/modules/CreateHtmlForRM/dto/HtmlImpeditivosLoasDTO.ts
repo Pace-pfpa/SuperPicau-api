@@ -14,6 +14,7 @@ export interface HtmlIImpeditivosLoasDTO {
     imovelruralAutor: boolean | null;
     embarcacaoAutor: boolean | null;
     aeronaveAutor: boolean | null;
+    doacaoEleitoralAutor: boolean | null;
     empresaGF: boolean | null;
     bensGF: boolean | null;
     veiculoGF: boolean | null;
@@ -21,4 +22,5 @@ export interface HtmlIImpeditivosLoasDTO {
     imovelruralGF: boolean | null;
     embarcacaoGF: boolean | null;
     aeronaveGF: boolean | null;
+    doacaoEleitoralGF: boolean | null;
 }

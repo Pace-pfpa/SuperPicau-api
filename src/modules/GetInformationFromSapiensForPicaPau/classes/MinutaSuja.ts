@@ -1,5 +1,5 @@
 import { createDocumentoUseCase } from "../../CreateDocumento";
-import { impeditivosHtmlMaternidade, impeditivosHtmlRural } from "../../CreateHtmlForRM";
+import { impeditivosHtmlLoas, impeditivosHtmlMaternidade, impeditivosHtmlRural } from "../../CreateHtmlForRM";
 import { getEditorMinutaUseCase } from "../../GetEditorMinuta";
 import { GetEditorMinutaDTO } from "../../GetEditorMinuta/dtos/GetEditorMinutaDTO";
 import { updateDocumentoUseCase } from "../../UpdateDocumento";
@@ -14,6 +14,8 @@ import { gerarObjetoUploadRM } from "../../CreateHtmlForRM/utils/gerarObjetoUplo
 import { atualizarHtmlEditor } from "../utils/atualizarHtmlEditor";
 import { getComponenteDigitalIDRM } from "../utils/getComponenteDigitalIDRM";
 import { obterHtmlETicketEditor } from "../utils/obterHtmlETicketEditor";
+import { gerarObjetoUploadLoas } from "../../CreateHtmlForRM/utils/gerarObjetoUploadLoas";
+import { getComponenteDigitalIDLoas } from "../utils/getComponenteDigitalIDLoas";
 
 export class MinutaSuja {
     async maternidadeProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosMaternidade, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
@@ -154,6 +156,71 @@ export class MinutaSuja {
     }
 
     async loasProcessoSujo(informacoesProcessoLoas: IInformacoesProcessoLoasDTO, impeditivosDosprev: IObjInfoImpeditivosLoas, impeditivosLabras: IResponseLabraAutorGF, impeditivos: string[]): Promise<void> {
-        console.log("FUTURA MINUTA LOAS")
+        const objetoUpload = gerarObjetoUploadLoas(impeditivos);
+        let htmlUpload = await impeditivosHtmlLoas.execute(objetoUpload, informacoesProcessoLoas.infoUpload, impeditivosDosprev, impeditivosLabras);
+
+        let documentoId: number;
+        try {
+            const createDocument = await createDocumentoUseCase.execute({
+                cookie: informacoesProcessoLoas.cookie,
+                usuario_nome: informacoesProcessoLoas.infoUpload.usuario.nome,
+                usuario_setor: informacoesProcessoLoas.infoUpload.usuario_setor,
+                tarefa_id: informacoesProcessoLoas.infoUpload.tarefa_id,
+                pasta_id: informacoesProcessoLoas.infoUpload.pasta_id,
+                tid: '3',
+                modelo_id: '734226',
+                tipoDocumento_id: '85'
+            });
+
+            if (!createDocument || !Array.isArray(createDocument) || createDocument.length === 0 || !createDocument[0].id) {
+                throw new Error("Falha ao criar o documento ou ID não encontrado.");
+            }
+
+            documentoId = createDocument[0].id;
+
+            const componenteDigital_id = await getComponenteDigitalIDLoas(informacoesProcessoLoas, documentoId);
+
+            const editorInfo: GetEditorMinutaDTO = {
+                cookie: informacoesProcessoLoas.cookie,
+                documentoId: documentoId,
+                minutaId: componenteDigital_id
+            }
+
+            await getEditorMinutaUseCase.execute(editorInfo);
+            console.log(`Editor ativado para documento ID: ${documentoId}, componente ID: ${componenteDigital_id}`);
+
+            const { ticket } = await obterHtmlETicketEditor(
+                informacoesProcessoLoas.cookie,
+                documentoId,
+                componenteDigital_id
+            );
+            console.log(`Ticket obtido para edição do documento ID: ${documentoId}`);
+            
+            await atualizarHtmlEditor(informacoesProcessoLoas.cookie, documentoId, componenteDigital_id, ticket, htmlUpload);
+        } catch (error) {
+            console.error("Erro ao criar o documento:", error);
+            throw new Error("Falha na criação do documento. Verifique os dados e tente novamente.");
+        }
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            await updateDocumentoUseCase.execute({
+                cookie: informacoesProcessoLoas.cookie,
+                dosprev_id: informacoesProcessoLoas.dosprevPoloAtivo.documentoJuntado_id,
+                minuta_id: documentoId,
+                pasta_id: informacoesProcessoLoas.infoUpload.pasta_id,
+                tarefa_id: informacoesProcessoLoas.infoUpload.tarefa_id,
+                tipoDocumento_id: '35',
+                usuario_nome: informacoesProcessoLoas.infoUpload.usuario.nome,
+                usuario_setor: informacoesProcessoLoas.infoUpload.usuario_setor,
+                tid: '10'
+            })
+            console.log(`Dossiê atualizado para documento ID: ${documentoId}`);
+
+        } catch (error) {
+            console.error("Erro ao fazer upload do documento:", error);
+            throw new Error("Falha no upload do documento. Verifique o processo e tente novamente.");
+        }
     }
 }

@@ -87,18 +87,21 @@ export class GetDocumentSislabraFromSapiensLoas {
 
 
         const GetAeronave = await getAeronaves(paginaformatada);
-        if (GetAeronave && !isPoloAtivo) {
+        if (GetAeronave && isPoloAtivo) {
             response += " AERONAVE -";
             ObjImpedimentos.aeronave = "AERONAVE ENCONTRADA NO AUTOR";
-        } else if (GetAeronave && isPoloAtivo) {
+        } else if (GetAeronave && !isPoloAtivo) {
             response += " AERONAVE GF -";
             ObjImpedimentos.aeronave = "AERONAVE ENCONTRADA NO GRUPO FAMILIAR";
         }
 
         const GetDoacaoEleitoral = await getDoacaoEleitoral(paginaformatada);
-        if (GetDoacaoEleitoral && !isPoloAtivo) {
+        if (GetDoacaoEleitoral && isPoloAtivo) {
             response += " DOAÇÃO ELEITORAL -";
             ObjImpedimentos.doacaoEleitoral = "DOAÇÃO ELEITORAL ENCONTRADA NO AUTOR";
+        } else if (GetDoacaoEleitoral && !isPoloAtivo) {
+            response += " DOAÇÃO ELEITORAL GF -";
+            ObjImpedimentos.doacaoEleitoral = "DOAÇÃO ELEITORAL ENCONTRADA NO GRUPO FAMILIAR";
         }
 
         return { impedimentos: response, objImpedimentos: ObjImpedimentos }
