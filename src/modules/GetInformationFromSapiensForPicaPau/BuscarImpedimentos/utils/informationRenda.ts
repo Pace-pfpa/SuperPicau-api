@@ -10,5 +10,6 @@ export async function informationRenda(
 ): Promise< { impeditivo: string[], objImpeditivoRenda: DetalhesRenda} > {
     const resultadoRenda = await calcularRendaFamiliar(arrayObjetosEnvolvidos, grupoFamiliar.length + 1, infoRequerente);
     const impedimentoRenda: string[] = await etiquetarRenda(resultadoRenda.impeditivo);
+    resultadoRenda.detalhesRenda = { ...resultadoRenda.detalhesRenda, rendaFamiliar: impedimentoRenda[0] }
     return { impeditivo: impedimentoRenda, objImpeditivoRenda: resultadoRenda.detalhesRenda }
 }

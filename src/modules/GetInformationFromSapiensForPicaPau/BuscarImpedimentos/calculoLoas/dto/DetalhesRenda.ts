@@ -1,4 +1,5 @@
 export interface DetalhesRenda {
+    rendaFamiliar?: string;
     numMembrosFamilia: number;
     mediaAjuizamento: number;
     mediaRequerimento: number;
