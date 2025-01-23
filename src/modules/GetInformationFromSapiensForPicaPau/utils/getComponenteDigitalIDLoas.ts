@@ -1,7 +1,7 @@
 import { getTarefaFacade } from "../../GetTarefa";
 import { IInformacoesProcessoLoasDTO } from "../dto";
 
-export async function getComponenteDigitalIDRM(informacoesProcesso: IInformacoesProcessoLoasDTO, documentoId: number): Promise<number> {
+export async function getComponenteDigitalIDLoas(informacoesProcesso: IInformacoesProcessoLoasDTO, documentoId: number): Promise<number> {
     let componenteDigital_id: number = null;
 
     try {

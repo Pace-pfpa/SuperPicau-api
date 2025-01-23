@@ -59,9 +59,17 @@ export class RestabelecimentoRequerimentosSuperDossie{
                            const datasEncontradas = (buscardatasLoas(xpathCoulaFormatadoRequerimentos))
                         }
                       
+                    } else if (xpathCoulaFormatadoRequerimentos.indexOf("ATIVO") !== -1) {
+                        return {
+                            valorBooleano: false,
+                            impeditivo: ""
+                        }
                     }
                 }
             }
+
+            console.log('---WE GON BE ALRIGHT---')
+            console.log(objetosEncontradosParaVerificar)
 
 
             if(objetosEncontradosParaVerificar.length == 0) {

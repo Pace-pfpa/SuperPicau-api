@@ -9,4 +9,5 @@ export * from './renders/renderRequerimento';
 export * from './renders/renderSecao';
 export * from './renders/renderTable';
 export * from './renders/renderIdade';
+export * from './renders/renderConcessaoLoas';
 export * from './verificarSeTodosSaoVazios';
