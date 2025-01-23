@@ -173,7 +173,7 @@ export class ImpeditivosHtmlLoas {
             "ATIVIDADE EMPRESARIAL",
             `A parte autora ou algum integrante do grupo familiar possui participação em sociedade empresária, sociedade simples, empresa individual ou empresa individual de responsabilidade limitada, em atividade incompatível para a percepção do benefício assistencial.`,
             autor?.empresas,
-            gf?.map((membro) => membro.empresas),
+            gf,
             ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"],
             "Empresas do Autor",
             "Empresas do Grupo Familiar"

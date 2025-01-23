@@ -30,8 +30,10 @@ export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDe
             const paginaSislabraGF = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaGF });
             const paginaFormatadaGF = new JSDOM(paginaSislabraGF);
             const sislabraGF = await getDocumentSislabraFromSapiensLoas.execute(paginaFormatadaGF, false);
-            response += sislabraGF.impedimentos;
-            impedimentosGF.push(sislabraGF.objImpedimentos);
+            if (!response.includes(sislabraGF.impedimentos)) {
+                response += sislabraGF.impedimentos;
+                impedimentosGF.push(sislabraGF.objImpedimentos);
+            }
         }
     } else if (!labrasGF.isGrupoFamiliarAusente && labrasGF.labrasGrupoFamiliar.length === 0) {
         response += " SISLABRA GF NÃO EXISTE -";

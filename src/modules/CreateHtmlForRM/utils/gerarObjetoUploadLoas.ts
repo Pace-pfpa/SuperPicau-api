@@ -13,7 +13,7 @@ export function gerarObjetoUploadLoas(impeditivos: string[]): HtmlIImpeditivosLo
         bpc: impeditivos.some(imp => imp.trim() === "BPC ATIVO"),
         beneficio: impeditivos.some(imp => imp.trim() === "BENEFÍCIO ATIVO"),
         idade: impeditivos.some(imp => imp.trim() === "IDADE"),
-        requerimento: impeditivos.some(imp => imp.trim() === "AUSÊNCIA DE REQUERIMENTO AUTOR"),
+        requerimento: impeditivos.some(imp => imp.trim() === "AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO"),
         renda: impeditivos.some(imp => imp.trim() === "RENDA MEDIA") || impeditivos.some(imp => imp.trim() === "RENDA ALTA") || impeditivos.some(imp => imp.trim() === "RENDA ELEVADA"),
         empresaAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "EMPRESA"),
         bensAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "BENS TSE"),

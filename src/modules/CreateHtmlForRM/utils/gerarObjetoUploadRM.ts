@@ -9,7 +9,7 @@ export function gerarObjetoUploadRM(impeditivos: string[]): HtmlIImpeditivosRura
     // Cria um objeto com os atributos dependentes dos impeditivos encontrados
     const objeto: HtmlIImpeditivosRuralMaternidadeDTO = {
         advogado: impeditivos.some(imp => imp.trim() === "ADVOGADO"),
-        requerimento: impeditivos.some(imp => imp.trim() === "AUSÊNCIA DE REQUERIMENTO AUTOR"),
+        requerimento: impeditivos.some(imp => imp.trim() === "AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO"),
         emprego: impeditivos.some(imp => imp.trim() === "EMPREGO"),
         vinculoAberto: impeditivos.some(imp => imp.trim() === "VÍNCULO ABERTO"),
         concessaoAnterior: impeditivos.some(imp => imp.trim() === "CONCESSÃO ANTERIOR"),

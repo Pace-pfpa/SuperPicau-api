@@ -1,28 +1,35 @@
-import { renderTable } from "..";
+import { renderTable, verificarSeTodosSaoVazios } from "..";
+import { IImpedimentosLoas } from "../../../GetInformationFromSapiensForPicaPau/dto/Sislabra/interfaces/IImpedimentosLoas";
 
 export const renderSecaoLoas = (
     titulo: string,
     mensagem: string,
     dadosAutor: any[] | undefined,
-    dadosGF: any[] | undefined,
+    grupoFamiliar: IImpedimentosLoas[],
     colunas: string[],
     tituloAutor: string,
     tituloGF: string
 ): string => {
-    const hasDados = (dadosAutor?.length ?? 0) > 0 || (dadosGF?.length ?? 0) > 0;
+    const valoresParaVerificar = [
+        ...grupoFamiliar.map((membro) => membro.empresas),
+    ];
+
+    const hasDados = (dadosAutor?.length ?? 0) > 0 || !verificarSeTodosSaoVazios(valoresParaVerificar);
 
     if (!hasDados) {
         return "";
     }
 
-    let gfTables = "";
-    if (dadosGF?.length) {
-        gfTables = dadosGF
-            .map((member, index) =>
-                renderTable([member], `${tituloGF} - Membro ${index + 1}`, colunas)
-            )
-            .join("");
-    }
+    const empresasFamilia = grupoFamiliar
+        .map((membro, index) =>
+          membro.empresas.length
+            ? renderTable(
+                membro.empresas,
+                tituloGF,
+                colunas
+              ) : ''
+        )
+        .join("");
 
     return `
         <p>
@@ -30,6 +37,6 @@ export const renderSecaoLoas = (
             ${mensagem}
         </p>
         ${dadosAutor?.length ? renderTable(dadosAutor, tituloAutor, colunas) : ""}
-        ${gfTables}
+        ${empresasFamilia}
     `;
 };
