@@ -1,3 +1,5 @@
+import { IPicaPauCalculeDTO } from "../../../dto";
+
 export interface DetalhesRenda {
     rendaFamiliar?: string;
     numMembrosFamilia: number;
@@ -5,6 +7,8 @@ export interface DetalhesRenda {
     mediaRequerimento: number;
     salarioMinimoAjuizamento: number;
     salarioMinimoRequerimento: number;
+    informacoesRequerente: IPicaPauCalculeDTO,
+    informacoesFamilia: IPicaPauCalculeDTO[],
     isFallback: boolean;
     fallbackInfo: {
         nome: string;

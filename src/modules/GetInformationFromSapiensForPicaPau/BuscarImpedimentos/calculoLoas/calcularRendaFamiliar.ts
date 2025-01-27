@@ -81,6 +81,8 @@ export async function calcularRendaFamiliar(
                 mediaRequerimento,
                 salarioMinimoAjuizamento: salarioMinimoAjz,
                 salarioMinimoRequerimento: salarioMinimoReq,
+                informacoesRequerente: infoRequerente,
+                informacoesFamilia: arrayObjetosEnvolvidos,
                 isFallback: fallbackInfo.length > 0,
                 fallbackInfo: fallbackInfo.length > 0 ? fallbackInfo : null,
             },
@@ -100,6 +102,8 @@ export async function calcularRendaFamiliar(
         mediaRequerimento,
         salarioMinimoAjuizamento: salarioMinimoAjz,
         salarioMinimoRequerimento: salarioMinimoReq,
+        informacoesRequerente: infoRequerente,
+        informacoesFamilia: arrayObjetosEnvolvidos,
         isFallback: fallbackInfo.length > 0,
         fallbackInfo: fallbackInfo.length > 0 ? fallbackInfo : null,
     };

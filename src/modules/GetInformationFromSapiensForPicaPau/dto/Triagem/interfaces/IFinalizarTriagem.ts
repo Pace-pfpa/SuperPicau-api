@@ -1,3 +1,4 @@
 export interface IFinalizarTriagem {
-    impeditivos: boolean;
+    resultadoTriagem: string;
+    resposta: string;
 }

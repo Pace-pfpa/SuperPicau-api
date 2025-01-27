@@ -1,11 +1,11 @@
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 import { extractDatesFromString } from "../../../../../shared/utils/FiltrarDatas";
 import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
 import { encontrarDataMaisAtual } from "../../../../../shared/utils/VerificarDataMaisAtual";
 import { SubtrairAnoMaisAtual } from "../../../../../shared/utils/subtrairAnoAtual";
 
-
 export class DatasRequerimentoNewDossie{
-    async dataRequerimento(parginaDosPrevFormatada: any, dataSubtrair: number):Promise<Date[]>{
+    async dataRequerimento(parginaDosPrevFormatada: JSDOMType, dataSubtrair: number):Promise<Date[]>{
         //Estrutura para identificar a maior data, e fazer a subtração dela
         let tamanhoColunasRequerimentos = 1;
         const arrayDatas: Array<Date> = [];
