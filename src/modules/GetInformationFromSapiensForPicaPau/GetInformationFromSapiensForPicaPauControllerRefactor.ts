@@ -77,7 +77,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                 } catch (error) {
                     console.error("Farfan", error)
                     return response.status(400).json({
-                        resultadoTriagem: '0',
+                        resultadoTriagem: '2',
                         resposta: error.message || "Erro inesperado durante a triagem."
                     });
                 }

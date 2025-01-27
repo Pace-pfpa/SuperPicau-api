@@ -72,7 +72,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
 
             const response = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
 
-            if (!response) {
+            if (response instanceof Error) {
                 await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
                 return { warning: `DOSPREV NÃO EXISTE` };
             }
@@ -172,7 +172,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
         arrayDeDossiesSuper: ResponseArvoreDeDocumentoDTO[], 
         cpfCapa: string, 
         cookie: string
-    ): Promise<IdentificarDossieAtivoType> {
+    ): Promise<IdentificarDossieAtivoType | Error> {
 
         let dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO = null;
         let isDosprevPoloAtivoNormal: boolean = false;
@@ -213,9 +213,8 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
             return { dosprevPoloAtivo, isDosprevPoloAtivoNormal };
         } catch (error) {
-            console.error("Erro na identificação do Dossiê" + error);
-            throw new Error('DOSPREV NÃO EXISTE');
+            console.error("Erro na identificação do Dossiê", error.message);
+            return new Error('DOSPREV NÃO EXISTE');
         }
-
     }
 }
