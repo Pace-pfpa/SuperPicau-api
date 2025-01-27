@@ -1,5 +1,5 @@
 import { minutaLimpaClass, minutaSujaClass } from ".";
-import { IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../dto";
+import { IFinalizarTriagem, IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
 import { atualizarEtiquetaImpeditivo, atualizarEtiquetaProcessoLimpo, isProcessoLimpo } from "../utils";
@@ -10,7 +10,7 @@ export class FinalizarTriagem {
         impeditivosLabrasRM: IResponseLabraAutorConjuge,
         impeditivosDosprevRM: IObjInfoImpeditivosRural,
         informacoesProcessoRM: IInformacoesProcessoDTO
-    ): Promise<{ impeditivos: boolean }> {
+    ): Promise<IFinalizarTriagem> {
         
         if (isProcessoLimpo(impeditivos)) {
         
@@ -24,7 +24,7 @@ export class FinalizarTriagem {
             }
         
             await atualizarEtiquetaProcessoLimpo(informacoesProcessoRM.cookie, informacoesProcessoRM.tarefaId);
-            return { impeditivos: true }
+            return { resultadoTriagem: '3', resposta: 'PROCESSO LIMPO' }
         } else {
         
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*RURAL*'));
@@ -39,7 +39,7 @@ export class FinalizarTriagem {
             }
         
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `RURAL IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
-            return {impeditivos: false}
+            return { resultadoTriagem: '1', resposta: 'IMPEDITIVOS' }
         }
     }
 
@@ -48,7 +48,7 @@ export class FinalizarTriagem {
         impeditivosLabrasRM: IResponseLabraAutorConjuge,
         impeditivosDosprevRM: IObjInfoImpeditivosMaternidade,
         informacoesProcessoRM: IInformacoesProcessoDTO
-    ): Promise<{ impeditivos: boolean }> {
+    ): Promise<IFinalizarTriagem> {
 
         if (isProcessoLimpo(impeditivos)) {
 
@@ -62,7 +62,7 @@ export class FinalizarTriagem {
             }
 
             await atualizarEtiquetaProcessoLimpo(informacoesProcessoRM.cookie, informacoesProcessoRM.tarefaId);
-            return { impeditivos: true }
+            return { resultadoTriagem: '3', resposta: 'PROCESSO LIMPO' }
         } else {
 
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*MATERNIDADE*'));
@@ -77,7 +77,7 @@ export class FinalizarTriagem {
             }
 
             await atualizarEtiquetaImpeditivo(informacoesProcessoRM.cookie, `MATERNIDADE IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoRM.tarefaId);
-            return { impeditivos: false }
+            return { resultadoTriagem: '1', resposta: 'IMPEDITIVOS' }
         }
     }
 
@@ -86,7 +86,7 @@ export class FinalizarTriagem {
         impeditivosLabrasLoas: IResponseLabraAutorGF,
         impeditivosDosprevLoas: IObjInfoImpeditivosLoas,
         informacoesProcessoLoas: IInformacoesProcessoLoasDTO
-    ): Promise<{ impeditivos: boolean }> {
+    ): Promise<IFinalizarTriagem> {
 
         if (isProcessoLimpo(impeditivos)) {
 
@@ -100,7 +100,7 @@ export class FinalizarTriagem {
             }
 
             await atualizarEtiquetaProcessoLimpo(informacoesProcessoLoas.cookie, informacoesProcessoLoas.tarefaId);
-            return { impeditivos: true }
+            return { resultadoTriagem: '3', resposta: 'PROCESSO LIMPO' }
         } else {
 
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*LOAS*'));
@@ -115,7 +115,7 @@ export class FinalizarTriagem {
             }
 
             await atualizarEtiquetaImpeditivo(informacoesProcessoLoas.cookie, `LOAS IMPEDITIVOS: ${impeditivosString}`, informacoesProcessoLoas.tarefaId);
-            return { impeditivos: false }
+            return { resultadoTriagem: '1', resposta: 'IMPEDITIVOS' }
         }
     }
 }

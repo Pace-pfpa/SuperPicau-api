@@ -3,6 +3,8 @@ import { DetalhesRenda } from "../../../GetInformationFromSapiensForPicaPau/Busc
 export const renderRendaFamiliar = (impeditivo: boolean, renda: DetalhesRenda | null): string => {
     if (!impeditivo) return '';
 
+    const rendaAtAll = [...renda.informacoesFamilia, renda.informacoesRequerente];
+
     let resultado = `
         <p class="impeditivos-field">
             <strong><span>RENDA IMCOMPATÍVEL:</span></strong>
@@ -10,15 +12,51 @@ export const renderRendaFamiliar = (impeditivo: boolean, renda: DetalhesRenda | 
             <br />
             <span>${renda.rendaFamiliar}</span>
             <br /> Número de Membros da Família: ${renda.numMembrosFamilia}
-            <br /> Média da Renda - Data de Ajuizamento: R$ ${renda.mediaAjuizamento.toFixed(2)}
-            <br /> Média da Renda - Data de Requerimento: R$ ${renda.mediaRequerimento.toFixed(2)}
-            <br /> Salário Mínimo - Data de Ajuizamento: R$ ${renda.salarioMinimoAjuizamento.toFixed(2)}
-            <br /> Salário Mínimo - Data de Requerimento: R$ ${renda.salarioMinimoRequerimento.toFixed(2)}
+            <br /> Média da Renda - ${renda.informacoesRequerente.dataAjuizamento} (Ajuizamento): R$ ${renda.mediaAjuizamento.toFixed(2)}
+            <br /> Média da Renda - ${renda.informacoesRequerente.dataRequerimento} (Requerimento): R$ ${renda.mediaRequerimento.toFixed(2)}
+            <br /> Salário Mínimo - ${renda.informacoesRequerente.dataAjuizamento.split('/')[2]} (Ajuizamento): R$ ${renda.salarioMinimoAjuizamento.toFixed(2)}
+            <br /> Salário Mínimo - ${renda.informacoesRequerente.dataRequerimento.split('/')[2]} (Requerimento): R$ ${renda.salarioMinimoRequerimento.toFixed(2)}
         </p>
     `;
 
+    if (rendaAtAll.length) {
+        const validFamilyRows = rendaAtAll
+            .filter(member => (member.remuneracaoAjuizamento > 0 || member.remuneracaoRequerimento > 0) && member.isFallback === false)
+            .map(member => `
+                <tr>
+                    <td style="border: 1px solid #000; padding: 5px;">${member.nome}</td>
+                    <td style="border: 1px solid #000; padding: 5px;">${member.cpf}</td>
+                    <td style="border: 1px solid #000; padding: 5px;">R$ ${member.remuneracaoAjuizamento.toFixed(2)}</td>
+                    <td style="border: 1px solid #000; padding: 5px;">R$ ${member.remuneracaoRequerimento.toFixed(2)}</td>
+                </tr>
+            `).join('');
+
+        resultado += `
+          <p><strong>Remuneração encontrada para membros da família:</strong></p>
+            <table style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+            <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 5px;">Nome</th>
+                <th style="border: 1px solid #000; padding: 5px;">CPF</th>
+                <th style="border: 1px solid #000; padding: 5px;">Remuneração (Ajuizamento)</th>
+                <th style="border: 1px solid #000; padding: 5px;">Remuneração (Requerimento)</th>
+            </tr>
+            </thead>
+            <tbody>
+                ${validFamilyRows}
+            </tbody>
+            </table>      
+        `;
+    }
+
     if (renda.isFallback && renda.fallbackInfo?.length) {
-        const fallbackTableRows = renda.fallbackInfo
+        const uniqueFallbackInfo = renda.fallbackInfo.filter((info, index, self) => 
+            index === self.findIndex(other => 
+                other.fallbackRemuneracao === info.fallbackRemuneracao && other.fallbackDate === info.fallbackDate
+            )
+        );
+
+        const fallbackTableRows = uniqueFallbackInfo
             .map((info) => `
                 <tr>
                     <td style="border: 1px solid #000; padding: 5px;">${info.nome}</td>

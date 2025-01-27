@@ -20,7 +20,10 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     const result = await this.getInformationFromSapiensForPicaPauUseCaseRefactor.execute(data);
 
                     if ('warning' in result) {
-                        return resolve(response.status(200).json(result))
+                        return resolve(response.status(200).json({
+                            resultadoTriagem: '2',
+                            resposta: result
+                        }))
                     }
 
                     let processo: IFinalizarTriagem;
@@ -74,7 +77,8 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                 } catch (error) {
                     console.error("Farfan", error)
                     return response.status(400).json({
-                        message: error.message || "Erro inesperado durante a triagem."
+                        resultadoTriagem: '0',
+                        resposta: error.message || "Erro inesperado durante a triagem."
                     });
                 }
             }, 5000)

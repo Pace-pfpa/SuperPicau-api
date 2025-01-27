@@ -39,20 +39,10 @@ export class SuperDossie {
               ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }
-        } catch {
+        } catch (error) {
+          console.error(error.message)
           ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -131,9 +121,11 @@ export class SuperDossie {
           const dataSubtrair = 16;
           const DatasAtualEMenosDezesseis: Array<Date> =
             await datasRequerimentoNewDossie.dataRequerimento(paginaDosprevFormatada, dataSubtrair)
-          if (DatasAtualEMenosDezesseis[0] == null) {
+          if (!DatasAtualEMenosDezesseis[0]) {
             ArrayImpedimentos = ArrayImpedimentos + " AUSÊNCIA DE REQUERIMENTO AUTOR -";
+            objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO NO DOSSIÊ"
           } else {
+
             const verificarDataFinal: EmpregoDP[] =
               await dataPrevidenciariasNewDossie.Previdenciarias(
                 DatasAtualEMenosDezesseis[0],
@@ -145,7 +137,8 @@ export class SuperDossie {
               ArrayImpedimentos = ArrayImpedimentos + " EMPREGO -";
             }
           }
-        } catch {
+        } catch (error) {
+          console.error(error.message)
           ArrayImpedimentos = ArrayImpedimentos + " VÍNCULO ABERTO -";
         }
 
