@@ -1,7 +1,7 @@
-import { ILoginDTO } from '../../DTO/LoginDTO'
 import dotenv from 'dotenv';
+import { LoginDTO } from '../../modules/LoginUsuario';
 
-export async function LoginSapiens(login: ILoginDTO): Promise<string> {
+export async function LoginSapiens(login: LoginDTO): Promise<string> {
     dotenv.config();
     const CMD_Python = process.env.CMD_Python;
     const { spawn } = require('child_process');
