@@ -1,10 +1,12 @@
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { IDossieSocialInfo } from "../dto";
 import { ISislabraGF } from "../dto/Sislabra/interfaces/ISislabraGF";
+import { verificarGeracaoComponentes } from "./verificarGeracaoComponentes";
 
 export async function buscarSislabraLOAS(
     arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[],
-    dossieSocialInfo: IDossieSocialInfo
+    dossieSocialInfo: IDossieSocialInfo,
+    cookie: string
     ): Promise<{ sislabraPoloAtivo: ResponseArvoreDeDocumentoDTO[], sislabraGFInfo: ISislabraGF }> {
     
     const familiaAusente = dossieSocialInfo?.grupoFamiliarCpfs.length === 0;
@@ -14,7 +16,14 @@ export async function buscarSislabraLOAS(
     
     const labrasPoloAtivo = arrayDeDocumentos.filter((doc) => doc.movimento?.indexOf("PÓLO ATIVO") !== -1);
 
-    if (labrasPoloAtivo.length > 0) {
+    const arraySislabrasValidos: ResponseArvoreDeDocumentoDTO[] = [];
+    for (const documento of labrasPoloAtivo) {
+        const isErroComponente = await verificarGeracaoComponentes(documento, cookie)
+        if (isErroComponente instanceof Error) continue;
+        arraySislabrasValidos.push(documento);
+    }
+
+    if (arraySislabrasValidos.length > 0) {
         sislabraPoloAtivo = labrasPoloAtivo;
     }
 

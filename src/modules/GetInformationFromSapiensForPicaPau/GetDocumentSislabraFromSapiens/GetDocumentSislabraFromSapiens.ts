@@ -57,7 +57,7 @@ export class GetDocumentSislabraFromSapiens {
             ObjImpedimentos.imoveisRurais = GetImoveisRuraisSislabra;
         }
 
-        const GetEmpresaSislabra = await getEmpresa(paginaformatada)
+        const GetEmpresaSislabra = await getEmpresa(paginaformatada);
         if(GetEmpresaSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
             response = response + " EMPRESA AUTOR -";
             ObjImpedimentos.empresas = GetEmpresaSislabra;
@@ -66,7 +66,7 @@ export class GetDocumentSislabraFromSapiens {
             ObjImpedimentos.empresas = GetEmpresaSislabra;
         }
 
-        const GetBensTSE = await getBensTSE(paginaformatada)
+        const GetBensTSE = await getBensTSE(paginaformatada);
         if (GetBensTSE && indentificadorDocumento == 'AUTOR') {
             response += " BENS TSE AUTOR -";
             ObjImpedimentos.bensTSE = "BENS ENCONTRADOS NO AUTOR";
@@ -75,30 +75,30 @@ export class GetDocumentSislabraFromSapiens {
             ObjImpedimentos.bensTSE = "BENS ENCONTRADOS NO CONJUGE";
         }
 
-        const GetImoveisSP = await getImoveisSP(paginaformatada)
+        const GetImoveisSP = await getImoveisSP(paginaformatada);
         if (GetImoveisSP && indentificadorDocumento == 'AUTOR') {
-            response += " IMÓVEL SP AUTOR -"
+            response += " IMÓVEL SP AUTOR -";
             ObjImpedimentos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO AUTOR";
         } else if (GetImoveisSP && indentificadorDocumento == 'CONJUGE') {
-            response += " IMÓVEL SP CONJUGE -"
+            response += " IMÓVEL SP CONJUGE -";
             ObjImpedimentos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO CONJUGE";
         }
 
-        const GetEmbarcacao = await getEmbarcacoes(paginaformatada)
+        const GetEmbarcacao = await getEmbarcacoes(paginaformatada);
         if (GetEmbarcacao && indentificadorDocumento == 'AUTOR') {
-            response += " EMBARCAÇÃO AUTOR -"
+            response += " EMBARCAÇÃO AUTOR -";
             ObjImpedimentos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO AUTOR";
         } else if (GetEmbarcacao && indentificadorDocumento == 'CONJUGE') {
-            response += " EMBARCAÇÃO CONJUGE -"
+            response += " EMBARCAÇÃO CONJUGE -";
             ObjImpedimentos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO CONJUGE";
         }
 
-        const GetAeronave = await getAeronaves(paginaformatada)
+        const GetAeronave = await getAeronaves(paginaformatada);
         if (GetAeronave && indentificadorDocumento == 'AUTOR') {
-            response += " AERONAVE AUTOR -"
+            response += " AERONAVE AUTOR -";
             ObjImpedimentos.aeronave = "AERONAVE ENCONTRADA NO AUTOR";
         } else if (GetAeronave && indentificadorDocumento == 'CONJUGE') {
-            response += " AERONAVE CONJUGE -"
+            response += " AERONAVE CONJUGE -";
             ObjImpedimentos.aeronave = "AERONAVE ENCONTRADA NO CONJUGE";
         }
 

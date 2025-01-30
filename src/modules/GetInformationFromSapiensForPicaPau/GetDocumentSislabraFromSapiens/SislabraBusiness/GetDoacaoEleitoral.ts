@@ -8,11 +8,11 @@ export async function getDoacaoEleitoral(paginaSislabra: JSDOMType): Promise<boo
                        
             const StringParaVerificar: string = "Nenhum dado encontrado";
             
-            if(xpathDoacaoEleitoral_formatada.includes(StringParaVerificar)) return false
+            if(xpathDoacaoEleitoral_formatada.includes(StringParaVerificar)) return false;
             return true
 
         } catch(e) {
-            console.error('Erro leitura Xpath Doaçao Eleitoral (Sislabra)')
-            return true
+            console.error('Erro leitura Xpath Doacao (Sislabra)', e.message);
+            return false;
         }
 }

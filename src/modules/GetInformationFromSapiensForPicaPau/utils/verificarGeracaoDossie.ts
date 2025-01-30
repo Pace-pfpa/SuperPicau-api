@@ -22,7 +22,7 @@ export async function verificarGeracaoDossie(dosprev: ResponseArvoreDeDocumentoD
         }
 
     } catch (error) {
-        console.log("Dossiê com falha na geração.");
+        console.error("Dossiê com falha na geração.");
         throw new Error("DOSPREV COM FALHA NA GERAÇÃO");
     }
     

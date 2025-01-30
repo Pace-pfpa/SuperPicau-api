@@ -12,10 +12,10 @@ import { ExecuteReturnType,
         IInfoUploadDTO } from "./dto";
 import { processarDossie } from "./helps/processarDossie";
 import { atualizarEtiquetaAviso,
-        buscarDossieSocial, 
+        buscarDossieSocial,
         buscarSislabraLOAS, 
         buscarSislabraRuralMaternidade, 
-        verificarEAtualizarDossie, 
+        verificarEAtualizarDossie,
         verificarGeracaoDossie } from "./utils";
 
 export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
@@ -111,8 +111,8 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             
             if (tipo_triagem === 2) {
                 
-                const { sislabraPoloAtivo, sislabraGFInfo } = await buscarSislabraLOAS(arrayDeDocumentos, dossieSocialInfo);
-                if (!sislabraPoloAtivo) {
+                const { sislabraPoloAtivo, sislabraGFInfo } = await buscarSislabraLOAS(arrayDeDocumentos, dossieSocialInfo, cookie);
+                if (sislabraPoloAtivo.length === 0) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
                     return { warning: "SISLABRA NÃO EXISTE" }
                 }
@@ -138,7 +138,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return [informacoesProcesso, 'LOAS'];
             } else {
 
-                const { sislabraPoloAtivo, sislabraConjuge } = await buscarSislabraRuralMaternidade(arrayDeDocumentos);
+                const { sislabraPoloAtivo, sislabraConjuge } = await buscarSislabraRuralMaternidade(arrayDeDocumentos, cookie);
                 if (!sislabraPoloAtivo) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
                     return { warning: "SISLABRA NÃO EXISTE" }
