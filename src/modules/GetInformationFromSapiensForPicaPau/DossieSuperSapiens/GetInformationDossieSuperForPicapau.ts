@@ -10,13 +10,9 @@ import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
 import { datasRequerimentoAtivoNewDossie, datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformationRequerimento";
 
-export class SuperDossie {
-    async impedimentosMaternidade(
-        paginaDosprevFormatada: JSDOMType,
-        parginaDosPrev: string
-      ): Promise<IReturnImpedimentosMaternidade> {
+export class GetInformationDossieSuperForPicapau {
+    async impedimentosMaternidade(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosMaternidade> {
         let ArrayImpedimentos: string = '';
-
         const objInfoImpeditivos: IObjInfoImpeditivosMaternidade = {} as IObjInfoImpeditivosMaternidade;
 
         try {
@@ -46,18 +42,18 @@ export class SuperDossie {
 
 
 
-        const segurado = await seguradoEspecial.handle(parginaDosPrev);
-        const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await datasRequerimentoAtivoNewDossie.handle(
-          paginaDosprevFormatada
-        );
+        // const segurado = await seguradoEspecial.handle(parginaDosPrev);
+        // const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await datasRequerimentoAtivoNewDossie.handle(
+        //   paginaDosprevFormatada
+        // );
     
-        if (segurado !== -1) {
-          objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
-          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-        } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
-          objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
-          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-        }
+        // if (segurado !== -1) {
+        //   objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+        //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+        // } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+        //   objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
+        //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+        // }
 
           
 
@@ -95,17 +91,9 @@ export class SuperDossie {
           objImpedimentosRM: objInfoImpeditivos
         }
 
-      }
+    }
 
-
-
-
-
-
-
-      async impeditivosRural(paginaDosprevFormatada: JSDOMType,
-        parginaDosPrev: string
-      ): Promise<IReturnImpedimentosRural> {
+    async impeditivosRural(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosRural> {
         let ArrayImpedimentos: string = '';
 
         const objInfoImpeditivos: IObjInfoImpeditivosRural = {} as IObjInfoImpeditivosRural;
@@ -145,18 +133,18 @@ export class SuperDossie {
 
 
 
-        const segurado = await seguradoEspecial.handle(parginaDosPrev);
-        const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await datasRequerimentoAtivoNewDossie.handle(
-          paginaDosprevFormatada
-        );
+        // const segurado = await seguradoEspecial.handle(parginaDosPrev);
+        // const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await datasRequerimentoAtivoNewDossie.handle(
+        //   paginaDosprevFormatada
+        // );
     
-        if (segurado !== -1) {
-          objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
-          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-        } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
-          objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
-          ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-        }
+        // if (segurado !== -1) {
+        //   objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+        //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+        // } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+        //   objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
+        //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+        // }
 
 
 
@@ -192,22 +180,12 @@ export class SuperDossie {
             objImpedimentosRM: objInfoImpeditivos
           }
 
-      }
+    }
 
-
-
-
-
-      
-
-
-
-
-      async impeditivosLoas(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosLOAS> {
+    async impeditivosLoas(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosLOAS> {
           let ArrayImpedimentos: string = ''; 
           const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
-          
           try{
             
             const restabelecimentoRequerimentos = await restabelecimentoRequerimentosSuperDossie.handle(paginaDosprevFormatada)
@@ -263,5 +241,5 @@ export class SuperDossie {
           }catch(e){
             console.error(e)
           }
-      }
+    }
 }

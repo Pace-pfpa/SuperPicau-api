@@ -20,10 +20,7 @@ import { dataPrevidencias } from "./DosprevBusiness/InformationPrevidenciarias";
 import { buscarTabelaRelacaoDeProcessosNormalDossie } from "./Help/BuscarTabelaRelacaoDeProcessosNormalDossie";
 
 export class GetInformationDossieForPicaPau {
-  async impedimentosMaternidade(
-    paginaDosprevFormatada: JSDOMType,
-    parginaDosPrev: string
-    ): Promise<IReturnImpedimentosMaternidade> {
+  async impedimentosMaternidade(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosMaternidade> {
     let ArrayImpedimentos: string = '';
 
     
@@ -67,18 +64,18 @@ export class GetInformationDossieForPicaPau {
 
 
 
-    const segurado = await seguradoEspecial.handle(parginaDosPrev);
-    const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await requerimentosAtivos.handle(
-      paginaDosprevFormatada
-    );
+    // const segurado = await seguradoEspecial.handle(parginaDosPrev);
+    // const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await requerimentosAtivos.handle(
+    //   paginaDosprevFormatada
+    // );
 
-    if (segurado !== -1) {
-      objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
-      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-    } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
-      objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
-      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-    }
+    // if (segurado !== -1) {
+    //   objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+    //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+    // } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+    //   objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
+    //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+    // }
 
 
 
@@ -121,9 +118,7 @@ export class GetInformationDossieForPicaPau {
 
 
 
-  async impeditivosRural(
-    paginaDosprevFormatada: JSDOMType,
-    parginaDosPrev: string):Promise<IReturnImpedimentosRural> {
+  async impeditivosRural(paginaDosprevFormatada: JSDOMType):Promise<IReturnImpedimentosRural> {
 
     let ArrayImpedimentos: string = '';
 
@@ -163,18 +158,18 @@ export class GetInformationDossieForPicaPau {
 
 
 
-    const segurado = await seguradoEspecial.handle(parginaDosPrev);
-    const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await requerimentosAtivos.handle(
-      paginaDosprevFormatada
-    );
+    // const segurado = await seguradoEspecial.handle(parginaDosPrev);
+    // const requerimentoAtivo: IImpeditivoRequerimentoAtivo = await requerimentosAtivos.handle(
+    //   paginaDosprevFormatada
+    // );
 
-    if (segurado !== -1) {
-      objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
-      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
-    } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
-      objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
-      ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR (Requerimento Ativo) -";
-    }
+    // if (segurado !== -1) {
+    //   objInfoImpeditivos.concessaoAnterior = 'SEGURADO ESPECIAL ENCONTRADO';
+    //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR -";
+    // } else if (requerimentoAtivo.haveRequerimentoAtivo === true) {
+    //   objInfoImpeditivos.concessaoAnterior = requerimentoAtivo.requerimentoAtivo;
+    //   ArrayImpedimentos = ArrayImpedimentos + " CONCESSÃO ANTERIOR (Requerimento Ativo) -";
+    // }
 
 
 

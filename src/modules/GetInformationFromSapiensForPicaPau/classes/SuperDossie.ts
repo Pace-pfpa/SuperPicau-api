@@ -1,7 +1,8 @@
 const { JSDOM } = require('jsdom');
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
-import { superDossie } from "../DossieSuperSapiens";
+import { getFichaSinteticaDoProcessoSuper } from "../BuscarImpedimentos/utils/dossieExtractor/getFichaSinteticoDoProcessoSuper";
+import { getInformationDossieSuperForPicapau } from "../DossieSuperSapiens";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 
@@ -13,7 +14,7 @@ export class SuperDossie {
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
 
-        const impeditivosRural = await superDossie.impeditivosRural(paginaDosPrevFormatada, paginaDosPrev);
+        const impeditivosRural = await getInformationDossieSuperForPicapau.impeditivosRural(paginaDosPrevFormatada);
 
         const impedimentos = impeditivosRural.arrayDeImpedimentos.split('-');
         const objImpedimentos = impeditivosRural.objImpedimentosRM;
@@ -28,7 +29,7 @@ export class SuperDossie {
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
 
-        const impeditivosMaternidade = await superDossie.impedimentosMaternidade(paginaDosPrevFormatada, paginaDosPrev);
+        const impeditivosMaternidade = await getInformationDossieSuperForPicapau.impedimentosMaternidade(paginaDosPrevFormatada);
 
         const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
         const objImpedimentos = impeditivosMaternidade.objImpedimentosRM;
@@ -36,16 +37,28 @@ export class SuperDossie {
         return { impedimentos, objImpedimentos };
     }
 
-    async buscarImpedimentosForLOAS(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
+    async buscarImpedimentosForLOAS(
+        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO,
+        cookie: string
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
 
-        const impeditivosLoas = await superDossie.impeditivosLoas(paginaDosPrevFormatada);
+        const impeditivosLoas = await getInformationDossieSuperForPicapau.impeditivosLoas(paginaDosPrevFormatada);
 
         const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
         const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
 
         return { impedimentos, objImpedimentos };
+    }
+
+    async dossieExtractorMaternidade(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<void> {
+        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
+        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
+        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+
+        const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
+        console.log(fichaSintetica);
     }
 }
