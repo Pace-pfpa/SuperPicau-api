@@ -3,6 +3,7 @@ import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { getFichaSinteticaDoProcessoNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getFichaSinteticaDoProcessoNormal";
 import { getProcessosMovidosNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getProcessosMovidosNormal";
+import { getRequerimentosNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getRequerimentosNormal";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { getInformationDossieForPicaPau } from "../GetInformationFromDossieForPicaPau";
@@ -28,10 +29,13 @@ export class NormalDossie {
 
         const fichaSintetica = await getFichaSinteticaDoProcessoNormal(paginaDosPrevFormatada);
         const processosMovidos = await getProcessosMovidosNormal(paginaDosPrevFormatada);
+        const requerimentos = await getRequerimentosNormal(paginaDosPrevFormatada);
         console.log("FICHA SINTÉTICA")
         console.log(fichaSintetica);
         console.log("PROCESSOS MOVIDOS")
         console.log(processosMovidos)
+        console.log("REQUERIMENTOS")
+        console.log(requerimentos)
 
         const impeditivosMaternidade = await getInformationDossieForPicaPau.impedimentosMaternidade(paginaDosPrevFormatada);
 
@@ -60,8 +64,14 @@ export class NormalDossie {
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
 
         const fichaSintetica = await getFichaSinteticaDoProcessoNormal(paginaDosPrevFormatada);
-        console.log(fichaSintetica);
         const processosMovidos = await getProcessosMovidosNormal(paginaDosPrevFormatada);
-        console.log(processosMovidos);
+        const requerimentos = await getRequerimentosNormal(paginaDosPrevFormatada);
+        console.log("FICHA SINTÉTICA")
+        console.log(fichaSintetica);
+        console.log("PROCESSOS MOVIDOS")
+        console.log(processosMovidos)
+        console.log("REQUERIMENTOS")
+        console.log(requerimentos)
+
     }
 }

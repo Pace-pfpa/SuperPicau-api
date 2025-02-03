@@ -33,6 +33,6 @@ export async function getProcessosMovidosSuper(dossie: JSDOMType): Promise<IProc
         return arrayProcessosMovidos;
     } catch (error) {
         console.error("Error in getProcessosMovidosSuper:", error.message);
-        return null;
+        return [];
     }
 }

@@ -3,6 +3,7 @@ import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { getFichaSinteticaDoProcessoSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getFichaSinteticoDoProcessoSuper";
 import { getProcessosMovidosSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getProcessosMovidosSuper";
+import { getRequerimentosSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getRequerimentosSuper";
 import { getInformationDossieSuperForPicapau } from "../DossieSuperSapiens";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
@@ -32,10 +33,13 @@ export class SuperDossie {
 
         const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
         const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
+        const requerimentos = await getRequerimentosSuper(paginaDosPrevFormatada);
         console.log("FICHA SINTÉTICA")
         console.log(fichaSintetica);
         console.log("PROCESSOS MOVIDOS")
         console.log(processosMovidos)
+        console.log("REQUERIMENTOS")
+        console.log(requerimentos)
 
         const impeditivosMaternidade = await getInformationDossieSuperForPicapau.impedimentosMaternidade(paginaDosPrevFormatada);
 
@@ -67,8 +71,13 @@ export class SuperDossie {
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
 
         const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
-        console.log(fichaSintetica);
         const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
+        const requerimentos = await getRequerimentosSuper(paginaDosPrevFormatada);
+        console.log("FICHA SINTÉTICA")
+        console.log(fichaSintetica);
+        console.log("PROCESSOS MOVIDOS")
         console.log(processosMovidos)
+        console.log("REQUERIMENTOS")
+        console.log(requerimentos)
     }
 }
