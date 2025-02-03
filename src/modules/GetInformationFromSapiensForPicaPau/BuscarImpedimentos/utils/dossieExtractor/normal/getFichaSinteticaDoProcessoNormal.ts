@@ -1,8 +1,9 @@
-import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
-import { extractField } from "../../../helps/renda.utils/extractField";
-import { IFichaSintetica } from "../../dtos/interfaces/IFichaSintetica";
-import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
-import { CorrigirCpfComZeros } from "../../../../CreateInterested/Helps/CorrigirCpfComZeros";
+import { JSDOMType } from "../../../../../../shared/dtos/JSDOM";
+import { CorrigirCpfComZeros } from "../../../../../CreateInterested/Helps/CorrigirCpfComZeros";
+import { extractField } from "../../../../helps/renda.utils/extractField";
+import { IFichaSintetica } from "../../../dtos/interfaces/IFichaSintetica";
+import { getXPathText } from "../../../../../../shared/utils/GetTextoPorXPATH";
+
 
 export async function getFichaSinteticaDoProcessoNormal(dossie: JSDOMType): Promise<IFichaSintetica> {
     const xpathMap = {

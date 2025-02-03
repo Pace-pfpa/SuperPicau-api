@@ -1,7 +1,8 @@
 const { JSDOM } = require('jsdom');
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
-import { getFichaSinteticaDoProcessoNormal } from "../BuscarImpedimentos/utils/dossieExtractor/getFichaSinteticaDoProcessoNormal";
+import { getFichaSinteticaDoProcessoNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getFichaSinteticaDoProcessoNormal";
+import { getProcessosMovidosNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getProcessosMovidosNormal";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { getInformationDossieForPicaPau } from "../GetInformationFromDossieForPicaPau";
@@ -24,6 +25,13 @@ export class NormalDossie {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
+
+        const fichaSintetica = await getFichaSinteticaDoProcessoNormal(paginaDosPrevFormatada);
+        const processosMovidos = await getProcessosMovidosNormal(paginaDosPrevFormatada);
+        console.log("FICHA SINTÉTICA")
+        console.log(fichaSintetica);
+        console.log("PROCESSOS MOVIDOS")
+        console.log(processosMovidos)
 
         const impeditivosMaternidade = await getInformationDossieForPicaPau.impedimentosMaternidade(paginaDosPrevFormatada);
 
@@ -53,5 +61,7 @@ export class NormalDossie {
 
         const fichaSintetica = await getFichaSinteticaDoProcessoNormal(paginaDosPrevFormatada);
         console.log(fichaSintetica);
+        const processosMovidos = await getProcessosMovidosNormal(paginaDosPrevFormatada);
+        console.log(processosMovidos);
     }
 }

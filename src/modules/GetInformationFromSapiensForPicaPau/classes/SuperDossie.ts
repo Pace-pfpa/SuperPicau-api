@@ -1,7 +1,8 @@
 const { JSDOM } = require('jsdom');
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
-import { getFichaSinteticaDoProcessoSuper } from "../BuscarImpedimentos/utils/dossieExtractor/getFichaSinteticoDoProcessoSuper";
+import { getFichaSinteticaDoProcessoSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getFichaSinteticoDoProcessoSuper";
+import { getProcessosMovidosSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getProcessosMovidosSuper";
 import { getInformationDossieSuperForPicapau } from "../DossieSuperSapiens";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
@@ -28,6 +29,13 @@ export class SuperDossie {
         const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
+
+        const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
+        const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
+        console.log("FICHA SINTÉTICA")
+        console.log(fichaSintetica);
+        console.log("PROCESSOS MOVIDOS")
+        console.log(processosMovidos)
 
         const impeditivosMaternidade = await getInformationDossieSuperForPicapau.impedimentosMaternidade(paginaDosPrevFormatada);
 
@@ -60,5 +68,7 @@ export class SuperDossie {
 
         const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
         console.log(fichaSintetica);
+        const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
+        console.log(processosMovidos)
     }
 }
