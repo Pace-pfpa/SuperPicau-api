@@ -3,6 +3,7 @@ import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { getFichaSinteticaDoProcessoSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getFichaSinteticoDoProcessoSuper";
 import { getProcessosMovidosSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getProcessosMovidosSuper";
+import { getRelacoesPrevidenciariasSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getRelacoesPrevidenciariasSuper";
 import { getRequerimentosSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getRequerimentosSuper";
 import { getInformationDossieSuperForPicapau } from "../DossieSuperSapiens";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
@@ -34,12 +35,16 @@ export class SuperDossie {
         const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
         const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
         const requerimentos = await getRequerimentosSuper(paginaDosPrevFormatada);
+        const relacoesPrevidenciarias = await getRelacoesPrevidenciariasSuper(paginaDosPrevFormatada);
+
         console.log("FICHA SINTÉTICA")
         console.log(fichaSintetica);
         console.log("PROCESSOS MOVIDOS")
         console.log(processosMovidos)
         console.log("REQUERIMENTOS")
         console.log(requerimentos)
+        console.log("RELACOES PREVIDENCIARIAS")
+        console.log(relacoesPrevidenciarias)
 
         const impeditivosMaternidade = await getInformationDossieSuperForPicapau.impedimentosMaternidade(paginaDosPrevFormatada);
 
@@ -73,11 +78,15 @@ export class SuperDossie {
         const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
         const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
         const requerimentos = await getRequerimentosSuper(paginaDosPrevFormatada);
+        const relacoesPrevidenciarias = await getRelacoesPrevidenciariasSuper(paginaDosPrevFormatada);
+
         console.log("FICHA SINTÉTICA")
         console.log(fichaSintetica);
         console.log("PROCESSOS MOVIDOS")
         console.log(processosMovidos)
         console.log("REQUERIMENTOS")
         console.log(requerimentos)
+        console.log("RELACOES PREVIDENCIARIAS")
+        console.log(relacoesPrevidenciarias)
     }
 }

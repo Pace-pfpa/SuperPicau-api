@@ -18,7 +18,6 @@ export async function getFichaSinteticaDoProcessoNormal(dossie: JSDOMType): Prom
         try {
             return await extractField(dossie, xpath, errorMessage);
         } catch (error) {
-            console.error(`Erro ao extrair campo: ${errorMessage}`);
             return null;
         }
     };

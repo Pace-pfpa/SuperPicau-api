@@ -14,7 +14,7 @@ export async function getProcessosMovidosNormal(dossie: JSDOMType): Promise<IPro
         const baseXPath = "/html/body/div/div[2]/table/tbody/tr";
         const rowCount = countChildElements(dossie, `${baseXPath}`);
 
-        for (let row = 1; row <= rowCount; row++) {
+        for (let row = 2; row <= rowCount; row++) {
             const processoJudicialRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[1]`, "Processo judicial não encontrado");
             const assuntoRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[2]`, "Assunto não encontrado");
             const ajuizamentoRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[5]`, "Assunto não encontrado");
@@ -33,6 +33,6 @@ export async function getProcessosMovidosNormal(dossie: JSDOMType): Promise<IPro
         return arrayProcessosMovidos;
     } catch (error) {
         console.error("Error in getProcessosMovidosNormal:", error.message);
-        return null;
+        return [];
     }
 }

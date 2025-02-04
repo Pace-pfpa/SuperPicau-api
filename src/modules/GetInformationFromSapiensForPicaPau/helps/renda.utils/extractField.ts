@@ -1,5 +1,5 @@
 import { JSDOMType } from "../../../../shared/dtos/JSDOM";
-import { correçaoDoErroDeFormatoDoSapiens } from "../../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
+//import { correçaoDoErroDeFormatoDoSapiens } from "../../../../shared/utils/CorreçaoDoErroDeFormatoDoSapiens";
 import { getXPathText } from "../../../../shared/utils/GetTextoPorXPATH";
 
 export async function extractField(dom: JSDOMType, xpath: string, errorMessage: string): Promise<string> {
@@ -8,5 +8,5 @@ export async function extractField(dom: JSDOMType, xpath: string, errorMessage: 
         console.error(errorMessage);
         throw new Error(errorMessage);
     }
-    return correçaoDoErroDeFormatoDoSapiens(value.trim());
+    return value.trim();
 }

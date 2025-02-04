@@ -17,7 +17,6 @@ export async function getFichaSinteticaDoProcessoSuper(dossie: JSDOMType): Promi
         try {
             return await extractField(dossie, xpath, errorMessage);
         } catch (error) {
-            console.error(`Erro ao extrair campo: ${errorMessage}`);
             return null;
         }
     };
