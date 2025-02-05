@@ -1,4 +1,4 @@
-import { IObjInfoImpeditivosMaternidade } from "./IObjInfoImpeditivos";
+import { IObjInfoImpeditivosMaternidade } from "./IObjInfoImpeditivosMaternidade";
 
 export interface IReturnImpedimentosMaternidade {
     arrayDeImpedimentos: string;
