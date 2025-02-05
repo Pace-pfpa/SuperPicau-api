@@ -1,13 +1,17 @@
 const { JSDOM } = require('jsdom');
 import { ResponseArvoreDeDocumentoDTO } from "../../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../../GetDocumento";
-import { IResponseSislabra, IImpedimentos } from "../../dto";
+import { IResponseSislabraRural, IImpedimentosRural } from "../../dto";
 import { getDocumentSislabraFromSapiens } from "../../GetDocumentSislabraFromSapiens";
 
-export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: ResponseArvoreDeDocumentoDTO, documentoConjuge: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<IResponseSislabra> {
+export async function impedimentosSislabraRural(
+    documentoPoloAtivo: ResponseArvoreDeDocumentoDTO, 
+    documentoConjuge: ResponseArvoreDeDocumentoDTO, 
+    cookie: string
+): Promise<IResponseSislabraRural> {
     let response = '';
-    let impedimentosAutor: IImpedimentos;
-    let impedimentosConjuge: IImpedimentos;
+    let impedimentosAutor: IImpedimentosRural;
+    let impedimentosConjuge: IImpedimentosRural;
 
     if (documentoPoloAtivo && documentoConjuge) {
 
@@ -40,7 +44,7 @@ export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: R
 
     const impedimentosString = response.split('-')
 
-    const impedimentos: IResponseSislabra = {
+    const impedimentos: IResponseSislabraRural = {
         impedimentos: impedimentosString,
         autor: impedimentosAutor,
         conjuge: impedimentosConjuge

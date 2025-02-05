@@ -1,7 +1,7 @@
-import { renderTable } from "..";
-import { IImpedimentos } from "../../../GetInformationFromSapiensForPicaPau/dto";
+import { renderTable } from "../..";
+import { IImpedimentosMaternidade } from "../../../../GetInformationFromSapiensForPicaPau/dto/Sislabra/interfaces/maternidade/IImpedimentosMaternidade";
 
-export const renderImoveisRurais = (autor: IImpedimentos, conjuge: IImpedimentos): string => {
+export const renderImoveisRuraisMaternidade = (autor: IImpedimentosMaternidade, conjuge: IImpedimentosMaternidade): string => {
     const autorImoveis = autor?.imoveisRurais ?? [];
     const conjugeImoveis = conjuge?.imoveisRurais ?? [];
 

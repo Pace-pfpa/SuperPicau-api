@@ -1,14 +1,15 @@
 import { minutaLimpaClass, minutaSujaClass } from ".";
-import { IFinalizarTriagem, IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../dto";
+import { IFinalizarTriagem, IInformacoesProcessoDTO, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjugeRural } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
+import { IResponseLabraAutorConjugeMaternidade } from "../dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
 import { atualizarEtiquetaImpeditivo, atualizarEtiquetaProcessoLimpo, isProcessoLimpo } from "../utils";
 
 export class FinalizarTriagem {
     async rural(
         impeditivos: string[], 
-        impeditivosLabrasRM: IResponseLabraAutorConjuge,
-        impeditivosDosprevRM: IObjInfoImpeditivosRural,
+        impeditivosLabrasRural: IResponseLabraAutorConjugeRural,
+        impeditivosDosprevRural: IObjInfoImpeditivosRural,
         informacoesProcessoRM: IInformacoesProcessoDTO
     ): Promise<IFinalizarTriagem> {
         
@@ -32,7 +33,7 @@ export class FinalizarTriagem {
         
             if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
-                    await minutaSujaClass.ruralProcessoSujo(informacoesProcessoRM, impeditivosDosprevRM, impeditivosLabrasRM, impeditivos);
+                    await minutaSujaClass.ruralProcessoSujo(informacoesProcessoRM, impeditivosDosprevRural, impeditivosLabrasRural, impeditivos);
                 } catch (error) {
                     console.error("Erro na função finalizarTriagem ao subir a minuta suja (rural): ", error);
                 }
@@ -45,8 +46,8 @@ export class FinalizarTriagem {
 
     async maternidade(
         impeditivos: string[], 
-        impeditivosLabrasRM: IResponseLabraAutorConjuge,
-        impeditivosDosprevRM: IObjInfoImpeditivosMaternidade,
+        impeditivosLabrasMaternidade: IResponseLabraAutorConjugeMaternidade,
+        impeditivosDosprevMaternidade: IObjInfoImpeditivosMaternidade,
         informacoesProcessoRM: IInformacoesProcessoDTO
     ): Promise<IFinalizarTriagem> {
 
@@ -70,7 +71,12 @@ export class FinalizarTriagem {
 
             if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
-                    await minutaSujaClass.maternidadeProcessoSujo(informacoesProcessoRM, impeditivosDosprevRM, impeditivosLabrasRM, impeditivos);
+                    await minutaSujaClass.maternidadeProcessoSujo(
+                        informacoesProcessoRM, 
+                        impeditivosDosprevMaternidade, 
+                        impeditivosLabrasMaternidade, 
+                        impeditivos
+                    );
                 } catch (error) {
                     console.error("Erro na função finalizarTriagem ao subir a minuta suja (maternidade): ", error);
                 }

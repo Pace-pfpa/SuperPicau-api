@@ -34,7 +34,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
  try {
      // 1. Verifica apenas dossiês normais
      if (normalDossie && !superDossie) {
-        console.log("-> DOSPREV: CASILLAS (Somente dossiês normais)");
         for (let i = 0; i < normalDossie.length; i++) {
             if (!validarDossie(normalDossie[i])) {
                 console.warn(`Alerta: Dossiê normal inválido detectado na posição ${i}. Continuando a busca.`);
@@ -51,7 +50,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
 
     // 2. Verifica apenas dossiês super
     if (!normalDossie && superDossie) {
-        console.log("-> DOSPREV: RAMOS (Somente dossiês super)");
         for (let i = 0; i < superDossie.length; i++) {
             if (!validarDossie(superDossie[i])) {
                 console.warn(`Alerta: Dossiê super inválido detectado na posição ${i}. Continuando a busca.`);
@@ -68,7 +66,6 @@ export async function verificarDossieMaisAtual(cpf: string, cookie:string, norma
     
     // 3. Quando existem dossiês normais e super
     if (normalDossie && superDossie) {
-        console.log('-> DOSPREV: ARBELOA (Dossiês normais e super)');
 
         let dossieNormalEncontrado: any = null;
         let dossieSuperEncontrado: any = null;

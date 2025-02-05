@@ -6,20 +6,27 @@ import { updateDocumentoUseCase } from "../../UpdateDocumento";
 import { IInformacoesProcessoDTO, 
         IInformacoesProcessoLoasDTO, 
         IObjInfoImpeditivosLoas, 
-        IObjInfoImpeditivosMaternidade, 
-        IResponseLabraAutorConjuge } from "../dto";
+        IObjInfoImpeditivosMaternidade,
+        IResponseLabraAutorConjugeRural} from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
-import { gerarObjetoUploadRM } from "../../CreateHtmlForRM/utils/gerarObjetoUploadRM";
+import { gerarObjetoUploadRural } from "../../CreateHtmlForRM/utils/gerarObjetoUploadRural";
 import { atualizarHtmlEditor } from "../utils/atualizarHtmlEditor";
 import { getComponenteDigitalIDRM } from "../utils/getComponenteDigitalIDRM";
 import { obterHtmlETicketEditor } from "../utils/obterHtmlETicketEditor";
 import { gerarObjetoUploadLoas } from "../../CreateHtmlForRM/utils/gerarObjetoUploadLoas";
 import { getComponenteDigitalIDLoas } from "../utils/getComponenteDigitalIDLoas";
+import { IResponseLabraAutorConjugeMaternidade } from "../dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
+import { gerarObjetoUploadMaternidade } from "../../CreateHtmlForRM/utils/gerarObjetoUploadMaternidade";
 
 export class MinutaSuja {
-    async maternidadeProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosMaternidade, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
-        const objetoUpload = gerarObjetoUploadRM(impeditivos);
+    async maternidadeProcessoSujo(
+        informacoesProcesso: IInformacoesProcessoDTO, 
+        impeditivosDosprev: IObjInfoImpeditivosMaternidade, 
+        impeditivosLabras: IResponseLabraAutorConjugeMaternidade, 
+        impeditivos: string[]
+    ): Promise<void> {
+        const objetoUpload = gerarObjetoUploadMaternidade(impeditivos);
         let htmlUpload = await impeditivosHtmlMaternidade.execute(objetoUpload, informacoesProcesso.infoUpload, impeditivosDosprev, impeditivosLabras);
 
         let documentoId: number;
@@ -86,8 +93,13 @@ export class MinutaSuja {
         }
     }
 
-    async ruralProcessoSujo(informacoesProcesso: IInformacoesProcessoDTO, impeditivosDosprev: IObjInfoImpeditivosRural, impeditivosLabras: IResponseLabraAutorConjuge, impeditivos: string[]): Promise<void> {
-        const objetoUpload = gerarObjetoUploadRM(impeditivos);
+    async ruralProcessoSujo(
+        informacoesProcesso: IInformacoesProcessoDTO, 
+        impeditivosDosprev: IObjInfoImpeditivosRural, 
+        impeditivosLabras: IResponseLabraAutorConjugeRural, 
+        impeditivos: string[]
+    ): Promise<void> {
+        const objetoUpload = gerarObjetoUploadRural(impeditivos);
         let htmlUpload = await impeditivosHtmlRural.execute(objetoUpload, informacoesProcesso.infoUpload, impeditivosDosprev, impeditivosLabras);
 
         let documentoId: number;
@@ -155,7 +167,12 @@ export class MinutaSuja {
         }
     }
 
-    async loasProcessoSujo(informacoesProcessoLoas: IInformacoesProcessoLoasDTO, impeditivosDosprev: IObjInfoImpeditivosLoas, impeditivosLabras: IResponseLabraAutorGF, impeditivos: string[]): Promise<void> {
+    async loasProcessoSujo(
+        informacoesProcessoLoas: IInformacoesProcessoLoasDTO, 
+        impeditivosDosprev: IObjInfoImpeditivosLoas, 
+        impeditivosLabras: IResponseLabraAutorGF, 
+        impeditivos: string[]
+    ): Promise<void> {
         const objetoUpload = gerarObjetoUploadLoas(impeditivos);
         let htmlUpload = await impeditivosHtmlLoas.execute(objetoUpload, informacoesProcessoLoas.infoUpload, impeditivosDosprev, impeditivosLabras);
 

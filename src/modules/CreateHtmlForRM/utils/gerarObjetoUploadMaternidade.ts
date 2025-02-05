@@ -1,22 +1,20 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../dto/HtmlImpeditivosRMDTO";
+import { HtmlIImpeditivosMaternidadeDTO } from "../dto/HtmlImpeditivosMaternidade";
 
-export function gerarObjetoUploadRM(impeditivos: string[]): HtmlIImpeditivosRuralMaternidadeDTO {
-
+export function gerarObjetoUploadMaternidade(impeditivos: string[]): HtmlIImpeditivosMaternidadeDTO {
     const sislabraAutorPresente = impeditivos.some(imp => imp.trim() === "SISLABRA AUTOR NÃO EXISTE");
     const sislabraConjugePresente = impeditivos.some(imp => imp.trim() === "SISLABRA GF NÃO EXISTE");
-
     
     // Cria um objeto com os atributos dependentes dos impeditivos encontrados
-    const objeto: HtmlIImpeditivosRuralMaternidadeDTO = {
+    const objeto: HtmlIImpeditivosMaternidadeDTO = {
         advogado: impeditivos.some(imp => imp.trim() === "ADVOGADO"),
-        requerimento: impeditivos.some(imp => imp.trim() === "AUSÊNCIA DE REQUERIMENTO AUTOR"),
+        litispendencia: impeditivos.some(imp => imp.trim() === "LITISPENDÊNCIA"),
+        requerimento: impeditivos.some(imp => imp.trim() === "AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO"),
+        beneficioAtivo: impeditivos.some(imp => imp.trim() === "BENEFÍCIO ATIVO"),
+        concessaoAnterior: impeditivos.some(imp => imp.trim() === "CONCESSÃO ANTERIOR"),
+        beneficioIncompativel: impeditivos.some(imp => imp.trim() === "BENEFÍCIO INCOMPATÍVEL"),
         emprego: impeditivos.some(imp => imp.trim() === "EMPREGO"),
         vinculoAberto: impeditivos.some(imp => imp.trim() === "VÍNCULO ABERTO"),
-        concessaoAnterior: impeditivos.some(imp => imp.trim() === "CONCESSÃO ANTERIOR"),
-        litispendencia: impeditivos.some(imp => imp.trim() === "POSSÍVEL LITISPENDÊNCIA/COISA JULGADA r" || imp.trim() === "POSSÍVEL LITISPENDÊNCIA/COISA JULGADA m"),
-        idade: impeditivos.some(imp => imp.trim() === "IDADE"),
         veiculoAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "VEICULO AUTOR"),
-        empregoAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "EMPREGO AUTOR"),
         imovelruralAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "IMOVEIS RURAIS AUTOR"),
         empresaAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "EMPRESA AUTOR"),
         bensTSEAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "BENS TSE AUTOR"),
@@ -24,7 +22,6 @@ export function gerarObjetoUploadRM(impeditivos: string[]): HtmlIImpeditivosRura
         embarcacaoAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "EMBARCAÇÃO AUTOR"),
         aeronaveAutor: sislabraAutorPresente ? null : impeditivos.some(imp => imp.trim() === "AERONAVE AUTOR"),
         veiculoConjuge: sislabraConjugePresente ? null : impeditivos.some(imp => imp.trim() === "VEICULO CONJUGE"),
-        empregoConjuge: sislabraConjugePresente ? null : impeditivos.some(imp => imp.trim() === "EMPREGO CONJUGE"),
         imovelruralConjuge: sislabraConjugePresente ? null : impeditivos.some(imp => imp.trim() === "IMOVEIS RURAIS CONJUGE"),
         empresaConjuge: sislabraConjugePresente ? null : impeditivos.some(imp => imp.trim() === "EMPRESA CONJUGE"),
         bensTSEConjuge: sislabraConjugePresente ? null : impeditivos.some(imp => imp.trim() === "BENS TSE CONJUGE"),

@@ -3,7 +3,7 @@ export * from './estilos';
 export * from './renders/renderLitispendencia'
 export * from './renders/renderCampoPatrimonioImcompativel';
 export * from './renders/renderConcessao';
-export * from './renders/renderImoveisRurais';
+export * from './renders/rural/renderImoveisRuraisRural';
 export * from './renders/renderPatrimonioImcompativel';
 export * from './renders/renderRequerimento';
 export * from './renders/renderSecao';

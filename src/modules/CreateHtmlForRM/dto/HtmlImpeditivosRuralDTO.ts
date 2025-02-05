@@ -1,4 +1,4 @@
-export interface HtmlIImpeditivosRuralMaternidadeDTO {
+export interface HtmlIImpeditivosRuralDTO {
     advogado: boolean;
     requerimento: boolean;
     emprego: boolean;
