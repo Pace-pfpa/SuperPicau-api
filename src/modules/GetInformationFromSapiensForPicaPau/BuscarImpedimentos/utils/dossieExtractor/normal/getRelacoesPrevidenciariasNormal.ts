@@ -15,6 +15,7 @@ export async function getRelacoesPrevidenciariasNormal(dossie: JSDOMType): Promi
 
         for (let row = 2; row <= rowCount; row++) {
             const seqRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[1]`, "Seq não encontrado");
+            const nbRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[3]`, "NB não encontrado");
             const origemVinculoRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[4]`, "Origem não encontrada");
             const dataInicioRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[5]`, "Data de início não encontrada");
             const dataFimRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[6]`, "Data fim não encontrada");
@@ -24,6 +25,7 @@ export async function getRelacoesPrevidenciariasNormal(dossie: JSDOMType): Promi
 
             const objetoRelacao: IRelacaoPrevidenciaria = {
                 seq: seqRaw,
+                nb: nbRaw,
                 origemDoVinculo: origemVinculoRaw,
                 dataInicio: dataInicioRaw,
                 dataFim: dataFimRaw,
