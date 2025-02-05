@@ -5,7 +5,6 @@ export const safeExtractField = async (dossie: JSDOMType, xpath: string, errorMe
         try {
             return await extractField(dossie, xpath, errorMessage);
         } catch (error) {
-            console.error(`Erro ao extrair campo: ${errorMessage}`);
             return null;
         }
 };
