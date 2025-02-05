@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { GetInformationFromSapiensForPicaPauUseCaseRefactor } from './GetInformationFromSapiensForPicaPauUseCaseRefactor';
 import { BuscarImpedimentosUseCase } from './BuscarImpedimentos/BuscarImpedimentosUseCase';
 import { GetInformationsFromSapiensDTO } from '.';
-import { IFinalizarTriagem, IResponseLabraAutorConjuge } from './dto';
+import { IFinalizarTriagem } from './dto';
 import { finalizarTriagem } from './classes';
 
 export class GetInformationFromSapiensForPicaPauControllerRefactor {
@@ -29,8 +29,6 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     let processo: IFinalizarTriagem;
                     let impedimentos: string[];
 
-                    let impedimentosLabraRM: IResponseLabraAutorConjuge;
-
                     if (result[1] === 'LOAS') {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
                         impedimentos = buscaDeImpedimentos.impedimentos;
@@ -47,26 +45,26 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     } else if (result[0].tipo_triagem === 0) {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosRural(result[0]);
                         impedimentos = buscaDeImpedimentos.impedimentos;
-                        impedimentosLabraRM = buscaDeImpedimentos.objImpedimentosLabra;
-                        let impedimentosDosprevRM = buscaDeImpedimentos.objImpedimentos;
+                        let impedimentosLabraRural = buscaDeImpedimentos.objImpedimentosLabra;
+                        let impedimentosDosprevRural = buscaDeImpedimentos.objImpedimentos;
 
                         processo = await finalizarTriagem.rural(
                             impedimentos,
-                            impedimentosLabraRM,
-                            impedimentosDosprevRM,
+                            impedimentosLabraRural,
+                            impedimentosDosprevRural,
                             result[0]
                         );
 
                     } else {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosMaternidade(result[0])
                         impedimentos = buscaDeImpedimentos.impedimentos;
-                        impedimentosLabraRM = buscaDeImpedimentos.objImpedimentosLabra;
-                        let impedimentosDosprevRM = buscaDeImpedimentos.objImpedimentos;
+                        let impedimentosLabraMaternidade = buscaDeImpedimentos.objImpedimentosLabra;
+                        let impedimentosDosprevMaternidade = buscaDeImpedimentos.objImpedimentos;
 
                         processo = await finalizarTriagem.maternidade(
                             impedimentos,
-                            impedimentosLabraRM,
-                            impedimentosDosprevRM,
+                            impedimentosLabraMaternidade,
+                            impedimentosDosprevMaternidade,
                             result[0]
                         );
 

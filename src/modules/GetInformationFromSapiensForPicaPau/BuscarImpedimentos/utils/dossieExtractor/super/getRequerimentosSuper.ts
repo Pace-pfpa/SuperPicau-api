@@ -15,6 +15,7 @@ export async function getRequerimentosSuper(dossie: JSDOMType): Promise<IRequeri
         const rowCount = countChildElements(dossie, `${baseXPath}`);
 
         for (let row = 1; row <= rowCount; row++) {
+            const nbRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[1]`, "NB não encontrado");
             const beneficioRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[2]`, "Benefício não encontrado");
             const derRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[3]`, "DER não encontrada");
             const dataInicioRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[4]`, "Data de início não encontrada");
@@ -22,6 +23,7 @@ export async function getRequerimentosSuper(dossie: JSDOMType): Promise<IRequeri
             const statusRaw = await safeExtractField(dossie, `${baseXPath}[${row}]/td[6]`, "Status não encontrado");
 
             const objetoRequerimento: IRequerimentos = {
+                numeroBeneficio: nbRaw.trim().replace(/\D/g, ''),
                 beneficio: beneficioRaw,
                 der: derRaw,
                 dataInicio: dataInicioRaw,

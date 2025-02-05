@@ -1,20 +1,21 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "./dto/HtmlImpeditivosRMDTO";
-import { IInfoUploadDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { IInfoUploadDTO, IObjInfoImpeditivosMaternidade } from "../GetInformationFromSapiensForPicaPau/dto";
 import { brasaoLogo, 
         estilos, 
         renderSecao, 
-        renderImoveisRurais, 
-        renderLitispendencia, 
-        renderPatrimonioImcompativel,
+        renderLitispendencia,
         renderConcessao, 
         renderRequerimento } from "./utils";
+import { IResponseLabraAutorConjugeMaternidade } from "../GetInformationFromSapiensForPicaPau/dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
+import { HtmlIImpeditivosMaternidadeDTO } from "./dto/HtmlImpeditivosMaternidade";
+import { renderPatrimonioImcompativelMaternidade } from "./utils/renders/maternidade/renderPatrimonioIncompativelMaternidade";
+import { renderImoveisRuraisMaternidade } from "./utils/renders/maternidade/renderImoveisRuraisMaternidade";
 
 export class ImpeditivosHtmlMaternidade {
     async execute(
-        data: HtmlIImpeditivosRuralMaternidadeDTO,
+        data: HtmlIImpeditivosMaternidadeDTO,
         infoUpload: IInfoUploadDTO,
         impedimentosDosprev: IObjInfoImpeditivosMaternidade, 
-        impedimentosLabra: IResponseLabraAutorConjuge
+        impedimentosLabra: IResponseLabraAutorConjugeMaternidade
     ): Promise<string> {
         const currentDate = new Date().toLocaleDateString("pt-BR", {
             day: "2-digit",
@@ -168,7 +169,7 @@ export class ImpeditivosHtmlMaternidade {
     `;
     }
 
-    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> 
+    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjugeMaternidade, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> 
     {
         const { autor, conjuge } = impedimentosLabra;
 
@@ -183,16 +184,6 @@ export class ImpeditivosHtmlMaternidade {
           "Empresas do Autor",
           "Empresas do Cônjuge"
         );
-        
-        const emprego = renderSecao(
-          "EMPREGO",
-          `O(a) cônjuge ou companheiro(a) possui diversos vínculos privados/públicos anteriores ao nascimento, com percepção de salário incompatível com a agricultura de subsistência, o que descaracteriza a qualidade de segurado especial da parte autora.`,
-          autor?.empregos,
-          conjuge?.empregos,
-          ["salarioContrato", "ocupacao", "empresa"],
-          "Empregos do Autor",
-          "Empregos do Cônjuge"
-        );
 
         const empregoDosprev = renderSecao(
           "EMPREGO AUTOR",
@@ -205,13 +196,12 @@ export class ImpeditivosHtmlMaternidade {
         )
 
 
-        const patrimonioIncompativel = renderPatrimonioImcompativel(autor, conjuge);
+        const patrimonioIncompativel = renderPatrimonioImcompativelMaternidade(autor, conjuge);
 
-        const imovelRural = renderImoveisRurais(autor, conjuge);
+        const imovelRural = renderImoveisRuraisMaternidade(autor, conjuge);
         
         if (
             !atividadeEmpresarial &&
-            !emprego &&
             !empregoDosprev &&
             !patrimonioIncompativel &&
             !imovelRural
@@ -232,7 +222,6 @@ export class ImpeditivosHtmlMaternidade {
             <tr>
               <td>
                 ${atividadeEmpresarial}
-                ${emprego}
                 ${empregoDosprev}
                 ${patrimonioIncompativel}
                 ${imovelRural}

@@ -1,6 +1,9 @@
 const { JSDOM } = require('jsdom');
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
+import { IDossieExtracted } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtracted";
+import { getCompetenciasDetalhadasSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getCompetenciasDetalhadasSuper";
 import { getFichaSinteticaDoProcessoSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getFichaSinteticoDoProcessoSuper";
 import { getProcessosMovidosSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getProcessosMovidosSuper";
 import { getRelacoesPrevidenciariasSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getRelacoesPrevidenciariasSuper";
@@ -32,21 +35,8 @@ export class SuperDossie {
         const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
         const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
 
-        const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
-        const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
-        const requerimentos = await getRequerimentosSuper(paginaDosPrevFormatada);
-        const relacoesPrevidenciarias = await getRelacoesPrevidenciariasSuper(paginaDosPrevFormatada);
-
-        console.log("FICHA SINTÉTICA")
-        console.log(fichaSintetica);
-        console.log("PROCESSOS MOVIDOS")
-        console.log(processosMovidos)
-        console.log("REQUERIMENTOS")
-        console.log(requerimentos)
-        console.log("RELACOES PREVIDENCIARIAS")
-        console.log(relacoesPrevidenciarias)
-
-        const impeditivosMaternidade = await getInformationDossieSuperForPicapau.impedimentosMaternidade(paginaDosPrevFormatada);
+        const dossie = await this.dossieExtractorMaternidadeSuper(paginaDosPrevFormatada);
+        const impeditivosMaternidade = await getInformationDossieSuperForPicapau.maternidade(dossie);
 
         const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
         const objImpedimentos = impeditivosMaternidade.objImpedimentosRM;
@@ -70,23 +60,21 @@ export class SuperDossie {
         return { impedimentos, objImpedimentos };
     }
 
-    async dossieExtractorMaternidade(dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<void> {
-        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+    async dossieExtractorMaternidadeSuper(dosprevPoloAtivo: JSDOMType): Promise<IDossieExtracted> {
+        const fichaSintetica = await getFichaSinteticaDoProcessoSuper(dosprevPoloAtivo);
+        const processosMovidos = await getProcessosMovidosSuper(dosprevPoloAtivo);
+        const requerimentos = await getRequerimentosSuper(dosprevPoloAtivo);
+        const relacoesPrevidenciarias = await getRelacoesPrevidenciariasSuper(dosprevPoloAtivo);
+        const competenciasDetalhadas = await getCompetenciasDetalhadasSuper(dosprevPoloAtivo, requerimentos, relacoesPrevidenciarias);
 
-        const fichaSintetica = await getFichaSinteticaDoProcessoSuper(paginaDosPrevFormatada);
-        const processosMovidos = await getProcessosMovidosSuper(paginaDosPrevFormatada);
-        const requerimentos = await getRequerimentosSuper(paginaDosPrevFormatada);
-        const relacoesPrevidenciarias = await getRelacoesPrevidenciariasSuper(paginaDosPrevFormatada);
+        const dossie: IDossieExtracted = {
+            fichaSintetica,
+            processosMovidos,
+            requerimentos,
+            relacoesPrevidenciarias,
+            competenciasDetalhadas
+        }
 
-        console.log("FICHA SINTÉTICA")
-        console.log(fichaSintetica);
-        console.log("PROCESSOS MOVIDOS")
-        console.log(processosMovidos)
-        console.log("REQUERIMENTOS")
-        console.log(requerimentos)
-        console.log("RELACOES PREVIDENCIARIAS")
-        console.log(relacoesPrevidenciarias)
+        return dossie;
     }
 }

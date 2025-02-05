@@ -3,19 +3,21 @@ import { getInfoReqDossieNormal } from "../helps/renda.utils/normal/getInfoReqDo
 import { getInfoReqDossieSuper } from "../helps/renda.utils/super/getInfoReqDossieSuper";
 import { normalDossieClass, superDossieClass } from "../classes";
 import { impedimentosSislabraLOAS } from "./sislabraImpedimentos/impedimentosSislabraLOAS";
-import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
-import { IInformacoesProcessoDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IPicaPauCalculeDTO } from "../dto";
+import { IInformacoesProcessoDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjugeRural, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IPicaPauCalculeDTO } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { getGrupoFamiliarCpfs } from "./utils/getGrupoFamiliarCpfs";
 import { getArrayObjetosEnvolvidos } from "./utils/getArrayObjetosEnvolvidos";
 import { informationRenda } from "./utils/informationRenda";
 import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
+import { impedimentosSislabraMaternidade } from "./sislabraImpedimentos/impedimentosSislabraMaternidade";
+import { IResponseLabraAutorConjugeMaternidade } from "../dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
+import { impedimentosSislabraRural } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
 
 export class BuscarImpedimentosUseCase {
 
     async procurarImpedimentosMaternidade(
         informacoesProcesso: IInformacoesProcessoDTO
-    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade, objImpedimentosLabra: IResponseLabraAutorConjugeMaternidade }> {
         const {
             cookie,
             capaFormatada,
@@ -31,8 +33,8 @@ export class BuscarImpedimentosUseCase {
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
-        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
+        const impedimentosSislabra = await impedimentosSislabraMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjugeMaternidade = {
             autor: impedimentosSislabra.autor,
             conjuge: impedimentosSislabra.conjuge,
         }
@@ -59,7 +61,7 @@ export class BuscarImpedimentosUseCase {
 
     async procurarImpedimentosRural(
         informacoesProcesso: IInformacoesProcessoDTO
-    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural, objImpedimentosLabra: IResponseLabraAutorConjugeRural }> {
         const {
             cookie,
             capaFormatada,
@@ -75,8 +77,8 @@ export class BuscarImpedimentosUseCase {
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
-        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
+        const impedimentosSislabra = await impedimentosSislabraRural(sislabraPoloAtivo, sislabraConjuge, cookie);
+        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjugeRural = {
             autor: impedimentosSislabra.autor,
             conjuge: impedimentosSislabra.conjuge
         }

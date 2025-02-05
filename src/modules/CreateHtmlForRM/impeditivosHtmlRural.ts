@@ -1,14 +1,14 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "./dto/HtmlImpeditivosRMDTO";
-import { IInfoUploadDTO, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { HtmlIImpeditivosRuralDTO } from "./dto/HtmlImpeditivosRuralDTO";
+import { IInfoUploadDTO, IResponseLabraAutorConjugeRural } from "../GetInformationFromSapiensForPicaPau/dto";
 import { IObjInfoImpeditivosRural } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
-import { brasaoLogo, estilos, renderConcessao, renderImoveisRurais, renderLitispendencia, renderPatrimonioImcompativel, renderRequerimento, renderSecao, renderIdade } from "./utils";
+import { brasaoLogo, estilos, renderConcessao, renderLitispendencia, renderPatrimonioImcompativel, renderRequerimento, renderSecao, renderIdade, renderImoveisRuraisRural } from "./utils";
 
 export class ImpeditivosHtmlRural {
     async execute(
-        data: HtmlIImpeditivosRuralMaternidadeDTO,
+        data: HtmlIImpeditivosRuralDTO,
         infoUpload: IInfoUploadDTO,
         impedimentosDosprev: IObjInfoImpeditivosRural, 
-        impedimentosLabra: IResponseLabraAutorConjuge
+        impedimentosLabra: IResponseLabraAutorConjugeRural
     ): Promise<string> {
         const currentDate = new Date().toLocaleDateString("pt-BR", {
             day: "2-digit",
@@ -148,7 +148,7 @@ export class ImpeditivosHtmlRural {
         `;
     }
 
-    private async renderTabelaTipo3(data: HtmlIImpeditivosRuralMaternidadeDTO, impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosRural): Promise<string> 
+    private async renderTabelaTipo3(data: HtmlIImpeditivosRuralDTO, impedimentosLabra: IResponseLabraAutorConjugeRural, impedimentosDosprev: IObjInfoImpeditivosRural): Promise<string> 
     {
         const { autor, conjuge } = impedimentosLabra;
 
@@ -188,7 +188,7 @@ export class ImpeditivosHtmlRural {
 
         const patrimonioIncompativel = renderPatrimonioImcompativel(autor, conjuge);
 
-        const imovelRural = renderImoveisRurais(autor, conjuge);
+        const imovelRural = renderImoveisRuraisRural(autor, conjuge);
 
         if (
             !atividadeEmpresarial &&
