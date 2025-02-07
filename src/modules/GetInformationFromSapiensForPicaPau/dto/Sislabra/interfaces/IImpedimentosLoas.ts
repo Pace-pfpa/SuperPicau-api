@@ -1,5 +1,5 @@
-import { IImpedimentos } from "./rural/IImpedimentosRural";
+import { IImpedimentosRural } from "./rural/IImpedimentosRural";
 
-export interface IImpedimentosLoas extends IImpedimentos {
+export interface IImpedimentosLoas extends IImpedimentosRural {
     doacaoEleitoral: string | null;
 }

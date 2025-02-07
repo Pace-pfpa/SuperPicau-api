@@ -3,23 +3,23 @@ import { getImoveisRurais } from "./SislabraBusiness/GetImoveisRuraisSislabra";
 import { getVeiculos } from "./SislabraBusiness/GetVeiculosSislabra";
 import { getEmpresa } from "./SislabraBusiness/GetEmpresaSislabra";
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
-import { IImpedimentos } from "../dto";
 import { getBensTSE } from "./SislabraBusiness/GetBensTSE";
 import { getImoveisSP } from "./SislabraBusiness/GetImoveisSp";
 import { getEmbarcacoes } from "./SislabraBusiness/GetEmbarcacoesSislabra";
 import { getAeronaves } from "./SislabraBusiness/GetAeronavesSislabra";
 import { IImpedimentosMaternidade } from "../dto/Sislabra/interfaces/maternidade/IImpedimentosMaternidade";
+import { IImpedimentosRural } from "../dto";
 
 export class GetDocumentSislabraFromSapiens {
     async execute(
         paginaformatada: JSDOMType, 
         indentificadorDocumento: string
-    ): Promise<{ impedimentos: string, objImpedimentos: IImpedimentos }> {
+    ): Promise<{ impedimentos: string, objImpedimentos: IImpedimentosRural }> {
 
        try {
         let response: string = "";
 
-        const ObjImpedimentos: IImpedimentos = {
+        const ObjImpedimentos: IImpedimentosRural = {
             veiculos: [],
             empregos: [],
             imoveisRurais: [],

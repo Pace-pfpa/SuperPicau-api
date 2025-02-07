@@ -1,8 +1,8 @@
-import { renderCampoPatrimonioImcompativel, renderTable, verificarSeTodosSaoVazios } from "..";
-import { IImpedimentos } from "../../../GetInformationFromSapiensForPicaPau/dto";
+import { renderCampoPatrimonioImcompativel, renderTable, verificarSeTodosSaoVazios } from "../..";
+import { IImpedimentosRural } from "../../../../GetInformationFromSapiensForPicaPau/dto";
 
 
-export const renderPatrimonioImcompativel = (autor: IImpedimentos, conjuge: IImpedimentos): string => {
+export const renderPatrimonioImcompativelRural = (autor: IImpedimentosRural, conjuge: IImpedimentosRural): string => {
     const valoresParaVerificar = [
       autor?.veiculos,
       conjuge?.veiculos,

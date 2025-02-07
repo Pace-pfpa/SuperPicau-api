@@ -1,7 +1,7 @@
 import { HtmlIImpeditivosRuralDTO } from "./dto/HtmlImpeditivosRuralDTO";
 import { IInfoUploadDTO, IResponseLabraAutorConjugeRural } from "../GetInformationFromSapiensForPicaPau/dto";
 import { IObjInfoImpeditivosRural } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
-import { brasaoLogo, estilos, renderConcessao, renderLitispendencia, renderPatrimonioImcompativel, renderRequerimento, renderSecao, renderIdade, renderImoveisRuraisRural } from "./utils";
+import { brasaoLogo, estilos, renderConcessao, renderLitispendencia, renderPatrimonioImcompativelRural, renderRequerimento, renderSecao, renderIdade, renderImoveisRuraisRural } from "./utils";
 
 export class ImpeditivosHtmlRural {
     async execute(
@@ -186,7 +186,7 @@ export class ImpeditivosHtmlRural {
             "SEM INFORMAÇÕES"
         );
 
-        const patrimonioIncompativel = renderPatrimonioImcompativel(autor, conjuge);
+        const patrimonioIncompativel = renderPatrimonioImcompativelRural(autor, conjuge);
 
         const imovelRural = renderImoveisRuraisRural(autor, conjuge);
 

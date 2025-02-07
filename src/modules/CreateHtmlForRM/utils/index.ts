@@ -4,7 +4,7 @@ export * from './renders/renderLitispendencia'
 export * from './renders/renderCampoPatrimonioImcompativel';
 export * from './renders/renderConcessao';
 export * from './renders/rural/renderImoveisRuraisRural';
-export * from './renders/renderPatrimonioImcompativel';
+export * from './renders/rural/renderPatrimonioImcompativelRural';
 export * from './renders/renderRequerimento';
 export * from './renders/renderSecao';
 export * from './renders/renderTable';

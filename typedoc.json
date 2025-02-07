@@ -1,0 +1,14 @@
+{
+    "entryPoints": ["src/config/typedoc.entrypoint.ts"],
+    "out": "./docs",
+    "exclude": ["**/node_modules/**", "**/dist/**", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"],
+    "includeVersion": true,
+    "tsconfig": "tsconfig.json",
+    "readme": "README.md",
+    "theme": "default",
+    "hideGenerator": true,
+    "excludePrivate": false,
+    "excludeProtected": false,
+    "excludeExternals": true,
+    "categorizeByGroup": false
+}

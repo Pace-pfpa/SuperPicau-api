@@ -1,5 +1,0 @@
-import { VerificadorValidadeDossiePrevidenciarioController } from "./VerificadorValidadeDossiePrevidenciarioController";
-import { VerificadorValidadeDossiePrevidenciarioUseCase } from "./VerificadorValidadeDossiePrevidenciarioUseCase";
-
-export const verificadorValidadeDossiePrevidenciarioUseCase = new VerificadorValidadeDossiePrevidenciarioUseCase();
-export const verificadorValidadeDossiePrevidenciarioController = new VerificadorValidadeDossiePrevidenciarioController(verificadorValidadeDossiePrevidenciarioUseCase);

@@ -1,56 +1,47 @@
+/**
+ * @group CreateDocumento
+ * DTO para criação de documentos no Sapiens.
+ * 
+ * - Contém os dados necessários para a requisição de criação de um documento.
+ * - Alguns campos são opcionais (`tipoDocumento_id` e `modelo_id`).
+ * 
+ * @example
+ * ```ts
+ * const dto: ICreateDocumentDTO = {
+ *   cookie: "session_cookie",
+ *   pasta_id: 123,
+ *   usuario_nome: "João Silva",
+ *   usuario_setor: 10,
+ *   tarefa_id: 456,
+ *   tid: "ABC123",
+ *   tipoDocumento_id: "789",
+ *   modelo_id: "101"
+ * };
+ * ```
+ */
 export interface ICreateDocumentDTO {
+    /** Cookie de autenticação da sessão do usuário. */
     cookie: string
+    /** ID da pasta onde o documento será armazenado. */
     pasta_id: number;
+    /** Nome do usuário solicitante. */
     usuario_nome: string
+    /** ID do setor do usuário solicitante. */
     usuario_setor: number;
+    /** ID da tarefa associada ao documento. */
     tarefa_id: number;
+     /** Identificador único da transação/documento. */
     tid: string;
+    /** ID do tipo de documento (opcional). 
+     * CONSTESTAÇÃO -> 85
+     * RELATÓRIO -> 35
+    */
     tipoDocumento_id?: string;
+    /** 
+     * ID do modelo de documento a ser utilizado (opcional).
+     * RURAL -> 613060 (LIMPO) | 546274 (SUJO)
+     * MATERNIDADE -> 726514 (LIMPO) | 609682 (SUJO)
+     * LOAS -> 613060 (LIMPO) | 734226 (SUJO)
+     */
     modelo_id?: string;
 }
-/**
-* @swagger
-* components:
-*   schemas:
-*     CreateDocumentDTO:
-*       type: object
-*       required:
-*         - pasta_id
-*         - usuario_nome
-*         - usuario_setor
-*         - tarefa_id
-*         - tid
-*       properties:
-*         cookie:
-*           type: string
-*           description: coookie de acesso do sapiens
-*         pasta_id:
-*           type: string
-*           description: Id da pasta do processo
-*         usuario_nome:
-*           type: string
-*           description: nome do da pessoa que ta criando o documento
-*         usuario_setor:
-*           type: string
-*           description: setor da pessoa que ta criando o documento
-*         tarefa_id:
-*           type: string
-*           description: id da tarefa do processo
-*         tid:
-*           type: string
-*           description: contador de quantidade de request do sapiens
-*         tipoDocumento_id:
-*           type: string
-*           description: tipo do documnto a ser criado, memoria de calculo é 1344
-*         modelo_id:
-*           type: string
-*           description: modelo do documento a ser criado quaso exista no sapiens
-*       example:
-*         usuario_setor: '12733'
-*         pasta_id: '1234'
-*         modelo_id: '1234'
-*         tipoDocumento_id: '1344'
-*         tid: '5'
-*         tarefa_id: '1234'
-*         usuario_nome: 'Emma White'
-* */
