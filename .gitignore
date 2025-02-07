@@ -5,7 +5,6 @@
 /dist
 /node_modules
 /build
-/docs
 
 # Logs
 logs
