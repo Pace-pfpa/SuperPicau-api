@@ -3,11 +3,8 @@ import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
 import { IDossieExtracted } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtracted";
+import { IDossieExtractedPartial } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtractedPartial";
 import { getCompetenciasDetalhadasNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getCompetenciasDetalhadasNormal";
-import { getFichaSinteticaDoProcessoNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getFichaSinteticaDoProcessoNormal";
-import { getProcessosMovidosNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getProcessosMovidosNormal";
-import { getRelacoesPrevidenciariasNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getRelacoesPrevidenciariasNormal";
-import { getRequerimentosNormal } from "../BuscarImpedimentos/utils/dossieExtractor/normal/getRequerimentosNormal";
 import { getInformationDossieSuperForPicapau } from "../DossieSuperSapiens";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
@@ -31,20 +28,23 @@ export class NormalDossie {
     }
 
     async burcarImpedimentosForMaternidade(
-        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, 
-        cookie: string
+        dosprevPoloAtivo: JSDOMType,
+        dossieExtractedPartial: IDossieExtractedPartial
     ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade }> {
-        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev); 
-
-        const dossie = await this.dossieExtractorMaternidadeNormal(paginaDosPrevFormatada);
-        const impeditivosMaternidade = await getInformationDossieSuperForPicapau.maternidade(dossie);
-
-        const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
-        const objImpedimentos = impeditivosMaternidade.objImpedimentosRM;
-
-        return { impedimentos, objImpedimentos };
+        try {
+            const dossie = await this.dossieExtractorMaternidadeNormal(
+                dosprevPoloAtivo,
+                dossieExtractedPartial
+            );
+            const impeditivosMaternidade = await getInformationDossieSuperForPicapau.maternidade(dossie);
+    
+            const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
+            const objImpedimentos = impeditivosMaternidade.objImpedimentosRM;
+    
+            return { impedimentos, objImpedimentos };
+        } catch (error) {
+            console.error("Erro na busca de impedimentos: ", error.message);
+        }
     }
 
     async buscarImpedimentosForLoas(
@@ -64,19 +64,17 @@ export class NormalDossie {
     }
 
     async dossieExtractorMaternidadeNormal(
-        dosprevPoloAtivo: JSDOMType
+        dosprevPoloAtivo: JSDOMType,
+        dossieExtractedPartial: IDossieExtractedPartial
     ): Promise<IDossieExtracted> {
-        const fichaSintetica = await getFichaSinteticaDoProcessoNormal(dosprevPoloAtivo);
-        const processosMovidos = await getProcessosMovidosNormal(dosprevPoloAtivo);
-        const requerimentos = await getRequerimentosNormal(dosprevPoloAtivo);
-        const relacoesPrevidenciarias = await getRelacoesPrevidenciariasNormal(dosprevPoloAtivo);
-        const competenciasDetalhadas = await getCompetenciasDetalhadasNormal(dosprevPoloAtivo, requerimentos, relacoesPrevidenciarias);
+        const competenciasDetalhadas = await getCompetenciasDetalhadasNormal(
+            dosprevPoloAtivo, 
+            dossieExtractedPartial.requerimentos, 
+            dossieExtractedPartial.relacoesPrevidenciarias
+        );
 
         const dossie: IDossieExtracted = {
-            fichaSintetica,
-            processosMovidos,
-            requerimentos,
-            relacoesPrevidenciarias,
+            ...dossieExtractedPartial,
             competenciasDetalhadas
         }
 

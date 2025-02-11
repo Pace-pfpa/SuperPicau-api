@@ -3,7 +3,13 @@ import { getInfoReqDossieNormal } from "../helps/renda.utils/normal/getInfoReqDo
 import { getInfoReqDossieSuper } from "../helps/renda.utils/super/getInfoReqDossieSuper";
 import { normalDossieClass, superDossieClass } from "../classes";
 import { impedimentosSislabraLOAS } from "./sislabraImpedimentos/impedimentosSislabraLOAS";
-import { IInformacoesProcessoDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjugeRural, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas, IPicaPauCalculeDTO } from "../dto";
+import { IInformacoesProcessoDTO, 
+        IObjInfoImpeditivosMaternidade, 
+        IResponseLabraAutorConjugeRural, 
+        IInformacoesProcessoLoasDTO, 
+        IObjInfoImpeditivosLoas, 
+        IPicaPauCalculeDTO 
+    } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { getGrupoFamiliarCpfs } from "./utils/getGrupoFamiliarCpfs";
 import { getArrayObjetosEnvolvidos } from "./utils/getArrayObjetosEnvolvidos";
@@ -14,18 +20,23 @@ import { IResponseLabraAutorConjugeMaternidade } from "../dto/Sislabra/interface
 import { impedimentosSislabraRural } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
 
 export class BuscarImpedimentosUseCase {
-
     async procurarImpedimentosMaternidade(
         informacoesProcesso: IInformacoesProcessoDTO
-    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade, objImpedimentosLabra: IResponseLabraAutorConjugeMaternidade }> {
+    ): Promise<{ 
+        impedimentos: string[], 
+        objImpedimentos: IObjInfoImpeditivosMaternidade, 
+        objImpedimentosLabra: IResponseLabraAutorConjugeMaternidade 
+    }> {
         const {
             cookie,
             capaFormatada,
-            dosprevPoloAtivo,
-            isDosprevPoloAtivoNormal,
             sislabraPoloAtivo,
             sislabraConjuge
         } = informacoesProcesso;
+
+        const isDosprevPoloAtivoNormal = informacoesProcesso.dossie.isDosprevPoloAtivoNormal;
+        const dossieExtractedPartial = informacoesProcesso.dossie.dossieExtractedPartial;
+        const dosprevFormatado = informacoesProcesso.dossie.dossieFormatado;
 
         const impedimentoCapa: string[] = [];
         const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
@@ -40,7 +51,7 @@ export class BuscarImpedimentosUseCase {
         }
 
         if (isDosprevPoloAtivoNormal) {
-            const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
+            const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevFormatado, dossieExtractedPartial);
 
             const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("MATERNIDADE NORMAL")
@@ -48,7 +59,7 @@ export class BuscarImpedimentosUseCase {
 
             return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
         } else {
-            const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
+            const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevFormatado, dossieExtractedPartial);
 
             const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("MATERNIDADE SUPER")
@@ -65,11 +76,12 @@ export class BuscarImpedimentosUseCase {
         const {
             cookie,
             capaFormatada,
-            dosprevPoloAtivo,
-            isDosprevPoloAtivoNormal,
             sislabraPoloAtivo,
             sislabraConjuge
         } = informacoesProcesso;
+
+        const dosprevPoloAtivo = informacoesProcesso.dossie.dosprevPoloAtivo;
+        const isDosprevPoloAtivoNormal = informacoesProcesso.dossie.isDosprevPoloAtivoNormal;
 
         const impedimentoCapa: string[] = [];
         const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);

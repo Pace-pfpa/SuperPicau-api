@@ -32,7 +32,7 @@ export async function getFichaSinteticaDoProcessoSuper(dossie: JSDOMType): Promi
     const cpfFormatado = cpfDosprevRaw ? CorrigirCpfComZeros(cpfDosprevRaw) : null;
 
     return {
-        numeroUnico: numeroUnicoRaw.trim().replace(/\D/g, ''),
+        numeroUnico: numeroUnicoRaw?.trim().replace(/\D/g, ''),
         dataAjuizamento: dataAjuizamentoRaw,
         assunto: assuntoRaw,
         nome: nomeCerto,

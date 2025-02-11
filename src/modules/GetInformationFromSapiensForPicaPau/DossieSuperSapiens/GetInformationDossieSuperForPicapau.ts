@@ -28,8 +28,8 @@ export class GetInformationDossieSuperForPicapau {
     }
 
     const impeditivoDossie = hasImpeditivoDossie(
-      dossie.fichaSintetica.dataAjuizamento, 
-      dossie.requerimentos, 
+      dossie.fichaSintetica.dataAjuizamento,
+      dossie.requerimentos,
       dossie.competenciasDetalhadas
     );
     if (impeditivoDossie.haveImpeditivo) {

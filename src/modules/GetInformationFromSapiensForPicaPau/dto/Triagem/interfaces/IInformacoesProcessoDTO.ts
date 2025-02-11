@@ -1,6 +1,7 @@
 
 import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
+import { IDossieExtractedPartial } from "../../../BuscarImpedimentos/dtos/interfaces/IDossieExtractedPartial";
 import { IInfoUploadDTO } from "./IInfoUploadDTO";
 
 export interface IInformacoesProcessoDTO {
@@ -11,8 +12,12 @@ export interface IInformacoesProcessoDTO {
     capaFormatada: JSDOMType,
     cpfCapa: string,
     infoUpload: IInfoUploadDTO,
-    dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO,
-    isDosprevPoloAtivoNormal: boolean,
+    dossie: {
+        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO,
+        isDosprevPoloAtivoNormal: boolean,
+        dossieFormatado: JSDOMType,
+        dossieExtractedPartial: IDossieExtractedPartial,
+    },
     sislabraPoloAtivo: ResponseArvoreDeDocumentoDTO,
     sislabraConjuge: ResponseArvoreDeDocumentoDTO
 }

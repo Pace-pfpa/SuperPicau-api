@@ -29,5 +29,5 @@ export function hasLitispendencia(numeroUnico: string, processos: IProcessosMovi
     return {
         haveLitispendencia: arrayLitispendencia.length > 0,
         litispendencia: arrayLitispendencia
-    } 
+    }
 }

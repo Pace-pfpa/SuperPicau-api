@@ -17,6 +17,9 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
         return new Promise((resolve, reject) => {
             setTimeout(async() => {
                 try {
+                    /** 
+                     * Extração de informações do SAPIENS
+                     */
                     const result = await this.getInformationFromSapiensForPicaPauUseCaseRefactor.execute(data);
 
                     if ('warning' in result) {
@@ -29,6 +32,9 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
                     let processo: IFinalizarTriagem;
                     let impedimentos: string[];
 
+                    /** 
+                     * Análise de impeditivos e finalização da triagem
+                    */
                     if (result[1] === 'LOAS') {
                         const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
                         impedimentos = buscaDeImpedimentos.impedimentos;

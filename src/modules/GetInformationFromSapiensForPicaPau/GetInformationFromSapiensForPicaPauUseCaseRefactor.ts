@@ -15,16 +15,14 @@ import { atualizarEtiquetaAviso,
         buscarDossieSocial,
         buscarSislabraLOAS, 
         buscarSislabraRuralMaternidade, 
-        verificarEAtualizarDossie,
-        verificarGeracaoDossie } from "./utils";
+        verificarEAtualizarDossie } from "./utils";
+import { dossieExtractorMain } from "./utils/dossieExtractorMain";
 
 export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
     async execute(data: GetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
-
-        const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
-        
         try {
+            const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
 
             const tipo_triagem = data.readDosprevAge;
             const tarefaId = data.tarefa.id;
@@ -79,15 +77,11 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
 
             const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = response;
 
-            if (!dosprevPoloAtivo) {
-                await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
-                return { warning: `DOSPREV NÃO EXISTE` };
-            }
+            const dosprevExtracted = await dossieExtractorMain(dosprevPoloAtivo, isDosprevPoloAtivoNormal, cookie);
 
-            const falhaNaGeracao = await verificarGeracaoDossie(dosprevPoloAtivo, cookie);
-            if (falhaNaGeracao instanceof Error) {
-                await atualizarEtiquetaAviso(cookie, "DOSPREV COM FALHA NA GERAÇÃO", tarefaId);
-                return { warning: "DOSPREV COM FALHA NA GERAÇÃO" }
+            if (dosprevExtracted.isAviso) {
+                await atualizarEtiquetaAviso(cookie, dosprevExtracted.avisoMessage, tarefaId);
+                return { warning: `DOSPREV IMPEDITIVO` };
             }
 
             let dossieSocialInfo: IDossieSocialInfo = null;
@@ -152,8 +146,12 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     capaFormatada,
                     cpfCapa,
                     infoUpload,
-                    dosprevPoloAtivo,
-                    isDosprevPoloAtivoNormal,
+                    dossie: {
+                        dosprevPoloAtivo,
+                        isDosprevPoloAtivoNormal,
+                        dossieExtractedPartial: dosprevExtracted.dossiePartial,
+                        dossieFormatado: dosprevExtracted.dossieFormatado
+                    },
                     sislabraPoloAtivo,
                     sislabraConjuge, 
                 }
