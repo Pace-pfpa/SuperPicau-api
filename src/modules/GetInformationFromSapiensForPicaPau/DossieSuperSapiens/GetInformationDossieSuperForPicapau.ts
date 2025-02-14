@@ -14,7 +14,9 @@ import { hasImpeditivoDossie } from "./SuperDossieBusiness/utils/hasImpeditivoDo
 import { hasLitispendencia } from "./SuperDossieBusiness/utils/hasLitispendencia";
 
 export class GetInformationDossieSuperForPicapau {
-  async maternidade(dossie: IDossieExtracted): Promise<IReturnImpedimentosMaternidade> {
+  async maternidade(
+    dossie: IDossieExtracted
+  ): Promise<IReturnImpedimentosMaternidade> {
     let arrayImpedimentos: string = '';
     const objInfoImpeditivos: IObjInfoImpeditivosMaternidade = {} as IObjInfoImpeditivosMaternidade;
 
@@ -28,8 +30,8 @@ export class GetInformationDossieSuperForPicapau {
     }
 
     const impeditivoDossie = hasImpeditivoDossie(
-      dossie.fichaSintetica.dataAjuizamento, 
-      dossie.requerimentos, 
+      dossie.fichaSintetica.dataAjuizamento,
+      dossie.requerimentos,
       dossie.competenciasDetalhadas
     );
     if (impeditivoDossie.haveImpeditivo) {
@@ -44,11 +46,11 @@ export class GetInformationDossieSuperForPicapau {
           break;
         case 5:
           arrayImpedimentos += impeditivoDossie.nomeImpeditivo;
-          objInfoImpeditivos.concessaoAnterior = "CONCESSÃO ANTERIOR";
+          objInfoImpeditivos.concessaoAnterior = impeditivoDossie.informacaoExtra;
           break;
         case 6:
           arrayImpedimentos += impeditivoDossie.nomeImpeditivo;
-          objInfoImpeditivos.beneficioIncompativel = "BENEFÍCIO INCOMPATÍVEL";
+          objInfoImpeditivos.beneficioIncompativel = impeditivoDossie.informacaoExtra;
           break;
         default:
           break;

@@ -77,7 +77,7 @@ export class MinutaSuja {
 
             await updateDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
-                dosprev_id: informacoesProcesso.dosprevPoloAtivo.documentoJuntado_id,
+                dosprev_id: informacoesProcesso.dossie.dosprevPoloAtivo.documentoJuntado_id,
                 minuta_id: documentoId,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,
@@ -150,7 +150,7 @@ export class MinutaSuja {
 
             await updateDocumentoUseCase.execute({
                 cookie: informacoesProcesso.cookie,
-                dosprev_id: informacoesProcesso.dosprevPoloAtivo.documentoJuntado_id,
+                dosprev_id: informacoesProcesso.dossie.dosprevPoloAtivo.documentoJuntado_id,
                 minuta_id: documentoId,
                 pasta_id: informacoesProcesso.infoUpload.pasta_id,
                 tarefa_id: informacoesProcesso.infoUpload.tarefa_id,

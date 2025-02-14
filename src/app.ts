@@ -22,7 +22,7 @@ app.use(logger("dev"));
 /**
  * The routes of API
  */
- app.use(routes);
+app.use(routes);
 
 
-export { app } 
+export { app };

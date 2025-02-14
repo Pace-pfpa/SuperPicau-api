@@ -33,33 +33,37 @@ export function hasImpeditivoDossie(
         }
     }
 
-    const concessaoAnterior = competenciasDetalhadas.some((beneficio) => {
+    const concessaoImpeditivo: string[] = [];
+    const concessaoAnterior = competenciasDetalhadas.find((beneficio) => {
         const dataCessacao = beneficio.dataFim;
-        if (dataCessacao && beneficio.formaFiliacao === 'SEGURADO_ESPECIAL') {
-            const anosParaVerificar = calcularIdadeIdoso(dataAjuizamento, dataCessacao);
-            if (anosParaVerificar <= 6) return true;
-        }
+        return dataCessacao 
+            && beneficio.formaFiliacao === 'SEGURADO_ESPECIAL' 
+            && calcularIdadeIdoso(dataAjuizamento, dataCessacao) <= 6;
     });
     if (concessaoAnterior) {
+        concessaoImpeditivo.push(concessaoAnterior.origemDoVinculo)
         return {
             haveImpeditivo: true,
             tipoImpeditivo: 5,
             nomeImpeditivo: " CONCESSÃO ANTERIOR -",
-        }
+            informacaoExtra: concessaoImpeditivo,
+        };
     }
 
-    const beneficioIncompativel = competenciasDetalhadas.some((beneficio) => {
+    const beneficioImpeditivo: string[] = [];
+    const beneficioIncompativel = competenciasDetalhadas.find((beneficio) => {
         const dataCessacao = beneficio.dataFim;
-        if (dataCessacao && beneficio.formaFiliacao !== 'SEGURADO_ESPECIAL') {
-            const anosParaVerificar = calcularIdadeIdoso(dataAjuizamento, dataCessacao);
-            if (anosParaVerificar <= 6) return true;
-        } 
-    })
+        return dataCessacao 
+            && beneficio.formaFiliacao !== 'SEGURADO_ESPECIAL' 
+            && calcularIdadeIdoso(dataAjuizamento, dataCessacao) <= 6;
+    });
     if (beneficioIncompativel) {
+        beneficioImpeditivo.push(beneficioIncompativel.origemDoVinculo);
         return {
             haveImpeditivo: true,
             tipoImpeditivo: 6,
             nomeImpeditivo: " BENEFÍCIO INCOMPATÍVEL -",
+            informacaoExtra: beneficioImpeditivo,
         }
     }
 

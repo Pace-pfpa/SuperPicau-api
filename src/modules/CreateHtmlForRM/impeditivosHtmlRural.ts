@@ -1,7 +1,8 @@
 import { HtmlIImpeditivosRuralDTO } from "./dto/HtmlImpeditivosRuralDTO";
 import { IInfoUploadDTO, IResponseLabraAutorConjugeRural } from "../GetInformationFromSapiensForPicaPau/dto";
 import { IObjInfoImpeditivosRural } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
-import { brasaoLogo, estilos, renderConcessao, renderLitispendencia, renderPatrimonioImcompativelRural, renderRequerimento, renderSecao, renderIdade, renderImoveisRuraisRural } from "./utils";
+import { brasaoLogo, estilos, renderLitispendencia, renderPatrimonioImcompativelRural, renderRequerimento, renderSecao, renderIdade, renderImoveisRuraisRural } from "./utils";
+import { renderConcessaoRural } from "./utils/renders/rural/renderConcessaoRural";
 
 export class ImpeditivosHtmlRural {
     async execute(
@@ -103,7 +104,7 @@ export class ImpeditivosHtmlRural {
         }
 
         const litispendenciaContent = renderLitispendencia(litispendencia, litispendenciaProcessos);
-        const concessaoContent = renderConcessao(concessao);
+        const concessaoContent = renderConcessaoRural(concessao);
         const requerimentoContent = renderRequerimento(requerimento);
 
         return `

@@ -1,14 +1,9 @@
+import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
-import { getDocumentoUseCase } from "../../GetDocumento";
-import { JSDOM } from 'jsdom';
 
-export async function verificarGeracaoDossie(dosprev: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<Error> {
-    const idDosprevParaPesquisa = dosprev.documentoJuntado.componentesDigitais[0].id;
+export async function verificarGeracaoDossie(paginaDosPrevFormatada: JSDOMType): Promise<Error> {
     
     try {
-        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
         const verifarSeFoiGeradoComFalha = (getXPathText(paginaDosPrevFormatada, "/html/body/div")).trim() == "Não foi possível a geração do dossiê previdenciário.";
     
         if (verifarSeFoiGeradoComFalha) {

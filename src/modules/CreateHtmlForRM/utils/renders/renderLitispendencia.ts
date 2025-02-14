@@ -7,7 +7,7 @@ export const renderLitispendencia = (litispendencia: boolean, processos: string[
 
     return `
         <p class="impeditivos-field">
-            <strong><span>LITISPENDÊNCIA</span>:</strong> Foi identificada em relação ao(s) seguinte(s) processo(s):
+            <strong><span>LITISPENDÊNCIA / COISA JULGADA</span>:</strong> Foi identificada em relação ao(s) seguinte(s) processo(s):
             ${processosContent}
         </p>
     `;
