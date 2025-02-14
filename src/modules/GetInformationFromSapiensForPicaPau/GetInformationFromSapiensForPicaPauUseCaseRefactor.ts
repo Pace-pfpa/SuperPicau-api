@@ -152,8 +152,10 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                         dossieExtractedPartial: dosprevExtracted.dossiePartial,
                         dossieFormatado: dosprevExtracted.dossieFormatado
                     },
-                    sislabraPoloAtivo,
-                    sislabraConjuge, 
+                    sislabra: {
+                        sislabraPoloAtivo,
+                        sislabraConjuge
+                    }
                 }
 
                 return [informacoesProcesso, 'RURAL/MATERNIDADE'];

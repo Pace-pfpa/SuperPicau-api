@@ -7,10 +7,19 @@ import { hasRelacoesPrevidenciarias } from "../dossieExtractor.utils/hasRelacoes
 export async function getRelacoesPrevidenciariasNormal(dossie: JSDOMType): Promise<IRelacaoPrevidenciaria[]> {
     const arrayRelacoes: IRelacaoPrevidenciaria[] = [];
     const possuiRelacoes = await hasRelacoesPrevidenciarias(dossie, 4);
+
+    const pensaoPorMortePath = '/html/body/div/p[5]/b/u';
+    const pensaoPorMorteRaw = await safeExtractField(dossie, pensaoPorMortePath, 'NORMAL');
     
     if (!possuiRelacoes) return arrayRelacoes;
     try {
-        const baseXPath = "/html/body/div/div[4]/table/tbody/tr";
+        let baseXPath: string;
+        baseXPath = "/html/body/div/div[4]/table/tbody/tr";
+
+        if (pensaoPorMorteRaw.includes('MORTE')) {
+            baseXPath = "/html/body/div/div[5]/table/tbody/tr"
+        }
+        
         const rowCount = countChildElements(dossie, `${baseXPath}`);
 
         for (let row = 2; row <= rowCount; row++) {

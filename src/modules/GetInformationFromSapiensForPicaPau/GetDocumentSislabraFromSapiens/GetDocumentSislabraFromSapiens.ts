@@ -9,6 +9,7 @@ import { getEmbarcacoes } from "./SislabraBusiness/GetEmbarcacoesSislabra";
 import { getAeronaves } from "./SislabraBusiness/GetAeronavesSislabra";
 import { IImpedimentosMaternidade } from "../dto/Sislabra/interfaces/maternidade/IImpedimentosMaternidade";
 import { IImpedimentosRural } from "../dto";
+import { sislabraExtractor } from "./utils/sislabraExtractor";
 
 export class GetDocumentSislabraFromSapiens {
     async execute(
@@ -122,80 +123,97 @@ export class GetDocumentSislabraFromSapiens {
             let response: string = "";
     
             const ObjImpedimentos: IImpedimentosMaternidade = {
-                veiculos: [],
-                imoveisRurais: [],
-                empresas: [],
-                bensTSE: null,
-                imoveisSP: null,
-                embarcacao: null,
-                aeronave: null
-            };
-    
-            const GetVeiculosSislabra = await getVeiculos(paginaformatada);
-            if(!(GetVeiculosSislabra.length == 2 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA" && GetVeiculosSislabra[1].tipo == "MOTOCICLETA" || 
-            GetVeiculosSislabra.length == 1 && GetVeiculosSislabra[0].tipo == "MOTOCICLETA"
-            )){
-                if(GetVeiculosSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
-                    response = response + " VEICULO AUTOR -";
-                    ObjImpedimentos.veiculos = GetVeiculosSislabra;
-                }else if(GetVeiculosSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
-                    response = response + " VEICULO CONJUGE -";
-                    ObjImpedimentos.veiculos = GetVeiculosSislabra;
+                nome: '',
+                identificacao: '',
+                impeditivos: {
+                    veiculos: [],
+                    imoveisRurais: [],
+                    empresas: [],
+                    bensTSE: null,
+                    imoveisSP: null,
+                    embarcacao: null,
+                    aeronave: null
                 }
-            }
-    
-            const GetImoveisRuraisSislabra = await getImoveisRurais(paginaformatada);
-            if(GetImoveisRuraisSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
-                response = response + " IMOVEIS RURAIS AUTOR -";
-                ObjImpedimentos.imoveisRurais = GetImoveisRuraisSislabra;
-            }else if(GetImoveisRuraisSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
-                response = response + " IMOVEIS RURAIS CONJUGE -";
-                ObjImpedimentos.imoveisRurais = GetImoveisRuraisSislabra;
-            }
-    
-            const GetEmpresaSislabra = await getEmpresa(paginaformatada);
-            if(GetEmpresaSislabra.length !== 0 && indentificadorDocumento == 'AUTOR'){
-                response = response + " EMPRESA AUTOR -";
-                ObjImpedimentos.empresas = GetEmpresaSislabra;
-            }else if(GetEmpresaSislabra.length !== 0 && indentificadorDocumento == 'CONJUGE'){
-                response = response + " EMPRESA CONJUGE -";
-                ObjImpedimentos.empresas = GetEmpresaSislabra;
-            }
-    
-            const GetBensTSE = await getBensTSE(paginaformatada);
-            if (GetBensTSE && indentificadorDocumento == 'AUTOR') {
-                response += " BENS TSE AUTOR -";
-                ObjImpedimentos.bensTSE = "BENS ENCONTRADOS NO AUTOR";
-            } else if (GetBensTSE && indentificadorDocumento == 'CONJUGE') {
-                response += " BENS TSE CONJUGE -"
-                ObjImpedimentos.bensTSE = "BENS ENCONTRADOS NO CONJUGE";
-            }
-    
-            const GetImoveisSP = await getImoveisSP(paginaformatada);
-            if (GetImoveisSP && indentificadorDocumento == 'AUTOR') {
-                response += " IMÓVEL SP AUTOR -";
-                ObjImpedimentos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO AUTOR";
-            } else if (GetImoveisSP && indentificadorDocumento == 'CONJUGE') {
-                response += " IMÓVEL SP CONJUGE -";
-                ObjImpedimentos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO CONJUGE";
-            }
-    
-            const GetEmbarcacao = await getEmbarcacoes(paginaformatada);
-            if (GetEmbarcacao && indentificadorDocumento == 'AUTOR') {
-                response += " EMBARCAÇÃO AUTOR -";
-                ObjImpedimentos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO AUTOR";
-            } else if (GetEmbarcacao && indentificadorDocumento == 'CONJUGE') {
-                response += " EMBARCAÇÃO CONJUGE -";
-                ObjImpedimentos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO CONJUGE";
-            }
-    
-            const GetAeronave = await getAeronaves(paginaformatada);
-            if (GetAeronave && indentificadorDocumento == 'AUTOR') {
-                response += " AERONAVE AUTOR -";
-                ObjImpedimentos.aeronave = "AERONAVE ENCONTRADA NO AUTOR";
-            } else if (GetAeronave && indentificadorDocumento == 'CONJUGE') {
-                response += " AERONAVE CONJUGE -";
-                ObjImpedimentos.aeronave = "AERONAVE ENCONTRADA NO CONJUGE";
+            };
+
+            if (indentificadorDocumento === 'AUTOR') {
+                const sislabra = await sislabraExtractor(paginaformatada, indentificadorDocumento)
+                ObjImpedimentos.nome = sislabra.nome;
+                ObjImpedimentos.identificacao = 'AUTOR';
+
+                if (sislabra.veiculos) {
+                    response = response + " VEICULO AUTOR -";
+                    ObjImpedimentos.impeditivos.veiculos = sislabra.veiculos;
+                }
+
+                if (sislabra.imoveisRurais) {
+                    response = response + " IMOVEIS RURAIS AUTOR -";
+                    ObjImpedimentos.impeditivos.imoveisRurais = sislabra.imoveisRurais;
+                }
+
+                if (sislabra.empresas) {
+                    response = response + " EMPRESA AUTOR -";
+                    ObjImpedimentos.impeditivos.empresas = sislabra.empresas;
+                }
+
+                if (sislabra.bensTse) {
+                    response += " BENS TSE AUTOR -";
+                    ObjImpedimentos.impeditivos.bensTSE = "BENS ENCONTRADOS NO AUTOR";
+                }
+
+                if (sislabra.imoveisSp) {
+                    response += " IMÓVEL SP AUTOR -";
+                    ObjImpedimentos.impeditivos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO AUTOR";
+                }
+
+                if (sislabra.embarcacao) {
+                    response += " EMBARCAÇÃO AUTOR -";
+                    ObjImpedimentos.impeditivos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO AUTOR";
+                }
+
+                if (sislabra.aeronave) {
+                    response += " AERONAVE AUTOR -";
+                    ObjImpedimentos.impeditivos.aeronave = "AERONAVE ENCONTRADA NO AUTOR";
+                }
+            } else {
+                const sislabra = await sislabraExtractor(paginaformatada, indentificadorDocumento);
+                ObjImpedimentos.nome = sislabra.nome;
+                ObjImpedimentos.identificacao = 'CONJUGE';
+
+                if (sislabra.veiculos) {
+                    response = response + " VEICULO CONJUGE -";
+                    ObjImpedimentos.impeditivos.veiculos = sislabra.veiculos;
+                }
+
+                if (sislabra.imoveisRurais) {
+                    response = response + " IMOVEIS RURAIS CONJUGE -";
+                    ObjImpedimentos.impeditivos.imoveisRurais = sislabra.imoveisRurais;
+                }
+
+                if (sislabra.empresas) {
+                    response = response + " EMPRESA CONJUGE -";
+                    ObjImpedimentos.impeditivos.empresas = sislabra.empresas;
+                }
+
+                if (sislabra.bensTse) {
+                    response += " BENS TSE CONJUGE -";
+                    ObjImpedimentos.impeditivos.bensTSE = "BENS ENCONTRADOS NO CONJUGE";
+                }
+
+                if (sislabra.imoveisSp) {
+                    response += " IMÓVEL SP CONJUGE -";
+                    ObjImpedimentos.impeditivos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO CONJUGE";
+                }
+
+                if (sislabra.embarcacao) {
+                    response += " EMBARCAÇÃO CONJUGE -";
+                    ObjImpedimentos.impeditivos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO CONJUGE";
+                }
+
+                if (sislabra.aeronave) {
+                    response += " AERONAVE CONJUGE -";
+                    ObjImpedimentos.impeditivos.aeronave = "AERONAVE ENCONTRADA NO CONJUGE";
+                }
             }
     
             return { impedimentos: response, objImpedimentos: ObjImpedimentos }

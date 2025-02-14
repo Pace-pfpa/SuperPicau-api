@@ -8,9 +8,13 @@ export async function getRelacoesPrevidenciariasSuper(dossie: JSDOMType): Promis
     const arrayRelacoes: IRelacaoPrevidenciaria[] = [];
     const divOptions = [7, 8]
 
+    const pensaoPorMortePath = '/html/body/div/u[4]';
+    const pensaoPorMorteRaw = await safeExtractField(dossie, pensaoPorMortePath, 'NORMAL');
+
     for (const div of divOptions) {
         const possuiRelacoes = await hasRelacoesPrevidenciarias(dossie, div);
         if (!possuiRelacoes) continue;
+        if (pensaoPorMorteRaw.includes('MORTE')) continue;
     
         try {
             const baseXPath = `/html/body/div/div[${div}]/table/tbody/tr`;

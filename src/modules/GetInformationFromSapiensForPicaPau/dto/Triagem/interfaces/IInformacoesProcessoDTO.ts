@@ -18,6 +18,8 @@ export interface IInformacoesProcessoDTO {
         dossieFormatado: JSDOMType,
         dossieExtractedPartial: IDossieExtractedPartial,
     },
-    sislabraPoloAtivo: ResponseArvoreDeDocumentoDTO,
-    sislabraConjuge: ResponseArvoreDeDocumentoDTO
+    sislabra: {
+        sislabraPoloAtivo: JSDOMType,    
+        sislabraConjuge: JSDOMType
+    },
 }

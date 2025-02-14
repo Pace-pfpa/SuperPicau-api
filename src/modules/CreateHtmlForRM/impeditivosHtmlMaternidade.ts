@@ -3,12 +3,11 @@ import { brasaoLogo,
         estilos, 
         renderSecao, 
         renderLitispendencia,
-        renderConcessao, 
         renderRequerimento } from "./utils";
 import { IResponseLabraAutorConjugeMaternidade } from "../GetInformationFromSapiensForPicaPau/dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
 import { HtmlIImpeditivosMaternidadeDTO } from "./dto/HtmlImpeditivosMaternidade";
 import { renderPatrimonioImcompativelMaternidade } from "./utils/renders/maternidade/renderPatrimonioIncompativelMaternidade";
-import { renderImoveisRuraisMaternidade } from "./utils/renders/maternidade/renderImoveisRuraisMaternidade";
+import { renderConcessaoMaternidade } from "./utils/renders/maternidade/renderConcessaoMaternidade";
 
 export class ImpeditivosHtmlMaternidade {
     async execute(
@@ -24,13 +23,14 @@ export class ImpeditivosHtmlMaternidade {
         });
 
         const tabelaTipo4 = await this.renderTabelaTipo4(
-            data.litispendencia,
-            data.concessaoAnterior,
-            data.requerimento,
-            impedimentosDosprev.litispendencia
+            data,
+            impedimentosDosprev
         );
 
-        const tabelaTipo3 = await this.renderTabelaTipo3(impedimentosLabra, impedimentosDosprev);
+        const tabelaTipo3 = await this.renderTabelaTipo3(
+          impedimentosLabra, 
+          impedimentosDosprev
+        );
 
         const html = `
             <!DOCTYPE html>
@@ -117,15 +117,30 @@ export class ImpeditivosHtmlMaternidade {
 
     }
 
-    private async renderTabelaTipo4(litispendencia: boolean, concessao: boolean, requerimento: boolean, litispendenciaProcessos: string[] | null): Promise<string> {
-        if (!litispendencia && !concessao && !requerimento) {
+    private async renderTabelaTipo4(
+      impeditivosBooleans: HtmlIImpeditivosMaternidadeDTO,
+      impeditivosDosprev: IObjInfoImpeditivosMaternidade
+    ): Promise<string> {
+        if (
+          !impeditivosBooleans.litispendencia && 
+          !impeditivosBooleans.concessaoAnterior &&
+          !impeditivosBooleans.beneficioAtivo &&
+          !impeditivosBooleans.beneficioIncompativel &&
+          !impeditivosBooleans.requerimento
+        ) {
           console.log('NÃO RENDERIZOU NADA')
-            return ""; // Não renderiza a tabela
+            return "";
         }
 
-      const litispendenciaContent = renderLitispendencia(litispendencia, litispendenciaProcessos);
-      const concessaoContent = renderConcessao(concessao);
-      const requerimentoContent = renderRequerimento(requerimento);
+      const litispendenciaContent = renderLitispendencia(
+        impeditivosBooleans.litispendencia, 
+        impeditivosDosprev.litispendencia
+      );
+      const concessaoContent = renderConcessaoMaternidade(
+        impeditivosBooleans,
+        impeditivosDosprev
+      );
+      const requerimentoContent = renderRequerimento(impeditivosBooleans.requerimento);
 
       return `
       <table border="1" cellpadding="1" cellspacing="1" style="height:20px; width:786px">
@@ -177,17 +192,18 @@ export class ImpeditivosHtmlMaternidade {
           "ATIVIDADE EMPRESARIAL",
           `A parte autora, o(a) cônjuge ou companheiro(a) possui (ou possuiu) participação em sociedade empresária, sociedade simples, empresa individual ou empresa individual de responsabilidade limitada, em atividade 
           <u><strong>dentro do período de carência previsto em Lei</strong></u>, 
-          <u><strong>em desacordo com as limitações legais</strong></u>, o que descaracteriza a qualidade de segurado especial.`,
-          autor?.empresas,
-          conjuge?.empresas,
+          <u><strong>em desacordo com as limitações legais</strong></u>, o que descaracteriza a qualidade de segurado especial.
+          <strong>PREQUESTIONAMENTO:</strong> Lei 8.213/91, art. 11, VII, § 1º, §10, I, “d”, e §12.`,
+          autor?.impeditivos.empresas,
+          conjuge?.impeditivos.empresas,
           ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"],
-          "Empresas do Autor",
-          "Empresas do Cônjuge"
+          `Empresas do Autor - ${autor?.nome}`,
+          `Empresas do Cônjuge - ${conjuge?.nome}`
         );
 
         const empregoDosprev = renderSecao(
-          "EMPREGO AUTOR",
-          `A parte autora possui diversos vínculos privados/públicos no período de carência, em total desacordo com os limites estabelecidos pela Lei e pela jurisprudência pacífica, conforme informações no dossiê previdenciário anexado.`,
+          "EMPREGO",
+          `A parte autora possui diversos vínculos privados/públicos anteriores ao nascimento, com percepção de salário incompatível com a agricultura de subsistência ou por intervalo superior ao limite legal (120 dias), sem comprovação do retorno ao trabalho rural após a cessação dessa(s) atividade(s), o que descaracteriza a qualidade de segurado especial da parte autora. <strong>PREQUESTIONAMENTO:</strong> Lei 8.213/1991, artigo 11, VII, e § 1º.`,
           impedimentosDosprev?.emprego,
           null,
           ["vinculo", "dataInicio", "dataFim", "filiacao", "ocupacao"],
@@ -197,14 +213,11 @@ export class ImpeditivosHtmlMaternidade {
 
 
         const patrimonioIncompativel = renderPatrimonioImcompativelMaternidade(autor, conjuge);
-
-        const imovelRural = renderImoveisRuraisMaternidade(autor, conjuge);
         
         if (
             !atividadeEmpresarial &&
             !empregoDosprev &&
-            !patrimonioIncompativel &&
-            !imovelRural
+            !patrimonioIncompativel
         ) {
             return "";
         }
@@ -224,7 +237,6 @@ export class ImpeditivosHtmlMaternidade {
                 ${atividadeEmpresarial}
                 ${empregoDosprev}
                 ${patrimonioIncompativel}
-                ${imovelRural}
               </td>
             </tr>
             <tr>
@@ -233,8 +245,7 @@ export class ImpeditivosHtmlMaternidade {
             <tr>
               <td>
                 <p>
-                  Para provar a existência da preliminar acima, além de outras provas específicas identificadas na própria minuta, o INSS demonstra da seguinte forma:
-                  a) atividade empresarial (informações da atividade empresarial na minuta de contestação); b) emprego (juntada de dossiê previdenciário e/ou informações na minuta de contestação); c) patrimônio incompatível (informações na minuta de contestação); d) imóvel rural (informações na minuta de contestação).
+                  Para provar a existência dos impeditivos para a concessão do benefício pleiteado, além de outras provas específicas identificadas na própria minuta, o INSS demonstra da seguinte forma: a) atividade empresarial (informações da atividade empresarial na minuta de contestação); b) emprego (juntada de dossiê previdenciário e/ou informações na minuta de contestação); c) patrimônio incompatível (informações na minuta de contestação);
                 </p>
               </td>
             </tr>
