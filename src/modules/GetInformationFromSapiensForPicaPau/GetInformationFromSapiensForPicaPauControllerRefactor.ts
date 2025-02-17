@@ -14,7 +14,7 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
     async handle(request: Request, response: Response): Promise<Response> {
         const data: GetInformationsFromSapiensDTO = request.body;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             setTimeout(async() => {
                 try {
                     /** 

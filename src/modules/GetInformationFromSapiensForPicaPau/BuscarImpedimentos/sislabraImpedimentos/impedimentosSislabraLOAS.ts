@@ -1,22 +1,20 @@
-import { JSDOM } from 'jsdom';
-import { getDocumentoUseCase } from "../../../GetDocumento";
 import { getDocumentSislabraFromSapiensLoas } from "../../GetDocumentSislabraFromSapiens";
-import { ResponseArvoreDeDocumentoDTO } from '../../../GetArvoreDocumento';
 import { IResponseSislabraLoas } from '../../dto/Sislabra/interfaces/IResponseSislabraLoas';
 import { ISislabraGF } from '../../dto/Sislabra/interfaces/ISislabraGF';
 import { IImpedimentosLoas } from '../../dto/Sislabra/interfaces/IImpedimentosLoas';
+import { JSDOMType } from '../../../../shared/dtos/JSDOM';
 
-export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: ISislabraGF, cookie: string): Promise<IResponseSislabraLoas> {
+export async function impedimentosSislabraLOAS(
+    labrasPoloAtivo: JSDOMType[], 
+    labrasGF: ISislabraGF,
+): Promise<IResponseSislabraLoas> {
     let response = '';
     let impedimentosAutor: IImpedimentosLoas;
     let impedimentosGF: IImpedimentosLoas[] = [];
 
     if (labrasPoloAtivo.length > 0) {
         for (let labra of labrasPoloAtivo) {
-            const idSislabraParaPesquisa = labra.documentoJuntado.componentesDigitais[0].id;
-            const paginaSislabra = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisa });
-            const paginaFormatada = new JSDOM(paginaSislabra);
-            const sislabraPoloAtivo = await getDocumentSislabraFromSapiensLoas.execute(paginaFormatada, true);
+            const sislabraPoloAtivo = await getDocumentSislabraFromSapiensLoas.execute(labra, true);
             if (!response.includes(sislabraPoloAtivo.impedimentos)) {
                 response += sislabraPoloAtivo.impedimentos;
                 impedimentosAutor = sislabraPoloAtivo.objImpedimentos;
@@ -26,10 +24,7 @@ export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDe
 
     if (!labrasGF.isGrupoFamiliarAusente && labrasGF.labrasGrupoFamiliar.length > 0) {
         for (let labra of labrasGF.labrasGrupoFamiliar) {
-            const idSislabraParaPesquisaGF = labra.documentoJuntado.componentesDigitais[0].id;
-            const paginaSislabraGF = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaGF });
-            const paginaFormatadaGF = new JSDOM(paginaSislabraGF);
-            const sislabraGF = await getDocumentSislabraFromSapiensLoas.execute(paginaFormatadaGF, false);
+            const sislabraGF = await getDocumentSislabraFromSapiensLoas.execute(labra, false);
             if (!response.includes(sislabraGF.impedimentos)) {
                 response += sislabraGF.impedimentos;
                 impedimentosGF.push(sislabraGF.objImpedimentos);

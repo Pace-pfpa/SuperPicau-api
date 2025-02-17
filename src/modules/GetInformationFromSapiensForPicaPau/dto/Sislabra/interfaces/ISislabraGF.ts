@@ -1,6 +1,6 @@
-import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 
 export interface ISislabraGF {
     isGrupoFamiliarAusente: boolean;
-    labrasGrupoFamiliar: ResponseArvoreDeDocumentoDTO[] | null;
+    labrasGrupoFamiliar: JSDOMType[] | null;
 }
