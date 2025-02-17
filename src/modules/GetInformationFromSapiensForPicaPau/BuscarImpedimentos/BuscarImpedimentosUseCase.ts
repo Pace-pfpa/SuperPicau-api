@@ -25,16 +25,14 @@ export class BuscarImpedimentosUseCase {
     ): Promise<{ 
         impedimentos: string[], 
         objImpedimentos: IObjInfoImpeditivosMaternidade, 
-        objImpedimentosLabra: IResponseLabraAutorConjugeMaternidade 
+        objImpedimentosLabra: IResponseLabraAutorConjugeMaternidade
     }> {
         const impedimentoCapa: string[] = [];
         const informationcapa = await getInformationCapa.ImpedimentosCapa(
             informacoesProcesso.capaFormatada
         );
-        if (!informationcapa.encontrouAdvogado) {
-            impedimentoCapa.push("ADVOGADO");
-        }
-
+        if (!informationcapa.encontrouAdvogado) impedimentoCapa.push("ADVOGADO");
+        
         const impedimentosSislabra = await impedimentosSislabraMaternidade(
             informacoesProcesso.sislabra.sislabraPoloAtivo, 
             informacoesProcesso.sislabra.sislabraConjuge
@@ -133,51 +131,68 @@ export class BuscarImpedimentosUseCase {
     async procurarImpedimentosLOAS(
         informacoesProcesso: IInformacoesProcessoLoasDTO
     ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas, objImpedimentosLabra: IResponseLabraAutorGF }> {
-        const {
-            tarefaPastaID,
-            cookie,
-            capaFormatada,
-            cpfCapa,
-            dosprevPoloAtivo,
-            isDosprevPoloAtivoNormal,
-            sislabraPoloAtivo,
-            sislabraGFInfo,
-            arrayDeDossiesNormais,
-            arrayDeDossiesSuper,
-            dossieSocialInfo
-        } = informacoesProcesso;
-
         let impedimentosBusca: { impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas };
         let grupoFamiliar: string[] = [];
         let impedimentoRenda: string[] = [];
         let infoRequerente: IPicaPauCalculeDTO;
 
         const impedimentoCapa: string[] = [];
-        const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
-        if (!informationcapa) {
-            impedimentoCapa.push("ADVOGADO");
-        }
+        const informationcapa = await getInformationCapa.ImpedimentosCapa(
+            informacoesProcesso.capaFormatada
+        );
+        if (!informationcapa) impedimentoCapa.push("ADVOGADO");
 
-        const impedimentosSislabra = await impedimentosSislabraLOAS(sislabraPoloAtivo, sislabraGFInfo, cookie);
+        const impedimentosSislabra = await impedimentosSislabraLOAS(
+            informacoesProcesso.sislabra.sislabraPoloAtivo, 
+            informacoesProcesso.sislabra.sislabraGFInfo,
+        );
+        
         const ObjImpedimentosLabraAutorGF: IResponseLabraAutorGF = {
             autor: impedimentosSislabra.autor,
             gf: impedimentosSislabra.gf
         }
 
-        if (isDosprevPoloAtivoNormal) {
-            impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(dosprevPoloAtivo, cookie);
-            infoRequerente = await getInfoReqDossieNormal(cookie, dosprevPoloAtivo);
+        if (informacoesProcesso.dossie.isDosprevPoloAtivoNormal) {
+            impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(
+                informacoesProcesso.dossie.dosprevPoloAtivo,
+                informacoesProcesso.cookie
+            );
+            infoRequerente = await getInfoReqDossieNormal(
+                informacoesProcesso.cookie,
+                informacoesProcesso.dossie.dosprevPoloAtivo
+            );
         } else {
-            impedimentosBusca = await superDossieClass.buscarImpedimentosForLOAS(dosprevPoloAtivo, cookie);
-            infoRequerente = await getInfoReqDossieSuper(cookie, dosprevPoloAtivo);
+            impedimentosBusca = await superDossieClass.buscarImpedimentosForLOAS(
+                informacoesProcesso.dossie.dosprevPoloAtivo,
+                informacoesProcesso.cookie
+            );
+            infoRequerente = await getInfoReqDossieSuper(
+                informacoesProcesso.cookie,
+                informacoesProcesso.dossie.dosprevPoloAtivo
+            );
         }
 
-        if (!dossieSocialInfo) {
+        if (!informacoesProcesso.dossieSocialInfo) {
             impedimentoCapa.push("CADÚNICO");
         } else {
-            grupoFamiliar = await getGrupoFamiliarCpfs(tarefaPastaID, cookie, cpfCapa, dossieSocialInfo);
-            let arrayObjetosEnvolvidos = await getArrayObjetosEnvolvidos(grupoFamiliar, infoRequerente, cookie, arrayDeDossiesNormais, arrayDeDossiesSuper);
-            const { impeditivo, objImpeditivoRenda } = await informationRenda(arrayObjetosEnvolvidos, grupoFamiliar, infoRequerente);
+            grupoFamiliar = await getGrupoFamiliarCpfs(
+                informacoesProcesso.tarefaPastaID,
+                informacoesProcesso.cookie,
+                informacoesProcesso.cpfCapa,
+                informacoesProcesso.dossieSocialInfo
+            );
+            let arrayObjetosEnvolvidos = await getArrayObjetosEnvolvidos(
+                grupoFamiliar,
+                infoRequerente,
+                informacoesProcesso.cookie,
+                informacoesProcesso.dossie.arrayDeDossiesNormais,
+                informacoesProcesso.dossie.arrayDeDossiesSuper
+            );
+            const { impeditivo, objImpeditivoRenda } = await informationRenda(
+                arrayObjetosEnvolvidos,
+                grupoFamiliar,
+                infoRequerente
+            );
             impedimentoRenda = impeditivo;
             impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: impedimentoRenda.length > 0 ? objImpeditivoRenda : null };
         }

@@ -50,7 +50,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             const arrayDeDocumentos = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
             if (!arrayDeDocumentos) {
                 await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
-                return { warning: "DOSPREV COM FALHA NA PESQUISA" }
+                return { warning: "ERRO AO BUSCAR DOCUMENTOS" }
             }
  
             const capaFormatada = await verificarECorrigirCapa(data, cookie);
@@ -120,13 +120,19 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     capaFormatada,
                     cpfCapa,
                     infoUpload,
-                    dosprevPoloAtivo,
-                    isDosprevPoloAtivoNormal,
-                    sislabraPoloAtivo,
-                    sislabraGFInfo,
+                    dossie: {
+                        dosprevPoloAtivo,
+                        isDosprevPoloAtivoNormal,
+                        dossieFormatado: dosprevExtracted.dossieFormatado,
+                        dossieExtractedPartial: dosprevExtracted.dossiePartial,
+                        arrayDeDossiesNormais,
+                        arrayDeDossiesSuper
+                    },
+                    sislabra: {
+                        sislabraPoloAtivo,
+                        sislabraGFInfo,
+                    },
                     dossieSocialInfo,
-                    arrayDeDossiesNormais,
-                    arrayDeDossiesSuper
                 }
 
                 return [informacoesProcesso, 'LOAS'];

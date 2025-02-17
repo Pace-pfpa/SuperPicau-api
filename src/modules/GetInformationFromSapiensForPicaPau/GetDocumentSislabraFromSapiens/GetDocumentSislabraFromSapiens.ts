@@ -118,7 +118,10 @@ export class GetDocumentSislabraFromSapiens {
     async maternidade(
         paginaformatada: JSDOMType, 
         indentificadorDocumento: string
-    ): Promise<{ impedimentos: string, objImpedimentos: IImpedimentosMaternidade }> {
+    ): Promise<{ 
+        impedimentos: string, 
+        objImpedimentos: IImpedimentosMaternidade
+    }> {
         try {
             let response: string = "";
     
@@ -219,7 +222,17 @@ export class GetDocumentSislabraFromSapiens {
             return { impedimentos: response, objImpedimentos: ObjImpedimentos }
     
            } catch(e) {
-                console.error("Erro ao buscar sislabra" + e)
+                console.error("Erro ao buscar sislabra" + e.message)
            }
     }
+
+    // async loas(
+    //     paginaformatada: JSDOMType, 
+    //     isPoloAtivo: boolean
+    // ): Promise<{ 
+    //     impedimentos: string, 
+    //     objImpedimentos: IImpedimentosLoas 
+    // }> {
+
+    // }
 }

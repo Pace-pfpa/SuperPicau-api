@@ -13,7 +13,7 @@ export async function getRelacoesPrevidenciariasSuper(dossie: JSDOMType): Promis
 
     for (const div of divOptions) {
         const possuiRelacoes = await hasRelacoesPrevidenciarias(dossie, div);
-        if (!possuiRelacoes) continue;
+        if (!possuiRelacoes) return [];
         if (pensaoPorMorteRaw.includes('MORTE')) continue;
     
         try {

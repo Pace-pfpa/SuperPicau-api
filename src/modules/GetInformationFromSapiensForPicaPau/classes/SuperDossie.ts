@@ -38,6 +38,8 @@ export class SuperDossie {
                 dossieExtractedPartial
             );
 
+            console.log(dossie)
+
             const impeditivosMaternidade = await getInformationDossieSuperForPicapau.maternidade(dossie);
     
             const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
