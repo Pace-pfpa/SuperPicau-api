@@ -2,9 +2,12 @@ export * from './brasaoLogo';
 export * from './estilos';
 export * from './renders/renderLitispendencia'
 export * from './renders/renderCampoPatrimonioImcompativel';
-export * from './renders/renderConcessao';
+export * from './renders/maternidade/renderConcessaoMaternidade';
+export * from './renders/maternidade/renderImoveisRuraisMaternidade';
+export * from './renders/maternidade/renderPatrimonioIncompativelMaternidade';
 export * from './renders/rural/renderImoveisRuraisRural';
 export * from './renders/rural/renderPatrimonioImcompativelRural';
+export * from './renders/rural/renderConcessaoRural';
 export * from './renders/renderRequerimento';
 export * from './renders/renderSecao';
 export * from './renders/renderTable';
