@@ -4,4 +4,5 @@ export interface IFichaSintetica {
     assunto: string | null;
     nome: string | null;
     cpf: string | null;
+    dataNascimento: string | null;
 }

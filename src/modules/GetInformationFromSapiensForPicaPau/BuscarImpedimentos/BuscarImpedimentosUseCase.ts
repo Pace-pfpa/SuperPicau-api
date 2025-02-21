@@ -130,8 +130,15 @@ export class BuscarImpedimentosUseCase {
 
     async procurarImpedimentosLOAS(
         informacoesProcesso: IInformacoesProcessoLoasDTO
-    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas, objImpedimentosLabra: IResponseLabraAutorGF }> {
-        let impedimentosBusca: { impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas };
+    ): Promise<{ 
+        impedimentos: string[], 
+        objImpedimentos: IObjInfoImpeditivosLoas, 
+        objImpedimentosLabra: IResponseLabraAutorGF 
+    }> {
+        let impedimentosBusca: { 
+            impedimentos: string[], 
+            objImpedimentos: IObjInfoImpeditivosLoas 
+        };
         let grupoFamiliar: string[] = [];
         let impedimentoRenda: string[] = [];
         let infoRequerente: IPicaPauCalculeDTO;
@@ -154,8 +161,8 @@ export class BuscarImpedimentosUseCase {
 
         if (informacoesProcesso.dossie.isDosprevPoloAtivoNormal) {
             impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(
-                informacoesProcesso.dossie.dosprevPoloAtivo,
-                informacoesProcesso.cookie
+                informacoesProcesso.dossie.dossieFormatado,
+                informacoesProcesso.dossie.dossieExtractedPartial
             );
             infoRequerente = await getInfoReqDossieNormal(
                 informacoesProcesso.cookie,
@@ -163,8 +170,7 @@ export class BuscarImpedimentosUseCase {
             );
         } else {
             impedimentosBusca = await superDossieClass.buscarImpedimentosForLOAS(
-                informacoesProcesso.dossie.dosprevPoloAtivo,
-                informacoesProcesso.cookie
+                informacoesProcesso.dossie.dossieExtractedPartial
             );
             infoRequerente = await getInfoReqDossieSuper(
                 informacoesProcesso.cookie,

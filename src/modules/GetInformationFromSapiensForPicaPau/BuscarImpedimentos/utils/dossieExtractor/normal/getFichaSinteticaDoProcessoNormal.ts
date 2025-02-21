@@ -11,7 +11,8 @@ export async function getFichaSinteticaDoProcessoNormal(dossie: JSDOMType): Prom
         dataAjuizamento: "/html/body/div/div[1]/table/tbody/tr[2]/td",
         assunto: "/html/body/div/div[1]/table/tbody/tr[4]/td",
         nome: "/html/body/div/div[1]/table/tbody/tr[6]/td",
-        cpf: "/html/body/div/div[1]/table/tbody/tr[7]/td"
+        cpf: "/html/body/div/div[1]/table/tbody/tr[7]/td",
+        dataNascimento: "/html/body/div/div[1]/table/tbody/tr[8]/td"
     };
 
     const safeExtractField = async (xpath: string, errorMessage: string) => {
@@ -31,12 +32,14 @@ export async function getFichaSinteticaDoProcessoNormal(dossie: JSDOMType): Prom
 
     const cpfDosprevRaw = await safeExtractField(xpathMap.cpf, "CPF não encontrado");
     const cpfFormatado = cpfDosprevRaw ? CorrigirCpfComZeros(cpfDosprevRaw) : null;
+    const dataNascimentoRaw = await safeExtractField(xpathMap.dataNascimento, "Data de nascimento não encontrada");
 
     return {
         numeroUnico: numeroUnicoRaw.trim().replace(/\D/g, ''),
         dataAjuizamento: dataAjuizamentoRaw,
         assunto: assuntoRaw,
         nome: nomeCerto,
-        cpf: cpfFormatado
+        cpf: cpfFormatado,
+        dataNascimento: dataNascimentoRaw
     };
 }

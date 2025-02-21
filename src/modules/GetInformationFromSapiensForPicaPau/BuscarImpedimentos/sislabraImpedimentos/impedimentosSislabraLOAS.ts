@@ -1,4 +1,4 @@
-import { getDocumentSislabraFromSapiensLoas } from "../../GetDocumentSislabraFromSapiens";
+import { getDocumentSislabraFromSapiens } from "../../GetDocumentSislabraFromSapiens";
 import { IResponseSislabraLoas } from '../../dto/Sislabra/interfaces/IResponseSislabraLoas';
 import { ISislabraGF } from '../../dto/Sislabra/interfaces/ISislabraGF';
 import { IImpedimentosLoas } from '../../dto/Sislabra/interfaces/IImpedimentosLoas';
@@ -14,7 +14,7 @@ export async function impedimentosSislabraLOAS(
 
     if (labrasPoloAtivo.length > 0) {
         for (let labra of labrasPoloAtivo) {
-            const sislabraPoloAtivo = await getDocumentSislabraFromSapiensLoas.execute(labra, true);
+            const sislabraPoloAtivo = await getDocumentSislabraFromSapiens.loas(labra, true);
             if (!response.includes(sislabraPoloAtivo.impedimentos)) {
                 response += sislabraPoloAtivo.impedimentos;
                 impedimentosAutor = sislabraPoloAtivo.objImpedimentos;
@@ -24,7 +24,7 @@ export async function impedimentosSislabraLOAS(
 
     if (!labrasGF.isGrupoFamiliarAusente && labrasGF.labrasGrupoFamiliar.length > 0) {
         for (let labra of labrasGF.labrasGrupoFamiliar) {
-            const sislabraGF = await getDocumentSislabraFromSapiensLoas.execute(labra, false);
+            const sislabraGF = await getDocumentSislabraFromSapiens.loas(labra, false);
             if (!response.includes(sislabraGF.impedimentos)) {
                 response += sislabraGF.impedimentos;
                 impedimentosGF.push(sislabraGF.objImpedimentos);
