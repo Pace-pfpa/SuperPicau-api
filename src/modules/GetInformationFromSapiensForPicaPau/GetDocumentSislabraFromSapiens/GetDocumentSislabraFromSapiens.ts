@@ -10,6 +10,8 @@ import { getAeronaves } from "./SislabraBusiness/GetAeronavesSislabra";
 import { IImpedimentosMaternidade } from "../dto/Sislabra/interfaces/maternidade/IImpedimentosMaternidade";
 import { IImpedimentosRural } from "../dto";
 import { sislabraExtractor } from "./utils/sislabraExtractor";
+import { IImpedimentosLoas } from "../dto/Sislabra/interfaces/IImpedimentosLoas";
+import { sislabraExtractorLoas } from "./utils/sislabraExtractorLoas";
 
 export class GetDocumentSislabraFromSapiens {
     async execute(
@@ -145,17 +147,17 @@ export class GetDocumentSislabraFromSapiens {
                 ObjImpedimentos.identificacao = 'AUTOR';
 
                 if (sislabra.veiculos) {
-                    response = response + " VEICULO AUTOR -";
+                    response += " VEICULO AUTOR -";
                     ObjImpedimentos.impeditivos.veiculos = sislabra.veiculos;
                 }
 
                 if (sislabra.imoveisRurais) {
-                    response = response + " IMOVEIS RURAIS AUTOR -";
+                    response += " IMOVEIS RURAIS AUTOR -";
                     ObjImpedimentos.impeditivos.imoveisRurais = sislabra.imoveisRurais;
                 }
 
                 if (sislabra.empresas) {
-                    response = response + " EMPRESA AUTOR -";
+                    response += " EMPRESA AUTOR -";
                     ObjImpedimentos.impeditivos.empresas = sislabra.empresas;
                 }
 
@@ -184,17 +186,17 @@ export class GetDocumentSislabraFromSapiens {
                 ObjImpedimentos.identificacao = 'CONJUGE';
 
                 if (sislabra.veiculos) {
-                    response = response + " VEICULO CONJUGE -";
+                    response += " VEICULO CONJUGE -";
                     ObjImpedimentos.impeditivos.veiculos = sislabra.veiculos;
                 }
 
                 if (sislabra.imoveisRurais) {
-                    response = response + " IMOVEIS RURAIS CONJUGE -";
+                    response += " IMOVEIS RURAIS CONJUGE -";
                     ObjImpedimentos.impeditivos.imoveisRurais = sislabra.imoveisRurais;
                 }
 
                 if (sislabra.empresas) {
-                    response = response + " EMPRESA CONJUGE -";
+                    response += " EMPRESA CONJUGE -";
                     ObjImpedimentos.impeditivos.empresas = sislabra.empresas;
                 }
 
@@ -226,13 +228,135 @@ export class GetDocumentSislabraFromSapiens {
            }
     }
 
-    // async loas(
-    //     paginaformatada: JSDOMType, 
-    //     isPoloAtivo: boolean
-    // ): Promise<{ 
-    //     impedimentos: string, 
-    //     objImpedimentos: IImpedimentosLoas 
-    // }> {
+    async loas(
+        paginaformatada: JSDOMType, 
+        isPoloAtivo: boolean
+    ): Promise<{ 
+        impedimentos: string, 
+        objImpedimentos: IImpedimentosLoas 
+    }> {
+        try {
+            let response: string = '';
 
-    // }
+            const objImpedimentos:IImpedimentosLoas = {
+                nome: '',
+                identificacao: '',
+                impeditivos: {
+                    empregos: [],
+                    veiculos: [],
+                    imoveisRurais: [],
+                    empresas: [],
+                    bensTSE: null,
+                    imoveisSP: null,
+                    embarcacao: null,
+                    aeronave: null,
+                    doacaoEleitoral: null
+                }
+            }
+
+            if (isPoloAtivo) {
+                const sislabra = await sislabraExtractorLoas(paginaformatada, isPoloAtivo);
+                objImpedimentos.nome = sislabra.nome;
+                objImpedimentos.identificacao = sislabra.identificacao;
+
+                if (sislabra.veiculos) {
+                    response += " VEÍCULOS -";
+                    objImpedimentos.impeditivos.veiculos = sislabra.veiculos;
+                }
+
+                if (sislabra.empregos) {
+                    response += " EMPREGO -";
+                    objImpedimentos.impeditivos.empregos = sislabra.empregos;
+                }
+
+                if (sislabra.imoveisRurais) {
+                    response += " IMÓVEL RURAL -";
+                    objImpedimentos.impeditivos.imoveisRurais = sislabra.imoveisRurais;
+                }
+
+                if (sislabra.empresas) {
+                    response += " EMPRESA -";
+                    objImpedimentos.impeditivos.empresas = sislabra.empresas;
+                }
+
+                if (sislabra.bensTse) {
+                    response += " BENS TSE -";
+                    objImpedimentos.impeditivos.bensTSE = "BENS ENCONTRADOS NO AUTOR";
+                }
+
+                if (sislabra.imoveisSp) {
+                    response += " IMÓVEL SP -";
+                    objImpedimentos.impeditivos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO AUTOR";
+                }
+
+                if (sislabra.embarcacao) {
+                    response += " EMBARCAÇÃO -";
+                    objImpedimentos.impeditivos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO AUTOR";
+                }
+
+                if (sislabra.aeronave) {
+                    response += " AERONAVE -";
+                    objImpedimentos.impeditivos.aeronave = "AERONAVE ENCONTRADA NO AUTOR";
+                }
+
+                if (sislabra.doacaoEleitoral) {
+                    response += " DOAÇÃO ELEITORAL -";
+                    objImpedimentos.impeditivos.doacaoEleitoral = "DOAÇÃO ELEITORAL ENCONTRADA NO AUTOR";
+                }
+            } else {
+                const sislabra = await sislabraExtractorLoas(paginaformatada, isPoloAtivo);
+                objImpedimentos.nome = sislabra.nome;
+                objImpedimentos.identificacao = sislabra.identificacao;
+
+                if (sislabra.veiculos) {
+                    response += " VEÍCULOS GF -";
+                    objImpedimentos.impeditivos.veiculos = sislabra.veiculos;
+                }
+
+                if (sislabra.empregos) {
+                    response += " EMPREGO GF -";
+                    objImpedimentos.impeditivos.empregos = sislabra.empregos;
+                }
+
+                if (sislabra.imoveisRurais) {
+                    response += " IMÓVEL RURAL GF -";
+                    objImpedimentos.impeditivos.imoveisRurais = sislabra.imoveisRurais;
+                }
+
+                if (sislabra.empresas) {
+                    response += " EMPRESA GF -";
+                    objImpedimentos.impeditivos.empresas = sislabra.empresas;
+                }
+
+                if (sislabra.bensTse) {
+                    response += " BENS TSE GF -";
+                    objImpedimentos.impeditivos.bensTSE = "BENS ENCONTRADOS NO AUTOR";
+                }
+
+                if (sislabra.imoveisSp) {
+                    response += " IMÓVEL SP GF -";
+                    objImpedimentos.impeditivos.imoveisSP = "IMÓVEIS EM SP ENCONTRADOS NO AUTOR";
+                }
+
+                if (sislabra.embarcacao) {
+                    response += " EMBARCAÇÃO GF -";
+                    objImpedimentos.impeditivos.embarcacao = "EMBARCAÇÃO ENCONTRADA NO AUTOR";
+                }
+
+                if (sislabra.aeronave) {
+                    response += " AERONAVE GF -";
+                    objImpedimentos.impeditivos.aeronave = "AERONAVE ENCONTRADA NO AUTOR";
+                }
+
+                if (sislabra.doacaoEleitoral) {
+                    response += " DOAÇÃO ELEITORAL GF -";
+                    objImpedimentos.impeditivos.doacaoEleitoral = "DOAÇÃO ELEITORAL ENCONTRADA NO AUTOR";
+                }
+            }
+
+            return { impedimentos: response, objImpedimentos: objImpedimentos }
+        } catch (e) {
+            console.error("Erro ao buscar sislabra LOAS" + e.message)
+        }
+    }
 }

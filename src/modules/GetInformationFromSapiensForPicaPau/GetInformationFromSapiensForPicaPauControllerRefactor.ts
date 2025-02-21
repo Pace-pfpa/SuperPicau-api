@@ -31,55 +31,64 @@ export class GetInformationFromSapiensForPicaPauControllerRefactor {
 
                     let processo: IFinalizarTriagem;
                     let impedimentos: string[];
+                    const tarefaId = result[0]?.tarefaId || null;
 
                     /** 
                      * Análise de impeditivos e finalização da triagem
                     */
-                    if (result[1] === 'LOAS') {
-                        const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
-                        impedimentos = buscaDeImpedimentos.impedimentos;
-                        let impedimentosLabraLoas = buscaDeImpedimentos.objImpedimentosLabra;
-                        let impedimentosDosprevLoas = buscaDeImpedimentos.objImpedimentos;
+                    try {
+                        if (result[1] === 'LOAS') {
+                            const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosLOAS(result[0]);
+                            impedimentos = buscaDeImpedimentos.impedimentos;
+                            let impedimentosLabraLoas = buscaDeImpedimentos.objImpedimentosLabra;
+                            let impedimentosDosprevLoas = buscaDeImpedimentos.objImpedimentos;
+    
+                            processo = await finalizarTriagem.loas(
+                                impedimentos,
+                                impedimentosLabraLoas,
+                                impedimentosDosprevLoas,
+                                result[0]
+                            );
+                            
+                        } else if (result[0].tipo_triagem === 0) {
+                            const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosRural(result[0]);
+                            impedimentos = buscaDeImpedimentos.impedimentos;
+                            let impedimentosLabraRural = buscaDeImpedimentos.objImpedimentosLabra;
+                            let impedimentosDosprevRural = buscaDeImpedimentos.objImpedimentos;
+    
+                            processo = await finalizarTriagem.rural(
+                                impedimentos,
+                                impedimentosLabraRural,
+                                impedimentosDosprevRural,
+                                result[0]
+                            );
+    
+                        } else {
+                            const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosMaternidade(result[0])
+                            impedimentos = buscaDeImpedimentos.impedimentos;
+                            let impedimentosLabraMaternidade = buscaDeImpedimentos.objImpedimentosLabra;
+                            let impedimentosDosprevMaternidade = buscaDeImpedimentos.objImpedimentos;
+    
+                            processo = await finalizarTriagem.maternidade(
+                                impedimentos,
+                                impedimentosLabraMaternidade,
+                                impedimentosDosprevMaternidade,
+                                result[0]
+                            );
+    
+                        }
 
-                        processo = await finalizarTriagem.loas(
-                            impedimentos,
-                            impedimentosLabraLoas,
-                            impedimentosDosprevLoas,
-                            result[0]
-                        );
-                        
-                    } else if (result[0].tipo_triagem === 0) {
-                        const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosRural(result[0]);
-                        impedimentos = buscaDeImpedimentos.impedimentos;
-                        let impedimentosLabraRural = buscaDeImpedimentos.objImpedimentosLabra;
-                        let impedimentosDosprevRural = buscaDeImpedimentos.objImpedimentos;
-
-                        processo = await finalizarTriagem.rural(
-                            impedimentos,
-                            impedimentosLabraRural,
-                            impedimentosDosprevRural,
-                            result[0]
-                        );
-
-                    } else {
-                        const buscaDeImpedimentos = await this.buscarImpedimentosUseCase.procurarImpedimentosMaternidade(result[0])
-                        impedimentos = buscaDeImpedimentos.impedimentos;
-                        let impedimentosLabraMaternidade = buscaDeImpedimentos.objImpedimentosLabra;
-                        let impedimentosDosprevMaternidade = buscaDeImpedimentos.objImpedimentos;
-
-                        processo = await finalizarTriagem.maternidade(
-                            impedimentos,
-                            impedimentosLabraMaternidade,
-                            impedimentosDosprevMaternidade,
-                            result[0]
-                        );
-
+                        resolve(response.status(200).json(processo));
+                    } catch (error) {
+                        console.error("Erro durante a análise de impeditivos ou finalização da triagem", error);
+                        resolve(response.status(400).json({
+                            resultadoTriagem: '2',
+                            tarefaId,
+                            resposta: error.message || "Erro inesperado durante a triagem."
+                        }));
                     }
-
-                    resolve(response.status(200).json(processo));
-
                 } catch (error) {
-                    console.error("Farfan", error)
+                    console.error("Erro ao extrair informações do SAPIENS", error);
                     return response.status(400).json({
                         resultadoTriagem: '2',
                         resposta: error.message || "Erro inesperado durante a triagem."

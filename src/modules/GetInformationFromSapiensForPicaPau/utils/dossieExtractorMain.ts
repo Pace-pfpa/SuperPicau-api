@@ -83,6 +83,13 @@ export async function dossieExtractorMain(
         };
     }
 
+    if (fichaSintetica.assunto === 'IDOSO' && !fichaSintetica.dataNascimento) {
+        return { 
+            isAviso: true,
+            avisoMessage: "DATA DE NASCIMENTO NÃO ENCONTRADO NO DOSSIÊ",
+        };
+    }
+
     const dossie: IDossieExtractedPartial = {
         fichaSintetica,
         processosMovidos,
