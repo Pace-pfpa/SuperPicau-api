@@ -6,19 +6,16 @@ export class LoginController {
     async handle(request: Request, response: Response): Promise<Response> {
         const { cpf, senha } = request.body;
         try {
-            let cookie = await this.loginUseCase.execute({ cpf, senha });
-            const incorrectUser = cookie == "Acesso negado"
-            const incorrectUser2 = cookie == "Erro Login"
-            if(incorrectUser || incorrectUser2){
-                response.status(401).json(cookie);
-                
-            }else{
-                response.status(200).json(cookie);
-                               
+            const resultadoLogin = await this.loginUseCase.execute({ cpf, senha });
+            if (resultadoLogin.startsWith("Erro:")) {
+                console.warn(`[LoginController] Falha no login: ${resultadoLogin}`);
+                return response.status(401).json({ message: resultadoLogin });
             }
+
+            return response.status(200).json(resultadoLogin);
         } catch (error) {
-            return response.status(400).json({
-                message: error.message || "Unexpected error"
+            return response.status(500).json({
+                message: error.message || "Erro interno no servidor."
             });
         }
     }
