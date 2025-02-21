@@ -38,8 +38,6 @@ export class SuperDossie {
                 dossieExtractedPartial
             );
 
-            console.log(dossie)
-
             const impeditivosMaternidade = await getInformationDossieSuperForPicapau.maternidade(dossie);
     
             const impedimentos = impeditivosMaternidade.arrayDeImpedimentos.split('-');
@@ -48,23 +46,24 @@ export class SuperDossie {
             return { impedimentos, objImpedimentos };
         } catch (error) {
             console.error("Erro na busca de impedimentos: ", error.message);
+            throw error;
         }
     }
 
     async buscarImpedimentosForLOAS(
-        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO,
-        cookie: string
+        dossieExtractedPartial: IDossieExtractedPartial,
     ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
-        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+        try {
+            const impeditivosLoas = await getInformationDossieSuperForPicapau.loas(dossieExtractedPartial);
+            
+            const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
+            const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
 
-        const impeditivosLoas = await getInformationDossieSuperForPicapau.impeditivosLoas(paginaDosPrevFormatada);
-
-        const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
-        const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
-
-        return { impedimentos, objImpedimentos };
+            return { impedimentos, objImpedimentos };
+        } catch (error) {
+            console.error("Erro na busca de impedimentos: ", error.message);
+            throw error;
+        }
     }
 
     async dossieExtractorMaternidadeSuper(

@@ -48,19 +48,19 @@ export class NormalDossie {
     }
 
     async buscarImpedimentosForLoas(
-        dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO, 
-        cookie: string
+        dosprevPoloAtivo: JSDOMType,
+        dossieExtractedPartial: IDossieExtractedPartial
     ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
-        const idDosprevParaPesquisa = dosprevPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-        const paginaDosPrev = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisa });
-        const paginaDosPrevFormatada = new JSDOM(paginaDosPrev);
+        try {
+            const impeditivosLoas = await getInformationDossieForPicaPau.impeditivoLoas(dosprevPoloAtivo);
+            
+            const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
+            const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
 
-        const impeditivosLoas = await getInformationDossieForPicaPau.impeditivoLoas(paginaDosPrevFormatada);
-
-        const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
-        const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
-
-        return { impedimentos, objImpedimentos };
+            return { impedimentos, objImpedimentos };
+        } catch (error) {
+            console.error("Erro na busca de impedimentos: ", error.message);
+        }
     }
 
     async dossieExtractorMaternidadeNormal(

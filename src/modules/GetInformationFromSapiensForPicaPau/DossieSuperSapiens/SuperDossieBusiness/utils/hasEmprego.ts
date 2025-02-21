@@ -1,14 +1,7 @@
 import { IRelacaoPrevidenciaria } from "../../../BuscarImpedimentos/dtos/interfaces/IRelacaoPrevidenciaria";
 import { EmpregoDP } from "../../../dto";
 import { IImpeditivoEmpregoMaternidade } from "../../../dto/RuralMaternidade/interfaces/IImpeditivoEmpregoMaternidade";
-
-/**
- * Função auxiliar para converter uma string no formato "DD/MM/AAAA" em um objeto Date.
- */
-function parseDate(dateStr: string): Date {
-    const [day, month, year] = dateStr.split('/');
-    return new Date(Number(year), Number(month) - 1, Number(day));
-}
+import { parseDate } from "./parseDate.util";
 
 /**
  * Função auxiliar para converter uma string no formato "MM/AAAA" em um objeto Date.
@@ -107,15 +100,15 @@ export function hasEmprego(
         }
     })
 
+    let isVinculoAberto = false;
+    const empregosImpeditivos: EmpregoDP[] = [];
+    
     Object.keys(acumuladorPorAno).forEach(ano => {
         const { totalDias, empregos } = acumuladorPorAno[ano];
         if (totalDias >= 120) {
             empregosImpeditivos.push(...empregos);
         }
     });
-
-    let isVinculoAberto = false;
-    const empregosImpeditivos: EmpregoDP[] = [];
 
     if (impeditiveClosedJobs.length > 0) {
         empregosImpeditivos.push(...impeditiveClosedJobs);

@@ -1,6 +1,7 @@
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
 import { IDossieExtracted } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtracted";
+import { IDossieExtractedPartial } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtractedPartial";
 import { EmpregoDP, IImpeditivoLitispendencia, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IReturnImpedimentosLOAS, IReturnImpedimentosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { IReturnImpedimentosRural } from "../dto/RuralMaternidade/interfaces/IReturnImpedimentosRural";
@@ -12,6 +13,7 @@ import { datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformation
 import { hasEmprego } from "./SuperDossieBusiness/utils/hasEmprego";
 import { hasImpeditivoDossie } from "./SuperDossieBusiness/utils/hasImpeditivoDossie";
 import { hasLitispendencia } from "./SuperDossieBusiness/utils/hasLitispendencia";
+import { hasLitispendenciaLoas } from "./SuperDossieBusiness/utils/hasLitispendenciaLoas";
 
 export class GetInformationDossieSuperForPicapau {
   async maternidade(
@@ -150,6 +152,33 @@ export class GetInformationDossieSuperForPicapau {
             objImpedimentosRM: objInfoImpeditivos
           }
 
+  }
+
+  async loas(
+    dossie: IDossieExtractedPartial
+  ): Promise<IReturnImpedimentosLOAS> {
+    let arrayImpedimentos: string = ''; 
+    const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
+
+    const impeditivosLitispendencia = hasLitispendenciaLoas(
+      dossie.fichaSintetica.numeroUnico,
+      dossie.processosMovidos,
+      dossie.requerimentos
+    );
+    if (impeditivosLitispendencia.haveLitispendencia) {
+      objInfoImpeditivos.litispendencia = impeditivosLitispendencia.litispendencia;
+      arrayImpedimentos += " LITISPENDÊNCIA -";
+    }
+    
+    console.log("---OBJETO IMPEDITIVOS LOAS");
+    console.log(objInfoImpeditivos);
+    
+    arrayImpedimentos += " *LOAS* ";
+
+    return {
+      arrayDeImpedimentos: arrayImpedimentos,
+      objImpedimentosLoas: objInfoImpeditivos
+    }
   }
 
   async impeditivosLoas(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosLOAS> {

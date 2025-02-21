@@ -1,7 +1,10 @@
 import { IProcessosMovidos } from "../../../BuscarImpedimentos/dtos/interfaces/IProcessosMovidos";
 import { IImpeditivoLitispendencia } from "../../../dto";
 
-export function hasLitispendencia(numeroUnico: string, processos: IProcessosMovidos[]): IImpeditivoLitispendencia {
+export function hasLitispendencia(
+    numeroUnico: string, 
+    processos: IProcessosMovidos[]
+): IImpeditivoLitispendencia {
     const palavrasProibidas: string[] = ["SALÁRIO-MATERNIDADE", "RURAL"];
 
     if (processos.length === 0) {
