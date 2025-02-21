@@ -1,10 +1,9 @@
 const { JSDOM } = require('jsdom');
+import { extractorSuper } from ".";
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { ResponseArvoreDeDocumentoDTO } from "../../GetArvoreDocumento";
 import { getDocumentoUseCase } from "../../GetDocumento";
-import { IDossieExtracted } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtracted";
 import { IDossieExtractedPartial } from "../BuscarImpedimentos/dtos/interfaces/IDossieExtractedPartial";
-import { getCompetenciasDetalhadasSuper } from "../BuscarImpedimentos/utils/dossieExtractor/super/getCompetenciasDetalhadasSuper";
 import { getInformationDossieSuperForPicapau } from "../DossieSuperSapiens";
 import { IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
@@ -33,7 +32,7 @@ export class SuperDossie {
         objImpedimentos: IObjInfoImpeditivosMaternidade
     }> {
         try {
-            const dossie = await this.dossieExtractorMaternidadeSuper(
+            const dossie = await extractorSuper.maternidade(
                 dosprevPoloAtivo, 
                 dossieExtractedPartial
             );
@@ -54,7 +53,9 @@ export class SuperDossie {
         dossieExtractedPartial: IDossieExtractedPartial,
     ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
         try {
-            const impeditivosLoas = await getInformationDossieSuperForPicapau.loas(dossieExtractedPartial);
+            const impeditivosLoas = await getInformationDossieSuperForPicapau.loas(
+                dossieExtractedPartial
+            );
             
             const impedimentos = impeditivosLoas.arrayDeImpedimentos.split('-');
             const objImpedimentos = impeditivosLoas.objImpedimentosLoas;
@@ -64,23 +65,5 @@ export class SuperDossie {
             console.error("Erro na busca de impedimentos: ", error.message);
             throw error;
         }
-    }
-
-    async dossieExtractorMaternidadeSuper(
-        dosprevPoloAtivo: JSDOMType,
-        dossieExtractedPartial: IDossieExtractedPartial
-    ): Promise<IDossieExtracted> {
-        const competenciasDetalhadas = await getCompetenciasDetalhadasSuper(
-            dosprevPoloAtivo, 
-            dossieExtractedPartial.requerimentos, 
-            dossieExtractedPartial.relacoesPrevidenciarias
-        );
-
-        const dossie: IDossieExtracted = {
-            ...dossieExtractedPartial,
-            competenciasDetalhadas
-        }
-
-        return dossie;
     }
 }

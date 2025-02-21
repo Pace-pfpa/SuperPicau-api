@@ -16,7 +16,9 @@ export function hasImpeditivoDossie(
         }
     }
 
-    const beneficioAtivo = requerimentos.filter((req) => req.status === "ATIVO").map((req) => req.beneficio);
+    const beneficioAtivo = requerimentos.filter(
+        (req) => req.status === "ATIVO"
+    ).map((req) => req.beneficio);
     if (beneficioAtivo.length > 0) {
         return {
             haveImpeditivo: true,
@@ -27,7 +29,7 @@ export function hasImpeditivoDossie(
     }
 
     if (!dataAjuizamento) {
-        console.warn("Data de ajuizamento não encontrada.")
+        console.warn("Data de ajuizamento não encontrada.");
         return {
             haveImpeditivo: false
         }

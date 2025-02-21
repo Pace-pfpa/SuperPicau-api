@@ -161,7 +161,6 @@ export class BuscarImpedimentosUseCase {
 
         if (informacoesProcesso.dossie.isDosprevPoloAtivoNormal) {
             impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(
-                informacoesProcesso.dossie.dossieFormatado,
                 informacoesProcesso.dossie.dossieExtractedPartial
             );
             infoRequerente = await getInfoReqDossieNormal(

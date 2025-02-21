@@ -11,7 +11,9 @@ import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
 import { datasRequerimentoNewDossie } from "./SuperDossieBusiness/GetInformationRequerimento";
 import { hasEmprego } from "./SuperDossieBusiness/utils/hasEmprego";
+import { hasIdadeLoas } from "./SuperDossieBusiness/utils/hasIdadeLoas";
 import { hasImpeditivoDossie } from "./SuperDossieBusiness/utils/hasImpeditivoDossie";
+import { hasImpeditivoDossieLoas } from "./SuperDossieBusiness/utils/hasImpeditivoDossieLoas";
 import { hasLitispendencia } from "./SuperDossieBusiness/utils/hasLitispendencia";
 import { hasLitispendenciaLoas } from "./SuperDossieBusiness/utils/hasLitispendenciaLoas";
 
@@ -168,6 +170,43 @@ export class GetInformationDossieSuperForPicapau {
     if (impeditivosLitispendencia.haveLitispendencia) {
       objInfoImpeditivos.litispendencia = impeditivosLitispendencia.litispendencia;
       arrayImpedimentos += " LITISPENDÊNCIA -";
+    }
+
+    const impeditivoDossie = hasImpeditivoDossieLoas(
+      dossie.fichaSintetica.dataAjuizamento,
+      dossie.requerimentos
+    );
+    if (impeditivoDossie.haveImpeditivo) {
+      switch (impeditivoDossie.tipoImpeditivo) {
+        case 3:
+          arrayImpedimentos += impeditivoDossie.nomeImpeditivo;
+          objInfoImpeditivos.requerimento = "AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO";
+          break;
+        case 4:
+          arrayImpedimentos += impeditivoDossie.nomeImpeditivo;
+          objInfoImpeditivos.bpc = impeditivoDossie.informacaoExtra[0];
+          break;
+        case 5:
+          arrayImpedimentos += impeditivoDossie.nomeImpeditivo;
+          objInfoImpeditivos.beneficio = impeditivoDossie.informacaoExtra[0];
+          break;
+        default:
+          break;
+      }
+
+      if (impeditivoDossie.tipoImpeditivo !== 3 && 
+          impeditivoDossie.tipoImpeditivo !== 4 && 
+          impeditivoDossie.tipoImpeditivo !== 5
+      ) {
+        const impeditivoIdadeLoas = hasIdadeLoas(
+          dossie.fichaSintetica.dataNascimento,
+          dossie.requerimentos
+        );
+        if (impeditivoIdadeLoas.idadeImpeditivo) {
+          objInfoImpeditivos.idade = impeditivoIdadeLoas.idadeAutor;
+          arrayImpedimentos += " IDADE -"
+        }
+      }
     }
     
     console.log("---OBJETO IMPEDITIVOS LOAS");
