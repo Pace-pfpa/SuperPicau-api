@@ -22,14 +22,15 @@ export class ImpeditivosHtmlLoas {
         });
 
         const tabelaTipo4 = await this.renderTabelaTipo4(
-            data.litispendencia,
-            data.bpc,
-            data.requerimento,
-            impedimentosDosprev.litispendencia,
-            impedimentosDosprev.bpc
+            data,
+            impedimentosDosprev
         );
 
-        const segundaTabela = await this.renderSegundaTabela(data, impedimentosDosprev, impedimentosLabra);
+        const segundaTabela = await this.renderSegundaTabela(
+            data, 
+            impedimentosDosprev, 
+            impedimentosLabra
+        );
 
         const html = `
             <!DOCTYPE html>
@@ -84,7 +85,28 @@ export class ImpeditivosHtmlLoas {
                 <table border="1" cellpadding="1" cellspacing="1" style="height:46px; width:789px"><tbody><tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>PREQUESTIONAMENTO</strong></td></tr><tr><td><p>Ficam prequestionados os artigos 20 e 20-B da Lei 8.742/93 e artigo 203, inciso V, da CRFB/88.</p></td></tr></tbody></table>
                 <p><br></p>
 
-                <table border="1" cellpadding="1" cellspacing="1" style="height:45px; width:788px"><tbody><tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>DOS PEDIDOS</strong></td></tr><tr><td><p><br></p><p><span style="color:black">Ante o exposto, requer o&nbsp;</span>INSS o acolhimento das preliminares eventualmente levantadas. No mérito, requer que os <span style="color:#242424">pedidos julgados <strong>totalmente improcedentes, </strong>condenando a parte autora no pagamento das custas do processo e da verba honorária, com fulcro no art. 85, §§2º e 6º, do CPC, </span>sendo indevidos nas hipóteses da Lei 9.099/95, bem como que seja deferida a <span style="color:#242424">produção de todas as provas admitidas em direito</span></p><p><br></p><p><span style="color:#242424">Caso sejam julgados procedentes os pedidos da parte autora, &nbsp;o INSS <u><strong>requer</strong></u>: a) a</span> observância da prescrição quinquenal; b) a intimação da&nbsp;parte autora para firmar e juntar aos autos a autodeclaração prevista no anexo XXIV da Instrução Normativa PRES/INSS nº 128, de 28 de março de 2022, em observância às regras de acumulação de benefícios estabelecida no art. 24, §§ 1.º e 2.º da Emenda Constitucional 103/2019; c) nas hipóteses da Lei n. 9.099/95, caso inexista nos autos declaração com esse teor, a intimação da parte autora para renúncia&nbsp;expressa&nbsp;dos valores que excedam o teto de 60 (sessenta) salários mínimos na data da propositura da ação e que eventualmente venham a ser identificados ao longo do processo, inclusive em sede de execução; d) a fixação dos honorários advocatícios nos termos da Súmula 111 do STJ, sendo indevidos nas hipóteses da Lei 9.099/95; e) a declaração de isenção de custas e outras taxas judiciárias; f) o desconto dos valores já pagos administrativamente ou de qualquer benefício inacumulável recebido no período e a&nbsp;cobrança&nbsp;de eventuais valores pagos em sede de antecipação dos efeitos da tutela posteriormente revogada; g) a atualização monetária, de remuneração do capital e de compensação da mora, que seja adotada a SELIC a partir de dezembro/2021, conforme a&nbsp;&nbsp;EC n. 113/2021; h) o prequestionamento de todas as matérias de defesa para fins recursais.</p></td></tr></tbody></table>
+                <table border="1" cellpadding="1" cellspacing="1" style="height:45px; width:788px">
+                    <tbody>
+                        <tr><td style="background-color: rgb(204, 204, 204);" class="centralizado"><strong>DOS PEDIDOS</strong></td></tr>
+                        <tr>
+                        <td><p><br></p>
+                        <p><span style="color:black">Ante o exposto, requer o&nbsp;</span>INSS o acolhimento das preliminares, sejam os pedidos julgados <strong>totalmente improcedentes,</strong> condenando a parte autora no pagamento das custas do processo e da verba honorária, com fulcro no art. 85, §§2º e 6º, do CPC, sendo indevidos nas hipóteses da Lei 9.099/95.
+                        <br>
+                        <span>Caso sejam julgados procedentes os pedidos da parte autora, a matéria de defesa fica desde já prequestionada para fins recursais. Requer ainda:<span>
+                        <br>
+                        1. A observância da prescrição quinquenal;
+                        2. Na hipótese de concessão de aposentadoria, a intimação da parte autora para firmar e juntar aos autos a autodeclaração prevista no anexo XXIV da Instrução Normativa PRES/INSS nº 128, de 28 de março de 2022, em observância às regras de acumulação de benefícios estabelecida no art. 24, §§ 1.º e 2.º da Emenda Constitucional 103/2019;
+                        3. Nas hipóteses da Lei n. 9.099/95, caso inexista nos autos declaração com esse teor, a intimação da parte autora para renúncia expressa dos valores que excedam o teto de 60 (sessenta) salários mínimos na data da propositura da ação e que eventualmente venham a ser identificados ao longo do processo, inclusive em sede de execução;
+                        4. A fixação dos honorários advocatícios nos termos da Súmula 111 do STJ, sendo indevidos nas hipóteses da Lei 9.099/95;
+                        5. A declaração de isenção de custas e outras taxas judiciárias;
+                        6. O desconto dos valores já pagos administrativamente ou de qualquer benefício inacumulável recebido no período e a cobrança de eventuais valores pagos em sede de antecipação dos efeitos da tutela posteriormente revogada;
+                        7. A produção de todas as provas admitidas em direito;
+                        8. Por cautela, para fins de atualização monetária, de remuneração do capital e de compensação da mora, que seja adotada a SELIC a partir de dezembro/2021, conforme a  EC n. 113/2021.
+                        <br>
+                        Por fim, o INSS informa que não tem interesse na audiência de conciliação prevista no art. 334 do CPC e que concorda com o Juízo 100% digital, se for o caso. 
+                        </p></td></tr>
+                    </tbody>
+                </table>
                 <p><br></p>
 
                 <p><span style="color:black"><span><span>Nesses termos, pede&nbsp;deferimento.</span></span></span></p>
@@ -104,20 +126,23 @@ export class ImpeditivosHtmlLoas {
     }
 
     private async renderTabelaTipo4(
-        litispendencia: boolean,
-        bpc: boolean,
-        requerimento: boolean,
-        litispendenciaProcessos: string[] | null,
-        bpcEncontrado: string | null,
+        data: HtmlIImpeditivosLoasDTO,
+        impedimentosDosprev: IObjInfoImpeditivosLoas
     ): Promise<string> {
-        if (!litispendencia && !bpc && !requerimento) {
+        if (!data.litispendencia && !data.bpc && !data.requerimento) {
             console.log('NÃO RENDERIZOU NADA LOAS')
             return ""; // Não renderiza a tabela
         }
 
-        const litispendenciaContent = renderLitispendencia(litispendencia, litispendenciaProcessos);
-        const bpcContent = renderConcessaoLoas(bpc, bpcEncontrado);
-        const requerimentoContent = renderRequerimento(requerimento);
+        const litispendenciaContent = renderLitispendencia(
+            data.litispendencia, 
+            impedimentosDosprev.litispendencia
+        );
+        const bpcContent = renderConcessaoLoas(
+            data.bpc, 
+            impedimentosDosprev.bpc
+        );
+        const requerimentoContent = renderRequerimento(data.requerimento);
 
         return `
             <table border="1" cellpadding="1" cellspacing="1" style="height:20px; width:786px">
@@ -172,10 +197,10 @@ export class ImpeditivosHtmlLoas {
         const atividadeEmpresarial = renderSecaoLoas(
             "ATIVIDADE EMPRESARIAL",
             `A parte autora ou algum integrante do grupo familiar possui participação em sociedade empresária, sociedade simples, empresa individual ou empresa individual de responsabilidade limitada, em atividade incompatível para a percepção do benefício assistencial.`,
-            autor?.empresas,
+            autor?.impeditivos.empresas,
             gf,
             ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"],
-            "Empresas do Autor",
+            `Empresas do Autor - ${autor?.nome}`,
             "Empresas do Grupo Familiar"
         );
         

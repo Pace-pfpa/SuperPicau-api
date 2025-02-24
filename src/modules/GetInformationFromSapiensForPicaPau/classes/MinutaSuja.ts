@@ -224,7 +224,7 @@ export class MinutaSuja {
 
             await updateDocumentoUseCase.execute({
                 cookie: informacoesProcessoLoas.cookie,
-                dosprev_id: informacoesProcessoLoas.dosprevPoloAtivo.documentoJuntado_id,
+                dosprev_id: informacoesProcessoLoas.dossie.dosprevPoloAtivo.documentoJuntado_id,
                 minuta_id: documentoId,
                 pasta_id: informacoesProcessoLoas.infoUpload.pasta_id,
                 tarefa_id: informacoesProcessoLoas.infoUpload.tarefa_id,

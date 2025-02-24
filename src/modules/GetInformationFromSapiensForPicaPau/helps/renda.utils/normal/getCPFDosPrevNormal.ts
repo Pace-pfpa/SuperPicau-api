@@ -1,6 +1,5 @@
 import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
 import { getDocumentoUseCase } from "../../../../GetDocumento";
-
 const { JSDOM } = require('jsdom');
 
 

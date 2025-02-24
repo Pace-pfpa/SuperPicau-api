@@ -11,7 +11,7 @@ export const renderSecaoLoas = (
     tituloGF: string
 ): string => {
     const valoresParaVerificar = [
-        ...grupoFamiliar.map((membro) => membro.empresas),
+        ...grupoFamiliar.map((membro) => membro.impeditivos.empresas),
     ];
 
     const hasDados = (dadosAutor?.length ?? 0) > 0 || !verificarSeTodosSaoVazios(valoresParaVerificar);
@@ -21,11 +21,11 @@ export const renderSecaoLoas = (
     }
 
     const empresasFamilia = grupoFamiliar
-        .map((membro, index) =>
-          membro.empresas.length
+        .map((membro, _index) =>
+          membro.impeditivos.empresas.length
             ? renderTable(
-                membro.empresas,
-                tituloGF,
+                membro.impeditivos.empresas,
+                tituloGF + ` - ${membro.nome}`,
                 colunas
               ) : ''
         )

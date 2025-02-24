@@ -3,22 +3,17 @@ import { RequestGetInteressadosNup } from "../../../sapiensOperations/resquest/R
 import { RequestHeaders } from "../../../sapiensOperations/resquest/RequestHeaders";
 
 export async function GetInteressadosReq(pasta_id: number, cookie: string){
-
-    const requestGetInteressadosNup = new RequestGetInteressadosNup
-    const requestHeaders = new RequestHeaders
+    const requestGetInteressadosNup = new RequestGetInteressadosNup();
+    const requestHeaders = new RequestHeaders();
     const payload = await requestGetInteressadosNup.execute(pasta_id);
-    const UrlRequest = "https://sapiens.agu.gov.br/route"
+    const UrlRequest = "https://sapiens.agu.gov.br/route";
 
     const headers = await requestHeaders.execute(cookie)
-    try{
+    try {
         const response = await axios.post(UrlRequest, payload, {headers})
         return response.data
-        
-    }catch(e){
+    } catch(e) {
         console.log(e)
-        return e
+        return []
     }
-
-
-
 }

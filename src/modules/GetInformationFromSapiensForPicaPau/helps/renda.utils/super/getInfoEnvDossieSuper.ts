@@ -55,7 +55,7 @@ export async function getInfoEnvDossieSuper(cookie: string, superDossie: Respons
         await validateDate(dateNascimentoRaw, "Pegou xpath errado do nascimento");
         
         console.log("Fetching remuneration values...");
-        const valoresCalcule = await getValueCalcDossieSuper(cookie, superDossie, dateAjuizamentoRaw, dataReq);
+        const valoresCalcule = await getValueCalcDossieSuper(dom, dateAjuizamentoRaw, dataReq);
 
         const objeto: IPicaPauCalculeDTO = {
             nome: nomeCerto,

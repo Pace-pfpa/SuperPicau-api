@@ -164,16 +164,16 @@ export class BuscarImpedimentosUseCase {
                 informacoesProcesso.dossie.dossieExtractedPartial
             );
             infoRequerente = await getInfoReqDossieNormal(
-                informacoesProcesso.cookie,
-                informacoesProcesso.dossie.dosprevPoloAtivo
+                informacoesProcesso.dossie.dossieExtractedPartial,
+                informacoesProcesso.dossie.dossieFormatado
             );
         } else {
             impedimentosBusca = await superDossieClass.buscarImpedimentosForLOAS(
                 informacoesProcesso.dossie.dossieExtractedPartial
             );
             infoRequerente = await getInfoReqDossieSuper(
-                informacoesProcesso.cookie,
-                informacoesProcesso.dossie.dosprevPoloAtivo
+                informacoesProcesso.dossie.dossieExtractedPartial,
+                informacoesProcesso.dossie.dossieFormatado
             );
         }
 

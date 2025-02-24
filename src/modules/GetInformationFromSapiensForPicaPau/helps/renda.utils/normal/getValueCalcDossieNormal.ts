@@ -1,13 +1,9 @@
 import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../../../shared/utils/GetTextoPorXPATH";
-import { ResponseArvoreDeDocumentoDTO } from "../../../../GetArvoreDocumento";
-import { getDocumentoUseCase } from "../../../../GetDocumento";
 import { isDateInRange } from "../../dataIsInRange";
 import { parseDate } from "../../parseDate";
-import { parseDateToString } from "../../parseDateToString";
 import { removeDayFromDate } from "../../removeDayFromDate";
 import { getRemuneracaoAjzNormal } from "./getRemuneracaoAjzNormal";
-const { JSDOM } = require('jsdom'); 
 
 type RelacaoPrevidenciaria = {
     seq: string;
@@ -47,9 +43,7 @@ async function getRemuneracoes(
     seqAjz: string, 
     seqReq: string,
     dom: JSDOMType, 
-    dates: { ajuizamento: string, requerimento: string }, 
-    fallbackSeq: string | null, 
-    fallbackDate: string | null
+    dates: { ajuizamento: string, requerimento: string },
 ) {
     const remuneracaoAjuizamento = await getRemuneracaoAjzNormal(seqAjz, dom, dates.ajuizamento);
     const remuneracaoRequerimento = await getRemuneracaoAjzNormal(seqReq, dom, dates.requerimento);
@@ -81,19 +75,6 @@ async function getRemuneracoes(
         };
     }
 
-    if (fallbackSeq && fallbackDate) {
-        const fallbackRemuneracao = await getRemuneracaoAjzNormal(fallbackSeq, dom, fallbackDate);
-        return {
-            remuneracaoAjz: remuneracaoAjuizamento || fallbackRemuneracao || 0,
-            remuneracaoReq: remuneracaoRequerimento || fallbackRemuneracao || 0,
-            isFallback: true,
-            fallbackInfo: {
-                fallbackRemuneracao: fallbackRemuneracao || 0,
-                fallbackDate: fallbackDate
-            }
-        };
-    } 
-
     return { 
         remuneracaoAjz: 0, 
         remuneracaoReq: 0, 
@@ -111,25 +92,15 @@ function countChildElements(dom: JSDOMType, baseXPath: string): number {
 }
 
 export async function getValueCalcDossieNormal(
-    cookie: string, 
-    normalDossie: ResponseArvoreDeDocumentoDTO, 
+    dossie: JSDOMType,
     dataAjuizamento: string, 
     dataRequerimento: string
 ) {
     try {
-        const idDosprevParaPesquisaDossieSuper = normalDossie.documentoJuntado.componentesDigitais[0].id;
-        const paginaDosPrevDossieSuper = await getDocumentoUseCase.execute({ cookie, idDocument: idDosprevParaPesquisaDossieSuper });
-        const dom = new JSDOM(paginaDosPrevDossieSuper);
-
-        const relacoes = await getRelacoesPrevidenciarias(dom);
+        const relacoes = await getRelacoesPrevidenciarias(dossie);
         if (relacoes.length === 0) {
             throw new Error('No previdenciary relations found.');
         }
-
-        const mostRecentRelacao = relacoes.reduce((mostRecent, relacao) => {
-            if (!relacao.dataFim) return mostRecent;
-            return !mostRecent || relacao.dataFim > mostRecent.dataFim ? relacao : mostRecent;
-        }, null)
 
         const seqIntervaloAjuizamento = isDateInRange(relacoes, parseDate(dataAjuizamento));
         const seqIntervaloRequerimento = isDateInRange(relacoes, parseDate(dataRequerimento));
@@ -137,12 +108,10 @@ export async function getValueCalcDossieNormal(
         console.log(`Seq for Ajuizamento: ${seqIntervaloAjuizamento}, Seq for Requerimento: ${seqIntervaloRequerimento}`);
 
         return await getRemuneracoes(
-            seqIntervaloAjuizamento || mostRecentRelacao?.seq || '',
-            seqIntervaloRequerimento || mostRecentRelacao?.seq || '',
-            dom,
+            seqIntervaloAjuizamento || '',
+            seqIntervaloRequerimento || '',
+            dossie,
             { ajuizamento: removeDayFromDate(dataAjuizamento), requerimento: removeDayFromDate(dataRequerimento) },
-            mostRecentRelacao?.seq || null,
-            mostRecentRelacao ? removeDayFromDate(parseDateToString(mostRecentRelacao.dataFim)) : null
         );
     } catch (error) {
         console.error('Error in getValueCalcDossieNormalRefactor:', error.message);

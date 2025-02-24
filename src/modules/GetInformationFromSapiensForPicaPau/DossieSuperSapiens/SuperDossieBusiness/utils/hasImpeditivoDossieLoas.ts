@@ -55,6 +55,16 @@ export function hasImpeditivoDossieLoas(
         );
 
         if (isRequerimentoAntigo) { // SE NÃO, É RESTABELECIMENTO
+            const haveIndeferido = requerimentos.some(
+                (req) => req.status === "INDEFERIDO"
+            );
+
+            if (haveIndeferido) {
+                return {
+                    haveImpeditivo: false
+                }    
+            }
+            
             return {
                 haveImpeditivo: true,
                 tipoImpeditivo: 3,

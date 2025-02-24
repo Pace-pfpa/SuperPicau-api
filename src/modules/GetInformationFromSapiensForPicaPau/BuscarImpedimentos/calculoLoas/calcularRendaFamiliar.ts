@@ -4,7 +4,7 @@ import { calcularMediaRequerimento } from "../../helps/renda.utils/calcularMedia
 import { removeDayMonthFromDate } from "../../helps/removeDayMonthFromDate";
 import { removeDayYearFromDate } from "../../helps/removeDayYearFromDate";
 import { compararPrioridade } from "../../loas/Business/Help/compareRenda";
-import { getSalarioMinimo } from "../../loas/Business/Help/getSalarioMinimo";
+import { getSalarioMinimo, getSalarioMinimo2023 } from "../../loas/Business/Help/getSalarioMinimo";
 import { DetalhesRenda } from "./dto/DetalhesRenda";
 
 export async function calcularRendaFamiliar(
@@ -31,9 +31,11 @@ export async function calcularRendaFamiliar(
         const mesAjuizamento = removeDayYearFromDate(infoRequerente.dataAjuizamento)
     
         if (["01", "02", "03", "04"].includes(mesAjuizamento)) {
-            salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[0].valor);
+            const salario2023 = getSalarioMinimo2023(true);
+            salarioMinimoAjz = parseFloat(salario2023.valor);
         } else {
-            salarioMinimoAjz = parseFloat(arraySalarioMinimoAjuizamento[1].valor);
+            const salario2023 = getSalarioMinimo2023(false);
+            salarioMinimoAjz = parseFloat(salario2023.valor);
         }
     
     }
@@ -42,9 +44,11 @@ export async function calcularRendaFamiliar(
         const mesRequerimento = removeDayYearFromDate(infoRequerente.dataRequerimento);
 
         if (["01", "02", "03", "04"].includes(mesRequerimento)) {
-            salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[0].valor);
+            const salario2023 = getSalarioMinimo2023(true);
+            salarioMinimoReq = parseFloat(salario2023.valor);
         } else {
-            salarioMinimoReq = parseFloat(arraySalarioMinimoRequerimento[1].valor);
+            const salario2023 = getSalarioMinimo2023(false);
+            salarioMinimoReq = parseFloat(salario2023.valor);
         }
     }
 

@@ -6,16 +6,16 @@ export const renderPatrimonioImcompativelLoas = (
     grupoFamiliar: IImpedimentosLoas[]
 ): string => {
     const valoresParaVerificar = [
-        autor?.veiculos,
-        ...grupoFamiliar.map((membro) => membro.veiculos),
-        autor?.bensTSE,
-        ...grupoFamiliar.map((membro) => membro.bensTSE),
-        autor?.imoveisSP,
-        ...grupoFamiliar.map((membro) => membro.imoveisSP),
-        autor?.embarcacao,
-        ...grupoFamiliar.map((membro) => membro.embarcacao),
-        autor?.aeronave,
-        ...grupoFamiliar.map((membro) => membro.aeronave),
+        autor?.impeditivos.veiculos,
+        ...grupoFamiliar.map((membro) => membro.impeditivos.veiculos),
+        autor?.impeditivos.bensTSE,
+        ...grupoFamiliar.map((membro) => membro.impeditivos.bensTSE),
+        autor?.impeditivos.imoveisSP,
+        ...grupoFamiliar.map((membro) => membro.impeditivos.imoveisSP),
+        autor?.impeditivos.embarcacao,
+        ...grupoFamiliar.map((membro) => membro.impeditivos.embarcacao),
+        autor?.impeditivos.aeronave,
+        ...grupoFamiliar.map((membro) => membro.impeditivos.aeronave),
     ];
 
     if (verificarSeTodosSaoVazios(valoresParaVerificar)) {
@@ -23,73 +23,73 @@ export const renderPatrimonioImcompativelLoas = (
     }
 
     // AUTOR
-    const bensTseAutor = renderCampoPatrimonioImcompativel("BENS TSE AUTOR", autor?.bensTSE);
-    const imoveisSpAutor = renderCampoPatrimonioImcompativel("IMOVEIS SP AUTOR", autor?.imoveisSP);
-    const embarcacaoAutor = renderCampoPatrimonioImcompativel("EMBARCAÇÃO AUTOR", autor?.embarcacao);
-    const aeronaveAutor = renderCampoPatrimonioImcompativel("AERONAVE AUTOR", autor?.aeronave);
-    const doacaoEleitoralAutor = renderCampoPatrimonioImcompativel("DOAÇÃO ELEITORAL", autor?.doacaoEleitoral);
-    const veiculosAutor = autor?.veiculos.length
+    const bensTseAutor = renderCampoPatrimonioImcompativel("BENS TSE AUTOR", autor?.impeditivos.bensTSE);
+    const imoveisSpAutor = renderCampoPatrimonioImcompativel("IMOVEIS SP AUTOR", autor?.impeditivos.imoveisSP);
+    const embarcacaoAutor = renderCampoPatrimonioImcompativel("EMBARCAÇÃO AUTOR", autor?.impeditivos.embarcacao);
+    const aeronaveAutor = renderCampoPatrimonioImcompativel("AERONAVE AUTOR", autor?.impeditivos.aeronave);
+    const doacaoEleitoralAutor = renderCampoPatrimonioImcompativel("DOAÇÃO ELEITORAL", autor?.impeditivos.doacaoEleitoral);
+    const veiculosAutor = autor?.impeditivos.veiculos.length
         ? renderTable(
-            autor.veiculos,
+            autor.impeditivos.veiculos,
             "Veículos do Autor",
             ["marca", "tipo", "valorEstipulado", "placa", "renavam", "anoFabricacao", "municipio", "restricao"]
         ) : '';
-    const imoveisRuraisAutor = autor?.imoveisRurais.length
+    const imoveisRuraisAutor = autor?.impeditivos.imoveisRurais.length
         ? renderTable(
-            autor.imoveisRurais,
+            autor.impeditivos.imoveisRurais,
             "Imóveis Rurais do Autor",
             ["nomeImovel", "sncr", "numeroCafir", "dataInscricao", "localizacao", "distrito", "cep", "municipio", "uf"]
         ) : '';
 
     // GRUPO FAMILIAR
     const bensTseGF = grupoFamiliar
-    .map((membro, index) =>
+    .map((membro) =>
       renderCampoPatrimonioImcompativel(
-        `BENS TSE GF - Membro ${index + 1}`,
-        membro.bensTSE
+        `BENS TSE GF - ${membro.nome}`,
+        membro.impeditivos.bensTSE
       )
     )
     .join("");
     const imoveisSpGF = grupoFamiliar
-        .map((membro, index) =>
+        .map((membro) =>
         renderCampoPatrimonioImcompativel(
-            `IMOVEIS SP GF - Membro ${index + 1}`,
-            membro.imoveisSP
+            `IMOVEIS SP GF - ${membro.nome}`,
+            membro.impeditivos.imoveisSP
         )
         )
         .join("");
     const embarcacaoGF = grupoFamiliar
-        .map((membro, index) =>
+        .map((membro) =>
         renderCampoPatrimonioImcompativel(
-            `EMBARCAÇÃO GF - Membro ${index + 1}`,
-            membro.embarcacao
+            `EMBARCAÇÃO GF - ${membro.nome}`,
+            membro.impeditivos.embarcacao
         )
         )
         .join("");
     const aeronaveGF = grupoFamiliar
-        .map((membro, index) =>
+        .map((membro) =>
         renderCampoPatrimonioImcompativel(
-            `AERONAVE GF - Membro ${index + 1}`,
-            membro.aeronave
+            `AERONAVE GF - ${membro.nome}`,
+            membro.impeditivos.aeronave
         )
         )
         .join("");
     const veiculosGF = grupoFamiliar
-        .map((membro, index) =>
-          membro.veiculos.length
+        .map((membro) =>
+          membro.impeditivos.veiculos.length
             ? renderTable(
-                membro.veiculos,
-                `Veículos do GF - Membro ${index + 1}`,
+                membro.impeditivos.veiculos,
+                `Veículos do GF - ${membro.nome}`,
                 ["marca", "tipo", "valorEstipulado", "placa", "renavam", "anoFabricacao", "municipio", "restricao"]
               ) : ''
         )
         .join("");
     const imoveisRuraisGF = grupoFamiliar
-        .map((membro, index) =>
-            membro.imoveisRurais.length
+        .map((membro) =>
+            membro.impeditivos.imoveisRurais.length
             ? renderTable(
-                membro.imoveisRurais,
-                `Imóveis Rurais do GF - Membro ${index + 1}`,
+                membro.impeditivos.imoveisRurais,
+                `Imóveis Rurais do GF - ${membro.nome}`,
                 ["nomeImovel", "sncr", "numeroCafir", "dataInscricao", "localizacao", "distrito", "cep", "municipio", "uf"]
             ) : '',
         )

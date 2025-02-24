@@ -5,7 +5,6 @@ import { IDossieExtractedPartial } from "../BuscarImpedimentos/dtos/interfaces/I
 import { EmpregoDP, IImpeditivoLitispendencia, IObjInfoImpeditivosLoas, IObjInfoImpeditivosMaternidade, IReturnImpedimentosLOAS, IReturnImpedimentosMaternidade } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
 import { IReturnImpedimentosRural } from "../dto/RuralMaternidade/interfaces/IReturnImpedimentosRural";
-import { loasLitispendenciaSuperDossie, restabelecimentoRequerimentosSuperDossie, loasAtivoSuperDossie, loasIdadeSuperDossie } from "../loas/Business";
 import { buscarTabelaRelacaoDeProcessos } from "./Help/BuscarTabelaRelacaoDeProcessos";
 import { calcularIdadeNewDossie } from "./SuperDossieBusiness/CalcularIdade";
 import { dataPrevidenciariasNewDossie } from "./SuperDossieBusiness/GetInformationPrevidenciariasNewDossie";
@@ -162,6 +161,8 @@ export class GetInformationDossieSuperForPicapau {
     let arrayImpedimentos: string = ''; 
     const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
 
+    console.log(dossie);
+
     const impeditivosLitispendencia = hasLitispendenciaLoas(
       dossie.fichaSintetica.numeroUnico,
       dossie.processosMovidos,
@@ -218,66 +219,5 @@ export class GetInformationDossieSuperForPicapau {
       arrayDeImpedimentos: arrayImpedimentos,
       objImpedimentosLoas: objInfoImpeditivos
     }
-  }
-
-  async impeditivosLoas(paginaDosprevFormatada: JSDOMType): Promise<IReturnImpedimentosLOAS> {
-          let ArrayImpedimentos: string = ''; 
-          const objInfoImpeditivos: IObjInfoImpeditivosLoas = {} as IObjInfoImpeditivosLoas;
-
-          try{
-            
-            const restabelecimentoRequerimentos = await restabelecimentoRequerimentosSuperDossie.handle(paginaDosprevFormatada)
-  
-            if (restabelecimentoRequerimentos instanceof Error) {
-              ArrayImpedimentos += " erro estabelecimento -"
-            } else if(restabelecimentoRequerimentos.valorBooleano) {
-              objInfoImpeditivos.requerimento = restabelecimentoRequerimentos.impeditivo;
-              ArrayImpedimentos += restabelecimentoRequerimentos.impeditivo;
-            } else if (!restabelecimentoRequerimentos.valorBooleano && restabelecimentoRequerimentos.impeditivo === " RESTABELECIENTO -") {
-              ArrayImpedimentos += restabelecimentoRequerimentos.impeditivo;
-            }
-  
-            const loasLitispendencia = await loasLitispendenciaSuperDossie.handle(paginaDosprevFormatada);
-  
-            if (loasLitispendencia instanceof Error) {
-              ArrayImpedimentos += " erro estabelecimento -"
-            } else if(loasLitispendencia.haveLitispendencia) {
-              objInfoImpeditivos.litispendencia = loasLitispendencia.litispendencia;
-              ArrayImpedimentos += " LITISPENDÊNCIA -"
-            }
-
-
-            const loasAtivo = await loasAtivoSuperDossie.handle(paginaDosprevFormatada)
-
-            if (loasAtivo.valorBooleano && loasAtivo.tipo === 1) {
-              objInfoImpeditivos.bpc = loasAtivo.nomeImpeditivo;
-              ArrayImpedimentos += loasAtivo.impeditivo;
-            } else if (loasAtivo.valorBooleano && loasAtivo.tipo === 2) {
-              objInfoImpeditivos.beneficio = loasAtivo.nomeImpeditivo;
-              ArrayImpedimentos += loasAtivo.impeditivo;
-            }
-
-
-
-            const loasIdade = await loasIdadeSuperDossie.handle(paginaDosprevFormatada)
-
-            if (loasIdade.idadeImpeditivo) {
-              objInfoImpeditivos.idade = loasIdade.idadeAutor;
-              ArrayImpedimentos += " IDADE -"
-            }
-
-            ArrayImpedimentos += " *LOAS* ";
-
-            console.log("---OBJETO IMPEDITIVOS LOAS SUPER");
-            console.log(objInfoImpeditivos);
-
-            return {
-              arrayDeImpedimentos: ArrayImpedimentos,
-              objImpedimentosLoas: objInfoImpeditivos
-            }
-
-          }catch(e){
-            console.error(e)
-          }
   }
 }

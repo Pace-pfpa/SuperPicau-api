@@ -53,7 +53,7 @@ export async function getInfoEnvDossieNormal(cookie:string, normalDossie: Respon
         const dateNascimentoRaw = await extractField(paginaDosPrevFormatadaDossie, xpathMap.dataNascimento, "Data de nascimento não encontrada");
         await validateDate(dateNascimentoRaw, "Pegou xpath errado do nascimento");
 
-        const valoresCalcule = await getValueCalcDossieNormal(cookie, normalDossie, dateAjuizamentoRaw, dataReq)
+        const valoresCalcule = await getValueCalcDossieNormal(paginaDosPrevFormatadaDossie, dateAjuizamentoRaw, dataReq)
 
         const objeto: IPicaPauCalculeDTO = {
             nome: nomeCerto,

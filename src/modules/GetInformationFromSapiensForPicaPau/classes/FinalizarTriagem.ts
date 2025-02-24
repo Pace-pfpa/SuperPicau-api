@@ -93,9 +93,7 @@ export class FinalizarTriagem {
         impeditivosDosprevLoas: IObjInfoImpeditivosLoas,
         informacoesProcessoLoas: IInformacoesProcessoLoasDTO
     ): Promise<IFinalizarTriagem> {
-
         if (isProcessoLimpo(impeditivos)) {
-
             if (informacoesProcessoLoas.isUserAdmin && informacoesProcessoLoas.infoUpload.subirMinuta) {
                 try {
                     await minutaLimpaClass.loasProcessoLimpo(informacoesProcessoLoas);
@@ -108,7 +106,6 @@ export class FinalizarTriagem {
             await atualizarEtiquetaProcessoLimpo(informacoesProcessoLoas.cookie, informacoesProcessoLoas.tarefaId);
             return { resultadoTriagem: '3', resposta: 'PROCESSO LIMPO' }
         } else {
-
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*LOAS*'));
             const impeditivosString = relevantes.join(' - ');
 

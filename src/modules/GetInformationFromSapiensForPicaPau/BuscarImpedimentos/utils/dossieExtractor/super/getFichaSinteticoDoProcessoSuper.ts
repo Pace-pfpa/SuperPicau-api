@@ -11,7 +11,7 @@ export async function getFichaSinteticaDoProcessoSuper(dossie: JSDOMType): Promi
         assunto: "/html/body/div/div[4]/table/tbody/tr[4]/td",
         nome: "/html/body/div/div[4]/table/tbody/tr[6]/td",
         cpf: "/html/body/div/div[4]/table/tbody/tr[7]/td",
-        dataNascimento: "/html/body/div/div[4]/table/tbody/tr[7]/td",
+        dataNascimento: "/html/body/div/div[4]/table/tbody/tr[8]/td",
     };
 
     const safeExtractField = async (xpath: string, errorMessage: string) => {
