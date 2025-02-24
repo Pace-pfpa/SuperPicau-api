@@ -7,8 +7,6 @@ import { getArvoreDocumentoController } from "../modules/GetArvoreDocumento";
 import { updateEtiquetaController } from "../modules/UpdateEtiqueta";
 import { getCapaDoPassivaController } from "../modules/GetCapaDoPassiva";
 
-//const sessao = request.session();
-
 export const routerInsertSapiens = Router();
 
 /**
@@ -71,7 +69,6 @@ routerInsertSapiens.post("/insertMinutas", async (req, res) => {
 
 
 routerInsertSapiens.post("/login", async (req, res) => {
-    console.log(req.body)
     return loginController.handle(req, res);
 })
 
@@ -94,17 +91,3 @@ routerInsertSapiens.post("/updateEtiqueta", async (req, res) => {
 routerInsertSapiens.post("/getCapaDoPassivaController", async (req, res) => {
     return getCapaDoPassivaController.handle(req, res);
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-

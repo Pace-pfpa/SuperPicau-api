@@ -1,8 +1,8 @@
 import axios from "axios";
-import { ILoginDTO } from "../../DTO/LoginDTO";
 import { parse, HTMLElement } from 'node-html-parser';
 import { RequestHeaders } from "../../sapiensOperations/resquest/RequestHeaders";
 import { RequestHeadersLogingCheck } from '../../sapiensOperations/resquest/RequestHeadersLoginCheck';
+import { LoginDTO } from "../../modules/LoginUsuario";
 
 interface heards {
     token: string;
@@ -16,7 +16,7 @@ export class RequestLoginSapiens {
     private token: string
     private requestHeaders = new RequestHeaders()
     private headers: any;
-    constructor(private login: ILoginDTO) { }
+    constructor(private login: LoginDTO) { }
     async handle(): Promise<string> {
         const requestHeadersLogingCheck = new RequestHeadersLogingCheck()
         var cookie: string;

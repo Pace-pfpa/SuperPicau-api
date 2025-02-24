@@ -1,47 +1,28 @@
 const { JSDOM } = require('jsdom');
-import { ResponseArvoreDeDocumentoDTO } from "../../../GetArvoreDocumento";
-import { getDocumentoUseCase } from "../../../GetDocumento";
-import { IResponseSislabra, IImpedimentos } from "../../dto";
+import { JSDOMType } from "../../../../shared/dtos/JSDOM";
+import { IResponseSislabraRural, IImpedimentosRural } from "../../dto";
 import { getDocumentSislabraFromSapiens } from "../../GetDocumentSislabraFromSapiens";
 
-export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: ResponseArvoreDeDocumentoDTO, documentoConjuge: ResponseArvoreDeDocumentoDTO, cookie: string): Promise<IResponseSislabra> {
+export async function impedimentosSislabraRural(
+    documentoPoloAtivo: JSDOMType, 
+    documentoConjuge: JSDOMType
+): Promise<IResponseSislabraRural> {
     let response = '';
-    let impedimentosAutor: IImpedimentos;
-    let impedimentosConjuge: IImpedimentos;
+    let impedimentosAutor: IImpedimentosRural;
+    let impedimentosConjuge: IImpedimentosRural;
 
     if (documentoPoloAtivo && documentoConjuge) {
-
-        const idSislabraAutor = documentoPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-        const paginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraAutor });
-        const paginaFormatadaAutor = new JSDOM(paginaSislabraAutor);
-        const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaFormatadaAutor, "AUTOR");
+        const sislabraAutor = await getDocumentSislabraFromSapiens.execute(documentoPoloAtivo, "AUTOR");
         response += sislabraAutor.impedimentos;
         impedimentosAutor = sislabraAutor.objImpedimentos;
 
-        const idSislabraConjuge = documentoConjuge.documentoJuntado.componentesDigitais[0].id;
-        const paginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraConjuge });
-        const paginaFormatadaConjuge = new JSDOM(paginaSislabraConjuge);
-        const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaFormatadaConjuge, "CONJUGE");
+        const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(documentoConjuge, "CONJUGE");
         response += sislabraConjuge.impedimentos;
         impedimentosConjuge = sislabraConjuge.objImpedimentos;
-
     } else if (documentoPoloAtivo) {
-
-        const idSislabraAutor = documentoPoloAtivo.documentoJuntado.componentesDigitais[0].id;
-        const paginaSislabraAutor = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraAutor });
-        const paginaFormatadaAutor = new JSDOM(paginaSislabraAutor);
-        const sislabraAutor = await getDocumentSislabraFromSapiens.execute(paginaFormatadaAutor, "AUTOR");
+        const sislabraAutor = await getDocumentSislabraFromSapiens.execute(documentoPoloAtivo, "AUTOR");
         response += sislabraAutor.impedimentos;
         impedimentosAutor = sislabraAutor.objImpedimentos;
-
-    } else if (documentoConjuge) {
-        
-        const idSislabraConjuge = documentoConjuge.documentoJuntado.componentesDigitais[0].id;
-        const paginaSislabraConjuge = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraConjuge });
-        const paginaFormatadaConjuge = new JSDOM(paginaSislabraConjuge);
-        const sislabraConjuge = await getDocumentSislabraFromSapiens.execute(paginaFormatadaConjuge, "CONJUGE");
-        response += sislabraConjuge.impedimentos;
-        impedimentosConjuge = sislabraConjuge.objImpedimentos;
 
     } else {
         response += " SISLABRA GF NÃO EXISTE -";
@@ -49,7 +30,7 @@ export async function impedimentosSislabraRuralMaternidade(documentoPoloAtivo: R
 
     const impedimentosString = response.split('-')
 
-    const impedimentos: IResponseSislabra = {
+    const impedimentos: IResponseSislabraRural = {
         impedimentos: impedimentosString,
         autor: impedimentosAutor,
         conjuge: impedimentosConjuge

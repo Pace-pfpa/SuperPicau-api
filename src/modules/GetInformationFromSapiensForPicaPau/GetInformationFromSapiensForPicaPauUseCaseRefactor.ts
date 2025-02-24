@@ -12,19 +12,17 @@ import { ExecuteReturnType,
         IInfoUploadDTO } from "./dto";
 import { processarDossie } from "./helps/processarDossie";
 import { atualizarEtiquetaAviso,
-        buscarDossieSocial, 
+        buscarDossieSocial,
         buscarSislabraLOAS, 
         buscarSislabraRuralMaternidade, 
-        verificarEAtualizarDossie, 
-        verificarGeracaoDossie } from "./utils";
+        verificarEAtualizarDossie } from "./utils";
+import { dossieExtractorMain } from "./utils/dossieExtractorMain";
 
 export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
     async execute(data: GetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
-
-        const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
-        
         try {
+            const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
 
             const tipo_triagem = data.readDosprevAge;
             const tarefaId = data.tarefa.id;
@@ -38,7 +36,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return { warning: "TAREFA NÃO ENCONTRADA" };
             }
 
-            const tarefaPastaID = tarefas[0].pasta_id
+            const tarefaPastaID = tarefas[0].pasta_id;
             
             console.log("SÓ OS LOUCOS SABEM");
 
@@ -50,9 +48,9 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             };
 
             const arrayDeDocumentos = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
-            if (arrayDeDocumentos instanceof Error) {
+            if (!arrayDeDocumentos) {
                 await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
-                return { warning: "DOSPREV COM FALHA NA PESQUISA" }
+                return { warning: "ERRO AO BUSCAR DOCUMENTOS" }
             }
  
             const capaFormatada = await verificarECorrigirCapa(data, cookie);
@@ -72,22 +70,18 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
 
             const response = await this.identificarDossieAtivo(arrayDeDossiesNormais, arrayDeDossiesSuper, cpfCapa, cookie);
 
-            if ('warning' in response) {
+            if (response instanceof Error) {
                 await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
                 return { warning: `DOSPREV NÃO EXISTE` };
             }
 
             const { dosprevPoloAtivo, isDosprevPoloAtivoNormal } = response;
 
-            if (!dosprevPoloAtivo) {
-                await atualizarEtiquetaAviso(cookie, "DOSPREV POLO ATIVO NÃO ENCONTRADO", tarefaId);
-                return { warning: `DOSPREV NÃO EXISTE` };
-            }
+            const dosprevExtracted = await dossieExtractorMain(dosprevPoloAtivo, isDosprevPoloAtivoNormal, cookie);
 
-            const falhaNaGeracao = await verificarGeracaoDossie(dosprevPoloAtivo, cookie);
-            if (falhaNaGeracao instanceof Error) {
-                await atualizarEtiquetaAviso(cookie, "DOSPREV COM FALHA NA GERAÇÃO", tarefaId);
-                return { warning: "DOSPREV COM FALHA NA GERAÇÃO" }
+            if (dosprevExtracted.isAviso) {
+                await atualizarEtiquetaAviso(cookie, dosprevExtracted.avisoMessage, tarefaId);
+                return { warning: `DOSPREV IMPEDITIVO` };
             }
 
             let dossieSocialInfo: IDossieSocialInfo = null;
@@ -111,8 +105,8 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
             
             if (tipo_triagem === 2) {
                 
-                const { sislabraPoloAtivo, sislabraGF } = await buscarSislabraLOAS(arrayDeDocumentos);
-                if (!sislabraPoloAtivo) {
+                const { sislabraPoloAtivo, sislabraGFInfo } = await buscarSislabraLOAS(arrayDeDocumentos, dossieSocialInfo, cookie);
+                if (sislabraPoloAtivo.length === 0) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
                     return { warning: "SISLABRA NÃO EXISTE" }
                 }
@@ -126,19 +120,25 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     capaFormatada,
                     cpfCapa,
                     infoUpload,
-                    dosprevPoloAtivo,
-                    isDosprevPoloAtivoNormal,
-                    sislabraPoloAtivo,
-                    sislabraGF,
+                    dossie: {
+                        dosprevPoloAtivo,
+                        isDosprevPoloAtivoNormal,
+                        dossieFormatado: dosprevExtracted.dossieFormatado,
+                        dossieExtractedPartial: dosprevExtracted.dossiePartial,
+                        arrayDeDossiesNormais,
+                        arrayDeDossiesSuper
+                    },
+                    sislabra: {
+                        sislabraPoloAtivo,
+                        sislabraGFInfo,
+                    },
                     dossieSocialInfo,
-                    arrayDeDossiesNormais,
-                    arrayDeDossiesSuper
                 }
 
                 return [informacoesProcesso, 'LOAS'];
             } else {
 
-                const { sislabraPoloAtivo, sislabraConjuge } = await buscarSislabraRuralMaternidade(arrayDeDocumentos);
+                const { sislabraPoloAtivo, sislabraConjuge } = await buscarSislabraRuralMaternidade(arrayDeDocumentos, cookie);
                 if (!sislabraPoloAtivo) {
                     await atualizarEtiquetaAviso(cookie, "SISLABRA (AUTOR) e (CÔNJUGE) NÃO EXISTE", tarefaId);
                     return { warning: "SISLABRA NÃO EXISTE" }
@@ -152,10 +152,16 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                     capaFormatada,
                     cpfCapa,
                     infoUpload,
-                    dosprevPoloAtivo,
-                    isDosprevPoloAtivoNormal,
-                    sislabraPoloAtivo,
-                    sislabraConjuge, 
+                    dossie: {
+                        dosprevPoloAtivo,
+                        isDosprevPoloAtivoNormal,
+                        dossieExtractedPartial: dosprevExtracted.dossiePartial,
+                        dossieFormatado: dosprevExtracted.dossieFormatado
+                    },
+                    sislabra: {
+                        sislabraPoloAtivo,
+                        sislabraConjuge
+                    }
                 }
 
                 return [informacoesProcesso, 'RURAL/MATERNIDADE'];
@@ -172,7 +178,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
         arrayDeDossiesSuper: ResponseArvoreDeDocumentoDTO[], 
         cpfCapa: string, 
         cookie: string
-    ): Promise<IdentificarDossieAtivoType> {
+    ): Promise<IdentificarDossieAtivoType | Error> {
 
         let dosprevPoloAtivo: ResponseArvoreDeDocumentoDTO = null;
         let isDosprevPoloAtivoNormal: boolean = false;
@@ -213,9 +219,8 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
             return { dosprevPoloAtivo, isDosprevPoloAtivoNormal };
         } catch (error) {
-            console.error("Erro na identificação do Dossiê" + error);
-            return { warning: error.message || "Erro desconhecido" };
+            console.error("Erro na identificação do Dossiê", error.message);
+            return new Error('DOSPREV NÃO EXISTE');
         }
-
     }
 }

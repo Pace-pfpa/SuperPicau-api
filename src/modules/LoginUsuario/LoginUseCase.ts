@@ -3,10 +3,17 @@ import { LoginDTO } from './dtos/LoginDTO';
 
 export class LoginUseCase {
     async execute(data: LoginDTO): Promise<string> {
-        console.log("login inicializado")
-        const loginIsTrue = await LoginSapiens(data)
-        const verifyBoolean = loginIsTrue.split("(")[1].split(",")[0].trim();
-        if(verifyBoolean == "False") throw new Error()
-        return loginIsTrue.split("(")[1].split("'")[1];
+        const loginResponse = await LoginSapiens(data)
+
+        const match = RegExp(/\((\w+),\s*'([^']+)'\)/).exec(loginResponse);
+
+        if (!match) {
+            throw new Error("Formato de resposta inesperado do LoginSapiens");
+        }
+
+        const [_, booleanStr, message] = match;
+        const isSuccess = booleanStr === "True";
+
+        return isSuccess ? message : `Erro: ${message}`;
     }
 }

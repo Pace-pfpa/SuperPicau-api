@@ -1,4 +1,5 @@
 import express from 'express';
+import path from "path";
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Options } from '../config/swagger';
@@ -17,8 +18,9 @@ routes.use("/samir", routerGetInformationsForSamir);
  * Swagger Roter
  */
 const swaggerSpec = swaggerJSDoc(Options);
-routes.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+routes.use('/swagger-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+routes.use('/back-docs', express.static(path.join(__dirname, "../../docs")));
 
 /**
  * Error tratament

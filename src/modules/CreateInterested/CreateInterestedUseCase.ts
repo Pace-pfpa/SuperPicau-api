@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-import { loginUseCase } from "../LoginUsuario";
+import { LoginDTO, loginUseCase } from "../LoginUsuario";
 import { getUsuarioUseCase } from "../GetUsuario";
 import { getTarefaUseCase } from "../GetTarefa";
 import { GetPessoa_id } from "./RequisicaoAxiosTarefas/GetPessoa_id";
@@ -15,179 +15,174 @@ import { getXPathText } from "../../shared/utils/GetTextoPorXPATH";
 import { updateEtiquetaUseCase } from "../UpdateEtiqueta";
 import { CorrigirCpfComZeros } from "./Helps/CorrigirCpfComZeros";
 import { arrayInteressados } from "./Helps/ArrayInteressados";
-import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
-import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
 import { buscarTableCpf, verificarCapaTrue } from "../GetCapaDoPassiva/utils";
 import { IinteressadosDTO } from "./dtos/InteressadosDTO";
+import { ITarefaResponse } from "../GetTarefa/dtos";
+import { JSDOMType } from "../../shared/dtos/JSDOM";
+import { GetEnvolvidoGhost } from "./RequisicaoAxiosTarefas/GetEnvolvidoGhost";
+import { GetPessoaFisica } from "./RequisicaoAxiosTarefas/GetPessoaFisica";
 
 export class CreateInterestedUseCase {
 
-
     async execute(data: IinteressadosDTO) {
-        
-        const resultado = {
+
+        const resultado = this.initializeResultado();
+        const cookie = await this.authenticate(data.login);
+        const usuario_id = await this.getUsuarioId(cookie);
+
+        const tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
+        resultado.totalTarefas = tarefas.length;
+
+        for (const tarefa of tarefas) {
+            try {
+                await this.processTarefa(tarefa, cookie, resultado);
+            } catch (error) {
+                console.error(`Erro ao processar tarefa ${tarefa.pasta.NUP}:`, error);
+                resultado.erroAoCadastrarEnvolvidos.push(tarefa.pasta.NUP);
+            }
+        }
+
+        return resultado;
+    }
+
+    initializeResultado() {
+        return {
             totalTarefas: 0,
             envolvidosCadastrados: 0,
             cpfNaoConstaNaReceita: 0,
             erroAoCadastrarEnvolvidos: [] as string[],
         };
+    }
 
-        const cookie = await loginUseCase.execute(data.login);
-        const usuario = (await getUsuarioUseCase.execute(cookie));
-        const usuario_id = `${usuario[0].id}`;
-        let novaCapa: any = false;
-        let cpfCapa;
+    async authenticate(login: LoginDTO): Promise<string> {
+        return await loginUseCase.execute(login);
+    }
 
-        let tarefas = await getTarefaUseCase.execute({ cookie, usuario_id, etiqueta: data.etiqueta });
-        resultado.totalTarefas = tarefas.length;
-        let arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[];
+    async getUsuarioId(cookie: string): Promise<string> {
+        const usuario = await getUsuarioUseCase.execute(cookie);
+        return `${usuario[0].id}`;
+    }
 
-        
-        
-        for(let i = 0; i < tarefas.length; i++){
+    async processTarefa(tarefa: ITarefaResponse, cookie: string, resultado: any): Promise<void> {
+        const { tarefaId, arrayDeDocumentos } = await this.fetchTarefaData(tarefa, cookie);
 
-            try{
-                
+        const dossieSocial = this.getDossieSocial(arrayDeDocumentos);
+        if (!dossieSocial) throw new Error("Dossiê Social não encontrado.");
 
-                const tarefaId = tarefas[i].id
-                const objectGetArvoreDocumento: GetArvoreDocumentoDTO = { nup: tarefas[i].pasta.NUP, chave: tarefas[i].pasta.chaveAcesso, cookie, tarefa_id: tarefas[i].id }
-                arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
-        
-        
-                const dossieSocial = arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
-            
-                const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
-                const paginaDossieSocial = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
-            
-                const paginaDossieSocialFormatada = new JSDOM(paginaDossieSocial); 
-    
-    
-                
-    
-                const tcapaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
-                const tcapaFormatada = new JSDOM(tcapaParaVerificar)
+        const paginaDossieSocial = await this.getPaginaDossieSocial(dossieSocial, cookie);
 
-                await verificarCapaTrue(tcapaFormatada)
-                try{
+        const capa = await this.verifyCapa(tarefa, cookie);
+        const cpfCapa = buscarTableCpf(capa);
 
-               
+        if (!cpfCapa) {
+            await this.updateEtiqueta(cookie, `CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId);
+            resultado.cpfNaoConstaNaReceita++;
+            return;
+        }
 
-                    const capaParaVerificar: string = await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie);
-                    const capaFormatada = new JSDOM(capaParaVerificar)
-                    
-                    const infoClasseExist = await verificarCapaTrue(capaFormatada) 
-                    let capa = ""
-                    if(!infoClasseExist){
-                
-                        const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b"
-                        const novaNup = await getXPathText(capaFormatada, xpathNovaNup)
-                        const nupFormatada:string = (novaNup.split('(')[0]).replace(/[./-]/g, "").trim();
-                        capa = (await getCapaDoPassivaUseCase.execute(nupFormatada, cookie));
-                        novaCapa = new JSDOM(capa)
-                    }else{
-                        
-                        capa = (await getCapaDoPassivaUseCase.execute(tarefas[i].pasta.NUP, cookie));
-                        novaCapa = new JSDOM(capa)
-                    }
+        const interessados = await this.processInteressados(tarefa, paginaDossieSocial, cpfCapa, cookie);
 
+        if (interessados.hasInvalidCpf) {
+            await this.updateEtiqueta(cookie, `CPF ${interessados.invalidCpfs} NÃO CONSTA NA RECEITA`, tarefaId);
+            resultado.cpfNaoConstaNaReceita += interessados.invalidCpfs.length;
+        } else {
+            await this.updateEtiqueta(cookie, `ENVOLVIDOS CADASTRADOS`, tarefaId);
+            resultado.envolvidosCadastrados++;
+        }
+    }
 
+    async fetchTarefaData(tarefa: ITarefaResponse, cookie: string): Promise<{
+        tarefaId: number;
+        arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[];
+    }> {
+        const tarefaId = tarefa.id;
+        const objectGetArvoreDocumento: GetArvoreDocumentoDTO = { nup: tarefa.pasta.NUP, chave: tarefa.pasta.chaveAcesso, cookie, tarefa_id: tarefa.id };
+        const arrayDeDocumentos = (await getArvoreDocumentoUseCase.execute(objectGetArvoreDocumento)).reverse();
 
-                    cpfCapa = buscarTableCpf(novaCapa);
-                    if(!cpfCapa){
-                        (await updateEtiquetaUseCase.execute({ cookie, etiqueta: ` CPF NÃO ENCONTRADO - (GERAR NOVO DOSSIE)`, tarefaId }))
-                        resultado.cpfNaoConstaNaReceita++;
-                      continue;
-                    }
+        return { tarefaId, arrayDeDocumentos };
+    }
 
+    getDossieSocial(arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[]): ResponseArvoreDeDocumentoDTO {
+        return arrayDeDocumentos.find(Documento => Documento.movimento.includes("CADUNICO"));
+    }
 
+    async getPaginaDossieSocial(dossieSocial: ResponseArvoreDeDocumentoDTO, cookie: string) {
+        const idDossieSocialParaPesquisa = dossieSocial.documentoJuntado.componentesDigitais[0].id;
+        const pagina = await getDocumentoUseCase.execute({ cookie, idDocument: idDossieSocialParaPesquisa });
+        return new JSDOM(pagina);
+    }
 
+    async verifyCapa(tarefa: ITarefaResponse, cookie: string) {
+        const capaContent = await getCapaDoPassivaUseCase.execute(tarefa.pasta.NUP, cookie);
+        const capa = new JSDOM(capaContent);
 
+        const isCapaValid = await verificarCapaTrue(capa);
+        if (!isCapaValid) {
+            const xpathNovaNup = "/html/body/div/div[4]/table/tbody/tr[13]/td[2]/a[1]/b";
+            const novaNup = getXPathText(capa, xpathNovaNup).split('(')[0].replace(/[./-]/g, "").trim();
+            const novaCapaContent = await getCapaDoPassivaUseCase.execute(novaNup, cookie);
+            return new JSDOM(novaCapaContent);
+        }
 
-        
-                }catch(e){
-                    /* return new Error("erro nos interessados") */
-                    continue;
-                }
-    
-                let InputArray = await GetInteressadosReq(tarefas[i].pasta_id, cookie)
-                console.log('--RESPOSTA:')
-                let ArrayEnvolvidos = arrayInteressados(InputArray)
-                
-                
-                const buscarTabelaGrupoFamiliar = new BuscarTabelaGrupoFamiliar;
-                const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocialFormatada); 
-                 
-                let cpfInvalidoEncontrado = false
-                let arrayDeCpfInvalido = []
+        return capa;
+    }
+
+    async delay(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async processInteressados(tarefa: ITarefaResponse, paginaDossieSocial: JSDOMType, cpfCapa: string, cookie: string) {
+        const buscarTabelaGrupoFamiliar = new BuscarTabelaGrupoFamiliar();
+        const arrayCpfsInteressados = await buscarTabelaGrupoFamiliar.execute(paginaDossieSocial);
+
+        const interessadosReq = await GetInteressadosReq(tarefa.pasta_id, cookie);
+        const interessadosExistentes = arrayInteressados(interessadosReq);
+
+        const invalidCpfs: string[] = [];
+        for (const cpfInteressado of arrayCpfsInteressados) {
+            const cpfCorrigido = CorrigirCpfComZeros(cpfInteressado.trim());
+
+            if (cpfCorrigido === cpfCapa || interessadosExistentes.includes(cpfCorrigido)) continue;
+
+            try {
+                // ATIVAR O GHOST
+                const envolvidoGhost = await GetEnvolvidoGhost(cpfCorrigido, cookie);
+                console.log('--GHOST')
+                console.log(envolvidoGhost);
+                const pessoaFisica = await GetPessoaFisica(cpfCorrigido, cookie);
+                console.log('---PESSOA FÍSICA')
+                console.log(pessoaFisica)
+
+                let pessoa_id: any = null;
 
                 try {
-                    for (let j = 0; j < arrayCpfsInteressados.length; j++ ) {
-
-                        try {
-                            console.log('aquiiiiiiiiiiii ' + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
-                            let cpfExistente = ArrayEnvolvidos.filter((element) => element === CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
-                            console.log(cpfExistente)
-
-
-                            if(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()) !== cpfCapa.trim() && !cpfExistente.length){
-                                let envolvidoGhost = await GetEnvolvidoGhost(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
-                                console.log('--GHOST DE FORA')
-                                console.log(envolvidoGhost)
-
-                                let pessoaFisica = await GetPessoaFisica(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
-                                console.log('--PESSOA FISICA')
-                                console.log(pessoaFisica)
-
-                                const pessoa_id =  await GetPessoa_id(CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()), cookie)
-                                console.log('-----PESSOA ID NO LAÇO: ')
-                                console.log(pessoa_id)
-                                if (!pessoa_id) {
-                                    throw new Error('CPF NÃO CONSTA NA RECEITA')
-                                } else {
-                                    const pasta_id = tarefas[i].pasta_id;
-                                    await CreateTarefa(pasta_id, pessoa_id, cookie)
-                                }
-                            }
-
-                            
-
-                        } catch (error) {
-                            arrayDeCpfInvalido.push(" " + CorrigirCpfComZeros(arrayCpfsInteressados[j].trim()))
-                            cpfInvalidoEncontrado = true
-                            if (error.message === 'CPF NÃO CONSTA NA RECEITA') {
-                                await updateEtiquetaUseCase.execute({ cookie, etiqueta: `CPF ${arrayDeCpfInvalido} NÃO CONSTA NA RECEITA`, tarefaId })
-                                resultado.cpfNaoConstaNaReceita++;
-                            }
-                        }
-
-
-
-
-                        
-    
-                        
-                    }
-
-                    if (!cpfInvalidoEncontrado) {
-                        await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ENVOLVIDOS CADASTRADOS`, tarefaId })
-                        resultado.envolvidosCadastrados++;
-                    }
-
-
+                    pessoa_id = await GetPessoa_id(cpfCorrigido, cookie);
                 } catch (error) {
-                    await updateEtiquetaUseCase.execute({ cookie, etiqueta: `ERRO AO CADASTRAR ENVOLVIDOS`, tarefaId })
-                    resultado.erroAoCadastrarEnvolvidos.push(tarefas[i].pasta.NUP);
+                    console.warn(`Erro ao buscar pessoa_id para CPF ${cpfCorrigido}. Tentando novamente após 5 segundos...`);
+                    await this.delay(5000);
+
+                    try {
+                        pessoa_id = await GetPessoa_id(cpfCorrigido, cookie);
+                    } catch (secondError) {
+                        console.error(`Erro persistente para CPF ${cpfCorrigido}:`, secondError);
+                        throw secondError;
+                    }
                 }
 
-    
-            }catch(e){
-                console.log(e)
-                resultado.erroAoCadastrarEnvolvidos.push(tarefas[i].pasta.NUP);
+                if (!pessoa_id) throw new Error("CPF NÃO CONSTA NA RECEITA");
+
+                await CreateTarefa(tarefa.pasta_id, pessoa_id, cookie);
+            } catch (error) {
+                console.error(`Erro final para CPF ${cpfCorrigido}:`, error);
+                invalidCpfs.push(cpfCorrigido);
             }
         }
 
-        return resultado;
+        return { hasInvalidCpf: invalidCpfs.length > 0, invalidCpfs };
+    }
 
+    async updateEtiqueta(cookie: string, etiqueta: string, tarefaId: number) {
+        return await updateEtiquetaUseCase.execute({ cookie, etiqueta, tarefaId });
     }
 
 }

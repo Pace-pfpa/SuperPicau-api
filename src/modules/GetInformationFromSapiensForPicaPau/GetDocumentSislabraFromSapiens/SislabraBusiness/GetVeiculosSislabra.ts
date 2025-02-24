@@ -3,8 +3,14 @@ import { getXPathText } from "../../../../shared/utils/GetTextoPorXPATH";
 import { Veiculo } from "../../dto";
 
 export async function getVeiculos(paginaSislabra: JSDOMType): Promise<Veiculo[]> {
-
     const veiculosEncontrados: Veiculo[] = [];
+    const marcasIndesejadas = [
+        "CHEVETTE", "OPALA", "MONZA", "BRASÍLIA", "FUSCA",
+        "CORCEL", "FIAT 147", "DEL REY", "BELINA", "CARAVAN",
+        "KOMBI", "VARIANT", "KADETT", "ESCORT", "SANTANA",
+        "CORSA", "CELTA"
+    ];
+
     let valueWhile = true;
     let contadorPaxh = 2;
     while(valueWhile){
@@ -17,8 +23,14 @@ export async function getVeiculos(paginaSislabra: JSDOMType): Promise<Veiculo[]>
         const valorEstipulado = getXPathText(paginaSislabra, `/html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[10]`)
         const restricao = getXPathText(paginaSislabra, `html/body/div/main/div/div[11]/table/tbody/tr[${contadorPaxh}]/td[11]`)
 
-        if(!VeiculoMarca && !tipoVeiculo){
-            break;
+        if (!VeiculoMarca && !tipoVeiculo) break;
+
+        if (VeiculoMarca) {
+            const marcaUpper = VeiculoMarca.toUpperCase();
+            if (marcasIndesejadas.some(marcaIndesejada => marcaUpper.includes(marcaIndesejada))) {
+              contadorPaxh++;
+              continue;
+            }
         }
 
         if(VeiculoMarca && !tipoVeiculo){
@@ -68,8 +80,6 @@ export async function getVeiculos(paginaSislabra: JSDOMType): Promise<Veiculo[]>
         contadorPaxh += 1;
 
     }
+
     return veiculosEncontrados
-    
 }
-
-

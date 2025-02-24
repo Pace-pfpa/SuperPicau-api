@@ -1,3 +1,3 @@
-import { SuperDossie } from "./superDossie";
+import { GetInformationDossieSuperForPicapau } from "./GetInformationDossieSuperForPicapau";
 
-export const superDossie = new SuperDossie();
+export const getInformationDossieSuperForPicapau = new GetInformationDossieSuperForPicapau();

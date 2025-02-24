@@ -66,8 +66,6 @@ export async function getEmpresa(paginaSislabra: JSDOMType): Promise<Empresa[]> 
         );
 
         return uniqueArray;
-        
-        
     }
     
 

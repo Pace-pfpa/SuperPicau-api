@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+       "skipLibCheck": true,
        "lib": [
           "es5",
           "es6",
@@ -21,5 +22,6 @@
        "emitDecoratorMetadata": true,
        "experimentalDecorators": true,
        "sourceMap": true
-    }
+    },
+    "exclude": ["node_modules", "dist", "docs"]
  }

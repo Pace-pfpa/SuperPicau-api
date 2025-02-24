@@ -1,20 +1,20 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
-import { IInfoUploadDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { IInfoUploadDTO, IObjInfoImpeditivosMaternidade } from "../GetInformationFromSapiensForPicaPau/dto";
 import { brasaoLogo, 
         estilos, 
         renderSecao, 
-        renderImoveisRurais, 
-        renderLitispendencia, 
-        renderPatrimonioImcompativel,
-        renderConcessao, 
+        renderLitispendencia,
         renderRequerimento } from "./utils";
+import { IResponseLabraAutorConjugeMaternidade } from "../GetInformationFromSapiensForPicaPau/dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
+import { HtmlIImpeditivosMaternidadeDTO } from "./dto/HtmlImpeditivosMaternidade";
+import { renderPatrimonioImcompativelMaternidade } from "./utils/renders/maternidade/renderPatrimonioIncompativelMaternidade";
+import { renderConcessaoMaternidade } from "./utils/renders/maternidade/renderConcessaoMaternidade";
 
 export class ImpeditivosHtmlMaternidade {
     async execute(
-        data: HtmlIImpeditivosRuralMaternidadeDTO,
+        data: HtmlIImpeditivosMaternidadeDTO,
         infoUpload: IInfoUploadDTO,
         impedimentosDosprev: IObjInfoImpeditivosMaternidade, 
-        impedimentosLabra: IResponseLabraAutorConjuge
+        impedimentosLabra: IResponseLabraAutorConjugeMaternidade
     ): Promise<string> {
         const currentDate = new Date().toLocaleDateString("pt-BR", {
             day: "2-digit",
@@ -23,13 +23,14 @@ export class ImpeditivosHtmlMaternidade {
         });
 
         const tabelaTipo4 = await this.renderTabelaTipo4(
-            data.litispendencia,
-            data.concessaoAnterior,
-            data.requerimento,
-            impedimentosDosprev.litispendencia
+            data,
+            impedimentosDosprev
         );
 
-        const tabelaTipo3 = await this.renderTabelaTipo3(impedimentosLabra, impedimentosDosprev);
+        const tabelaTipo3 = await this.renderTabelaTipo3(
+          impedimentosLabra, 
+          impedimentosDosprev
+        );
 
         const html = `
             <!DOCTYPE html>
@@ -37,22 +38,21 @@ export class ImpeditivosHtmlMaternidade {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Relatório de Impeditivos</title>
                 ${estilos()}
             </head>
             <body>
-                <div class="centralizado">
+                <div style="text-align: center;">
                     ${brasaoLogo()}
                     <br>
-                    ADVOCACIA GERAL DA UNIÃO
+                    <span style="text-indent: 0;">ADVOCACIA GERAL DA UNIÃO</span>
                     <br>
-                    PROCURADORIA-GERAL FEDERAL
+                    <span style="center; text-indent: 0;">PROCURADORIA-GERAL FEDERAL</span>
                     <br>
-                    <span>${infoUpload.usuario.unidade}</span>
+                    <span style="text-indent: 0;">${infoUpload.usuario.unidade}</span>
                     <br>
-                    <span>${infoUpload.usuario.setor}</span>
+                    <span style="text-indent: 0;">${infoUpload.usuario.setor}</span>
                     <br>
-                    <span style="font-size:7pt">${infoUpload.usuario.endereco}</span>
+                    <span style="font-size:7pt; text-indent: 0">${infoUpload.usuario.endereco}</span>
                 </div>
                 <hr>
                 <p><br></p>
@@ -66,9 +66,9 @@ export class ImpeditivosHtmlMaternidade {
                 <p><br></p>
                 <p><br></p>
                 <p><br></p>
-                <p class="esquerda"><strong>NÚMERO:</strong> ${infoUpload.numeroProcesso}</p>
-                <p class="esquerda"><strong>REQUERENTE(S):</strong> ${infoUpload.infoMinuta.infoRequerente.nome}</p>
-                <p class="esquerda"><strong>REQUERIDO(S):</strong> ${infoUpload.infoMinuta.infoRequerente.nome_requerido}</p>
+                <p class="esquerda"><strong>NÚMERO: ${infoUpload.numeroProcesso}</strong></p>
+                <p class="esquerda"><strong>REQUERENTE(S): ${infoUpload.infoMinuta.infoRequerente.nome}</strong></p>
+                <p class="esquerda"><strong>REQUERIDO(S): ${infoUpload.infoMinuta.infoRequerente.nome_requerido}</strong></p>
                 <p><br></p>
                 <p><strong>INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS</strong>, pessoa jurídica de direito público, representado(a) pelo membro da Advocacia-Geral da União infra assinado(a), vem, respeitosamente, à presença de Vossa Excelência, apresentar</p>
                 <p><br></p>
@@ -109,9 +109,6 @@ export class ImpeditivosHtmlMaternidade {
                 <p class="centralizado usarrole">EQUIPE DE SEGURADOS ESPECIAIS E ASSISTÊNCIA SOCIAL DA 1ª REGIÃO</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
             </body>
             </html>
         `;
@@ -120,15 +117,30 @@ export class ImpeditivosHtmlMaternidade {
 
     }
 
-    private async renderTabelaTipo4(litispendencia: boolean, concessao: boolean, requerimento: boolean, litispendenciaProcessos: string[] | null): Promise<string> {
-        if (!litispendencia && !concessao && !requerimento) {
+    private async renderTabelaTipo4(
+      impeditivosBooleans: HtmlIImpeditivosMaternidadeDTO,
+      impeditivosDosprev: IObjInfoImpeditivosMaternidade
+    ): Promise<string> {
+        if (
+          !impeditivosBooleans.litispendencia && 
+          !impeditivosBooleans.concessaoAnterior &&
+          !impeditivosBooleans.beneficioAtivo &&
+          !impeditivosBooleans.beneficioIncompativel &&
+          !impeditivosBooleans.requerimento
+        ) {
           console.log('NÃO RENDERIZOU NADA')
-            return ""; // Não renderiza a tabela
+            return "";
         }
 
-      const litispendenciaContent = renderLitispendencia(litispendencia, litispendenciaProcessos);
-      const concessaoContent = renderConcessao(concessao);
-      const requerimentoContent = renderRequerimento(requerimento);
+      const litispendenciaContent = renderLitispendencia(
+        impeditivosBooleans.litispendencia, 
+        impeditivosDosprev.litispendencia
+      );
+      const concessaoContent = renderConcessaoMaternidade(
+        impeditivosBooleans,
+        impeditivosDosprev
+      );
+      const requerimentoContent = renderRequerimento(impeditivosBooleans.requerimento);
 
       return `
       <table border="1" cellpadding="1" cellspacing="1" style="height:20px; width:786px">
@@ -172,7 +184,7 @@ export class ImpeditivosHtmlMaternidade {
     `;
     }
 
-    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> 
+    private async renderTabelaTipo3(impedimentosLabra: IResponseLabraAutorConjugeMaternidade, impedimentosDosprev: IObjInfoImpeditivosMaternidade): Promise<string> 
     {
         const { autor, conjuge } = impedimentosLabra;
 
@@ -180,27 +192,18 @@ export class ImpeditivosHtmlMaternidade {
           "ATIVIDADE EMPRESARIAL",
           `A parte autora, o(a) cônjuge ou companheiro(a) possui (ou possuiu) participação em sociedade empresária, sociedade simples, empresa individual ou empresa individual de responsabilidade limitada, em atividade 
           <u><strong>dentro do período de carência previsto em Lei</strong></u>, 
-          <u><strong>em desacordo com as limitações legais</strong></u>, o que descaracteriza a qualidade de segurado especial.`,
-          autor?.empresas,
-          conjuge?.empresas,
+          <u><strong>em desacordo com as limitações legais</strong></u>, o que descaracteriza a qualidade de segurado especial.
+          <strong>PREQUESTIONAMENTO:</strong> Lei 8.213/91, art. 11, VII, § 1º, §10, I, “d”, e §12.`,
+          autor?.impeditivos.empresas,
+          conjuge?.impeditivos.empresas,
           ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"],
-          "Empresas do Autor",
-          "Empresas do Cônjuge"
-        );
-        
-        const emprego = renderSecao(
-          "EMPREGO",
-          `O(a) cônjuge ou companheiro(a) possui diversos vínculos privados/públicos anteriores ao nascimento, com percepção de salário incompatível com a agricultura de subsistência, o que descaracteriza a qualidade de segurado especial da parte autora.`,
-          autor?.empregos,
-          conjuge?.empregos,
-          ["salarioContrato", "ocupacao", "empresa"],
-          "Empregos do Autor",
-          "Empregos do Cônjuge"
+          `Empresas do Autor - ${autor?.nome}`,
+          `Empresas do Cônjuge - ${conjuge?.nome}`
         );
 
         const empregoDosprev = renderSecao(
-          "EMPREGO AUTOR",
-          `A parte autora possui diversos vínculos privados/públicos no período de carência, em total desacordo com os limites estabelecidos pela Lei e pela jurisprudência pacífica, conforme informações no dossiê previdenciário anexado.`,
+          "EMPREGO",
+          `A parte autora possui diversos vínculos privados/públicos anteriores ao nascimento, com percepção de salário incompatível com a agricultura de subsistência ou por intervalo superior ao limite legal (120 dias), sem comprovação do retorno ao trabalho rural após a cessação dessa(s) atividade(s), o que descaracteriza a qualidade de segurado especial da parte autora. <strong>PREQUESTIONAMENTO:</strong> Lei 8.213/1991, artigo 11, VII, e § 1º.`,
           impedimentosDosprev?.emprego,
           null,
           ["vinculo", "dataInicio", "dataFim", "filiacao", "ocupacao"],
@@ -209,16 +212,12 @@ export class ImpeditivosHtmlMaternidade {
         )
 
 
-        const patrimonioIncompativel = renderPatrimonioImcompativel(autor, conjuge);
-
-        const imovelRural = renderImoveisRurais(autor, conjuge);
+        const patrimonioIncompativel = renderPatrimonioImcompativelMaternidade(autor, conjuge);
         
         if (
             !atividadeEmpresarial &&
-            !emprego &&
             !empregoDosprev &&
-            !patrimonioIncompativel &&
-            !imovelRural
+            !patrimonioIncompativel
         ) {
             return "";
         }
@@ -236,10 +235,8 @@ export class ImpeditivosHtmlMaternidade {
             <tr>
               <td>
                 ${atividadeEmpresarial}
-                ${emprego}
                 ${empregoDosprev}
                 ${patrimonioIncompativel}
-                ${imovelRural}
               </td>
             </tr>
             <tr>
@@ -248,8 +245,7 @@ export class ImpeditivosHtmlMaternidade {
             <tr>
               <td>
                 <p>
-                  Para provar a existência da preliminar acima, além de outras provas específicas identificadas na própria minuta, o INSS demonstra da seguinte forma:
-                  a) atividade empresarial (informações da atividade empresarial na minuta de contestação); b) emprego (juntada de dossiê previdenciário e/ou informações na minuta de contestação); c) patrimônio incompatível (informações na minuta de contestação); d) imóvel rural (informações na minuta de contestação).
+                  Para provar a existência dos impeditivos para a concessão do benefício pleiteado, além de outras provas específicas identificadas na própria minuta, o INSS demonstra da seguinte forma: a) atividade empresarial (informações da atividade empresarial na minuta de contestação); b) emprego (juntada de dossiê previdenciário e/ou informações na minuta de contestação); c) patrimônio incompatível (informações na minuta de contestação);
                 </p>
               </td>
             </tr>

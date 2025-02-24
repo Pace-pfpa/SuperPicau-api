@@ -24,9 +24,7 @@ export function calcularIdadeIdoso(dataNasc: string, dataReq: string): number {
     }
   
     const nascimento = stringParaData(dataNasc);
-    console.log(nascimento)
     const requerimento = stringParaData(dataReq);
-    console.log(requerimento)
 
     if (nascimento === null || requerimento === null) {
         console.error('Erro ao converter as datas.')

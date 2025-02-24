@@ -1,75 +1,101 @@
-import { arrayInteressados } from "../../CreateInterested/Helps/ArrayInteressados";
-import { GetInteressadosReq } from "../../CreateInterested/RequisicaoAxiosTarefas/GetInteressadosReq";
 import { getInformationCapa } from "../GetInformationCapa";
-import { getInfoReqDossieNormal } from "../helps/getInfoReqDossieNormal";
-import { getInfoReqDossieSuper } from "../helps/getInfoReqDossieSuper";
-import { verificarDossieMaisAtual } from "../helps/verificarDossieMaisAtual";
+import { getInfoReqDossieNormal } from "../helps/renda.utils/normal/getInfoReqDossieNormal";
+import { getInfoReqDossieSuper } from "../helps/renda.utils/super/getInfoReqDossieSuper";
 import { normalDossieClass, superDossieClass } from "../classes";
-import { calcularRendaFamiliar } from "./calculoLoas/calcularRendaFamiliar";
-import { etiquetarRenda } from "./calculoLoas/etiquetarRenda";
-import { montarObjetosEnvolvidos } from "./calculoLoas/montarObjetosEnvolvidos";
 import { impedimentosSislabraLOAS } from "./sislabraImpedimentos/impedimentosSislabraLOAS";
-import { impedimentosSislabraRuralMaternidade } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
-import { IInformacoesProcessoDTO, IObjInfoImpeditivosMaternidade, IResponseLabraAutorConjuge, IInformacoesProcessoLoasDTO, IObjInfoImpeditivosLoas } from "../dto";
+import { IInformacoesProcessoDTO, 
+        IObjInfoImpeditivosMaternidade, 
+        IResponseLabraAutorConjugeRural, 
+        IInformacoesProcessoLoasDTO, 
+        IObjInfoImpeditivosLoas, 
+        IPicaPauCalculeDTO 
+    } from "../dto";
 import { IObjInfoImpeditivosRural } from "../dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
+import { getGrupoFamiliarCpfs } from "./utils/getGrupoFamiliarCpfs";
+import { getArrayObjetosEnvolvidos } from "./utils/getArrayObjetosEnvolvidos";
+import { informationRenda } from "./utils/informationRenda";
+import { IResponseLabraAutorGF } from "../dto/Sislabra/interfaces/IResponseLabraAutorGF";
+import { impedimentosSislabraMaternidade } from "./sislabraImpedimentos/impedimentosSislabraMaternidade";
+import { IResponseLabraAutorConjugeMaternidade } from "../dto/Sislabra/interfaces/maternidade/IResponseLabraAutorConjugeMaternidade";
+import { impedimentosSislabraRural } from "./sislabraImpedimentos/impedimentosSislabraRuralMaternidade";
 
 export class BuscarImpedimentosUseCase {
-
     async procurarImpedimentosMaternidade(
         informacoesProcesso: IInformacoesProcessoDTO
-    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosMaternidade, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
-        const {
-            cookie,
-            capaFormatada,
-            dosprevPoloAtivo,
-            isDosprevPoloAtivoNormal,
-            sislabraPoloAtivo,
-            sislabraConjuge
-        } = informacoesProcesso;
-
+    ): Promise<{ 
+        impedimentos: string[], 
+        objImpedimentos: IObjInfoImpeditivosMaternidade, 
+        objImpedimentosLabra: IResponseLabraAutorConjugeMaternidade
+    }> {
         const impedimentoCapa: string[] = [];
-        const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
-        if (!informationcapa.encontrouAdvogado) {
-            impedimentoCapa.push("ADVOGADO");
-        }
-
-        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
-        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
+        const informationcapa = await getInformationCapa.ImpedimentosCapa(
+            informacoesProcesso.capaFormatada
+        );
+        if (!informationcapa.encontrouAdvogado) impedimentoCapa.push("ADVOGADO");
+        
+        const impedimentosSislabra = await impedimentosSislabraMaternidade(
+            informacoesProcesso.sislabra.sislabraPoloAtivo, 
+            informacoesProcesso.sislabra.sislabraConjuge
+        );
+        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjugeMaternidade = {
             autor: impedimentosSislabra.autor,
             conjuge: impedimentosSislabra.conjuge,
         }
 
-        if (isDosprevPoloAtivoNormal) {
-            const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
+        if (informacoesProcesso.dossie.isDosprevPoloAtivoNormal) {
+            const impedimentosBusca = await normalDossieClass.burcarImpedimentosForMaternidade(
+                informacoesProcesso.dossie.dossieFormatado, 
+                informacoesProcesso.dossie.dossieExtractedPartial
+            );
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [
+                ...impedimentoCapa, 
+                ...impedimentosBusca.impedimentos, 
+                ...impedimentosSislabra.impedimentos
+            ];
             console.log("MATERNIDADE NORMAL")
             console.log(impedimentos)
 
-            return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
+            return { 
+                impedimentos, 
+                objImpedimentos: impedimentosBusca.objImpedimentos, 
+                objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge 
+            }
         } else {
-            const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(dosprevPoloAtivo, cookie);
+            const impedimentosBusca = await superDossieClass.buscarImpedimentosForMaternidade(
+                informacoesProcesso.dossie.dossieFormatado, 
+                informacoesProcesso.dossie.dossieExtractedPartial
+            );
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [
+                ...impedimentoCapa, 
+                ...impedimentosBusca.impedimentos, 
+                ...impedimentosSislabra.impedimentos
+            ];
             console.log("MATERNIDADE SUPER")
             console.log(impedimentos)
 
-            return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge }
+            return { 
+                impedimentos, 
+                objImpedimentos: impedimentosBusca.objImpedimentos, 
+                objImpedimentosLabra: ObjImpedimentosLabraAutorConjuge 
+            }
         }
         
     }
 
     async procurarImpedimentosRural(
         informacoesProcesso: IInformacoesProcessoDTO
-    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural, objImpedimentosLabra: IResponseLabraAutorConjuge }> {
+    ): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosRural, objImpedimentosLabra: IResponseLabraAutorConjugeRural }> {
         const {
             cookie,
-            capaFormatada,
-            dosprevPoloAtivo,
-            isDosprevPoloAtivoNormal,
-            sislabraPoloAtivo,
-            sislabraConjuge
+            capaFormatada
         } = informacoesProcesso;
+
+        const sislabraPoloAtivo = informacoesProcesso.sislabra.sislabraPoloAtivo;
+        const sislabraConjuge = informacoesProcesso.sislabra.sislabraConjuge;
+        const dosprevPoloAtivo = informacoesProcesso.dossie.dosprevPoloAtivo;
+        const isDosprevPoloAtivoNormal = informacoesProcesso.dossie.isDosprevPoloAtivoNormal;
 
         const impedimentoCapa: string[] = [];
         const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
@@ -77,8 +103,8 @@ export class BuscarImpedimentosUseCase {
             impedimentoCapa.push("ADVOGADO");
         }
 
-        const impedimentosSislabra = await impedimentosSislabraRuralMaternidade(sislabraPoloAtivo, sislabraConjuge, cookie);
-        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjuge = {
+        const impedimentosSislabra = await impedimentosSislabraRural(sislabraPoloAtivo, sislabraConjuge);
+        const ObjImpedimentosLabraAutorConjuge: IResponseLabraAutorConjugeRural = {
             autor: impedimentosSislabra.autor,
             conjuge: impedimentosSislabra.conjuge
         }
@@ -86,7 +112,7 @@ export class BuscarImpedimentosUseCase {
         if (isDosprevPoloAtivoNormal) {
             const impedimentosBusca = await normalDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("RURAL NORMAL")
             console.log(impedimentos)
 
@@ -94,7 +120,7 @@ export class BuscarImpedimentosUseCase {
         } else {
             const impedimentosBusca = await superDossieClass.buscarImpedimentosForRural(dosprevPoloAtivo, cookie);
 
-            const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
+            const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos];
             console.log("RURAL SUPER")
             console.log(impedimentos)
 
@@ -102,93 +128,84 @@ export class BuscarImpedimentosUseCase {
         }
     }
 
-    async procurarImpedimentosLOAS(informacoesProcesso: IInformacoesProcessoLoasDTO): Promise<{ impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas }> {
-        const {
-            tarefaPastaID,
-            cookie,
-            capaFormatada,
-            cpfCapa,
-            dosprevPoloAtivo,
-            isDosprevPoloAtivoNormal,
-            sislabraPoloAtivo,
-            sislabraGF,
-            arrayDeDossiesNormais,
-            arrayDeDossiesSuper,
-            dossieSocialInfo
-        } = informacoesProcesso;
+    async procurarImpedimentosLOAS(
+        informacoesProcesso: IInformacoesProcessoLoasDTO
+    ): Promise<{ 
+        impedimentos: string[], 
+        objImpedimentos: IObjInfoImpeditivosLoas, 
+        objImpedimentosLabra: IResponseLabraAutorGF 
+    }> {
+        let impedimentosBusca: { 
+            impedimentos: string[], 
+            objImpedimentos: IObjInfoImpeditivosLoas 
+        };
+        let grupoFamiliar: string[] = [];
+        let impedimentoRenda: string[] = [];
+        let infoRequerente: IPicaPauCalculeDTO;
 
         const impedimentoCapa: string[] = [];
-        const informationcapa = await getInformationCapa.ImpedimentosCapa(capaFormatada);
-        if(!informationcapa){
-            impedimentoCapa.push("ADVOGADO");
-        }
-
-        if (!dossieSocialInfo) {
-            impedimentoCapa.push("CADÚNICO");
-        }
-
-        const impedimentosSislabra = await impedimentosSislabraLOAS(sislabraPoloAtivo, sislabraGF, cookie);
-
-        let InputArray = await GetInteressadosReq(tarefaPastaID, cookie);
-        let ArrayEnvolvidos = arrayInteressados(InputArray);
-
-        let grupoFamiliarCpfs = dossieSocialInfo?.grupoFamiliarCpfs || [];
-        let updated_cpf_dos_familiares2 = [...grupoFamiliarCpfs, ...ArrayEnvolvidos.filter(cpf => {
-            return cpf !== '0000000000-' && cpf !== cpfCapa && cpf.length <= 11 && !grupoFamiliarCpfs.includes(cpf);
-        })];
-
-        console.log('---GRUPO FAMILIAR COMPLETO');
-        console.log(updated_cpf_dos_familiares2)
-
-        let arrayDossieEnvolvidosNormal = [];
-        let arrayDossieEnvolvidosSuper = [];
-        let infoRequerente;
-
-        let impedimentosBusca: { impedimentos: string[], objImpedimentos: IObjInfoImpeditivosLoas };
-
-        if (isDosprevPoloAtivoNormal) {
-            impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(dosprevPoloAtivo, cookie);
-            infoRequerente = await getInfoReqDossieNormal(cookie, dosprevPoloAtivo);
-        } else {
-            impedimentosBusca = await superDossieClass.buscarImpedimentosForLOAS(dosprevPoloAtivo, cookie);
-            infoRequerente = await getInfoReqDossieSuper(cookie, dosprevPoloAtivo);
-        }
-
-
-        for (let cpf of updated_cpf_dos_familiares2) {
-            try {
-                const dossie = await verificarDossieMaisAtual(cpf, cookie, arrayDeDossiesNormais, arrayDeDossiesSuper);
-                if (dossie instanceof Error || !dossie) {
-                    console.error(`ERRO DOSPREV ENVOLVIDO CPF: ${cpf}`);
-                    continue;
-                }
-
-                const [dossieId, tipoDossie] = dossie;
-    
-                if (tipoDossie === 0) {
-                    arrayDossieEnvolvidosNormal.push(dossieId);
-                } else if (tipoDossie === 1) {
-                    arrayDossieEnvolvidosSuper.push(dossieId);
-                }
-            } catch (error) {
-                console.error(`Erro inesperado ao processar CPF ${cpf}:`, error);
-            }
-        }
-
-        let arrayObjetosEnvolvidos = await montarObjetosEnvolvidos(
-            arrayDossieEnvolvidosNormal, 
-            arrayDossieEnvolvidosSuper, 
-            infoRequerente, 
-            cookie
+        const informationcapa = await getInformationCapa.ImpedimentosCapa(
+            informacoesProcesso.capaFormatada
         );
+        if (!informationcapa) impedimentoCapa.push("ADVOGADO");
 
-        const resultadoRenda = await calcularRendaFamiliar(arrayObjetosEnvolvidos, updated_cpf_dos_familiares2.length + 1, infoRequerente);
-        const impedimentoRenda: string[] = await etiquetarRenda(resultadoRenda);
+        const impedimentosSislabra = await impedimentosSislabraLOAS(
+            informacoesProcesso.sislabra.sislabraPoloAtivo, 
+            informacoesProcesso.sislabra.sislabraGFInfo,
+        );
+        
+        const ObjImpedimentosLabraAutorGF: IResponseLabraAutorGF = {
+            autor: impedimentosSislabra.autor,
+            gf: impedimentosSislabra.gf
+        }
 
-        const impedimentos = [...(impedimentoCapa || []), ...impedimentosBusca.impedimentos, ...impedimentosSislabra, ...(impedimentoRenda || [])];
+        if (informacoesProcesso.dossie.isDosprevPoloAtivoNormal) {
+            impedimentosBusca = await normalDossieClass.buscarImpedimentosForLoas(
+                informacoesProcesso.dossie.dossieExtractedPartial
+            );
+            infoRequerente = await getInfoReqDossieNormal(
+                informacoesProcesso.dossie.dossieExtractedPartial,
+                informacoesProcesso.dossie.dossieFormatado
+            );
+        } else {
+            impedimentosBusca = await superDossieClass.buscarImpedimentosForLOAS(
+                informacoesProcesso.dossie.dossieExtractedPartial
+            );
+            infoRequerente = await getInfoReqDossieSuper(
+                informacoesProcesso.dossie.dossieExtractedPartial,
+                informacoesProcesso.dossie.dossieFormatado
+            );
+        }
+
+        if (!informacoesProcesso.dossieSocialInfo) {
+            impedimentoCapa.push("CADÚNICO");
+        } else {
+            grupoFamiliar = await getGrupoFamiliarCpfs(
+                informacoesProcesso.tarefaPastaID,
+                informacoesProcesso.cookie,
+                informacoesProcesso.cpfCapa,
+                informacoesProcesso.dossieSocialInfo
+            );
+            let arrayObjetosEnvolvidos = await getArrayObjetosEnvolvidos(
+                grupoFamiliar,
+                infoRequerente,
+                informacoesProcesso.cookie,
+                informacoesProcesso.dossie.arrayDeDossiesNormais,
+                informacoesProcesso.dossie.arrayDeDossiesSuper
+            );
+            const { impeditivo, objImpeditivoRenda } = await informationRenda(
+                arrayObjetosEnvolvidos,
+                grupoFamiliar,
+                infoRequerente
+            );
+            impedimentoRenda = impeditivo;
+            impedimentosBusca.objImpedimentos = { ...impedimentosBusca.objImpedimentos, renda: impedimentoRenda.length > 0 ? objImpeditivoRenda : null };
+        }
+
+        const impedimentos = [...impedimentoCapa, ...impedimentosBusca.impedimentos, ...impedimentosSislabra.impedimentos, ...impedimentoRenda];
         console.log("LOAS")
         console.log(impedimentos)
 
-        return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos }
+        return { impedimentos, objImpedimentos: impedimentosBusca.objImpedimentos, objImpedimentosLabra: ObjImpedimentosLabraAutorGF }
     }
 }

@@ -3,10 +3,12 @@ import { verificarDataNoPeriodoDeDezesseisAnos } from "../../../../../shared/uti
 import { converterDatasParaDate } from "../../../../../shared/utils/TransformarStringParaFormatoDate";
 import { ordenarDatas } from "../../../../../shared/utils/BuscarDatasEmString";
 import { EmpregoDP } from "../../../dto";
+import { JSDOMType } from "../../../../../shared/dtos/JSDOM";
+import { getIntervaloDias } from "../../../BuscarImpedimentos/utils/getIntervaloDeDias";
 //Estrutura para identificar data de emprego
 
 export class DataPrevidenciariasNewDossie{
-    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: any): Promise<EmpregoDP[]> {
+    async Previdenciarias(dataAtual: Date, dataMenosdezesseis: Date, parginaDosPrevFormatada: JSDOMType): Promise<EmpregoDP[]> {
         const empregosEncontrados: EmpregoDP[] = [];
     
     let tamanhoColunaPrevidenciarias = 1;
@@ -26,10 +28,12 @@ export class DataPrevidenciariasNewDossie{
         const xpathColunaPrevidenciarias = `html/body/div/div[7]/table/tbody/tr[${p}]`;
         const xpathCoulaFormatadoPrevidenciarias: string = getXPathText(parginaDosPrevFormatada, xpathColunaPrevidenciarias);
             if(xpathCoulaFormatadoPrevidenciarias.indexOf("Empregado") !== -1 || xpathCoulaFormatadoPrevidenciarias.indexOf("Contribuinte Individual") !== -1){
+                
                     const datasEmprego = converterDatasParaDate(ordenarDatas(getXPathText(parginaDosPrevFormatada, xpathColunaPrevidenciarias))); 
                     const impeditivoBoolean = verificarDataNoPeriodoDeDezesseisAnos(dataAtual, dataMenosdezesseis, datasEmprego[0], datasEmprego[1]);
+                    const intervaloDias = getIntervaloDias(datasEmprego[0], datasEmprego[1]);
 
-                        if(impeditivoBoolean){
+                        if(impeditivoBoolean && intervaloDias >= 120){
 
                             const vinculoEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[7]/table/tbody/tr[${p}]/td[4]`).trim()
                             const dataInicioEmprego = getXPathText(parginaDosPrevFormatada, `html/body/div/div[7]/table/tbody/tr[${p}]/td[5]`).trim()

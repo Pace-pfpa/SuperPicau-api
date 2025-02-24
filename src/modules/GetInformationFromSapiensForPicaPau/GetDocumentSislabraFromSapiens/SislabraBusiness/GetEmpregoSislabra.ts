@@ -7,7 +7,6 @@ export async function getEmpregoSislabra(paginaSislabra: JSDOMType): Promise<Emp
     let contadorWhile = true;
     let contadorXpath = 2;
     while(contadorWhile){
-        console.log("calma pae")
         const salarioContradoXpath = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[8]`)
         const ocupacao = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[5]`)
         const empresa = getXPathText(paginaSislabra, `html/body/div/main/div/div[8]/table/tbody/tr[${contadorXpath}]/td[3]`)

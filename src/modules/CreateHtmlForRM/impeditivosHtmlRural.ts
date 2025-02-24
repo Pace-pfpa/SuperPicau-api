@@ -1,15 +1,15 @@
-import { HtmlIImpeditivosRuralMaternidadeDTO } from "../CreateHtmlForRuralMaternidade/dtos/HtmlImpeditivosRMDTO";
-import { IInfoUploadDTO, IResponseLabraAutorConjuge } from "../GetInformationFromSapiensForPicaPau/dto";
+import { HtmlIImpeditivosRuralDTO } from "./dto/HtmlImpeditivosRuralDTO";
+import { IInfoUploadDTO, IResponseLabraAutorConjugeRural } from "../GetInformationFromSapiensForPicaPau/dto";
 import { IObjInfoImpeditivosRural } from "../GetInformationFromSapiensForPicaPau/dto/RuralMaternidade/interfaces/IObjInfoImpeditivosRural";
-import { brasaoLogo, estilos, renderConcessao, renderImoveisRurais, renderLitispendencia, renderPatrimonioImcompativel, renderRequerimento, renderSecao } from "./utils";
-import { renderIdade } from "./utils/renderIdade";
+import { brasaoLogo, estilos, renderLitispendencia, renderPatrimonioImcompativelRural, renderRequerimento, renderSecao, renderIdade, renderImoveisRuraisRural } from "./utils";
+import { renderConcessaoRural } from "./utils/renders/rural/renderConcessaoRural";
 
 export class ImpeditivosHtmlRural {
     async execute(
-        data: HtmlIImpeditivosRuralMaternidadeDTO,
+        data: HtmlIImpeditivosRuralDTO,
         infoUpload: IInfoUploadDTO,
         impedimentosDosprev: IObjInfoImpeditivosRural, 
-        impedimentosLabra: IResponseLabraAutorConjuge
+        impedimentosLabra: IResponseLabraAutorConjugeRural
     ): Promise<string> {
         const currentDate = new Date().toLocaleDateString("pt-BR", {
             day: "2-digit",
@@ -32,22 +32,18 @@ export class ImpeditivosHtmlRural {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Relatório de Impeditivos</title>
                 ${estilos()}
             </head>
             <body>
-                <div class="centralizado">
-                    ${brasaoLogo()}
-                    <br>
-                    ADVOCACIA GERAL DA UNIÃO
-                    <br>
-                    PROCURADORIA-GERAL FEDERAL
-                    <br>
-                    <span>${infoUpload.usuario.unidade}</span>
-                    <br>
-                    <span>${infoUpload.usuario.setor}</span>
-                    <br>
-                    <span style="font-size:7pt">${infoUpload.usuario.endereco}</span>
+                <div class="topo">
+                    <div style="text-align: center !important;">
+                        <p>${brasaoLogo()}</p>
+                        <p>ADVOCACIA GERAL DA UNIÃO</p>
+                        <p style="text-align: center !important;">PROCURADORIA-GERAL FEDERAL</p>
+                        <p style="text-align: center !important;">${infoUpload.usuario.unidade}</p>
+                        <p style="text-align: center !important;">${infoUpload.usuario.setor}</p>
+                        <p style="font-size: 7pt;">${infoUpload.usuario.endereco}</p>
+                    </div>
                 </div>
                 <hr>
                 <p><br></p>
@@ -61,9 +57,9 @@ export class ImpeditivosHtmlRural {
                 <p><br></p>
                 <p><br></p>
                 <p><br></p>
-                <p class="esquerda"><strong>NÚMERO:</strong> ${infoUpload.numeroProcesso}</p>
-                <p class="esquerda"><strong>REQUERENTE(S):</strong> ${infoUpload.infoMinuta.infoRequerente.nome}</p>
-                <p class="esquerda"><strong>REQUERIDO(S):</strong> ${infoUpload.infoMinuta.infoRequerente.nome_requerido}</p>
+                <p class="esquerda"><strong>NÚMERO: ${infoUpload.numeroProcesso}</strong></p>
+                <p class="esquerda"><strong>REQUERENTE(S): ${infoUpload.infoMinuta.infoRequerente.nome}</strong></p>
+                <p class="esquerda"><strong>REQUERIDO(S): ${infoUpload.infoMinuta.infoRequerente.nome_requerido}</strong></p>
                 <p><br></p>
                 <p><strong>INSTITUTO NACIONAL DO SEGURO SOCIAL - INSS</strong>, pessoa jurídica de direito público, representado(a) pelo membro da Advocacia-Geral da União infra assinado(a), vem, respeitosamente, à presença de Vossa Excelência, apresentar</p>
                 <p><br></p>
@@ -94,9 +90,6 @@ export class ImpeditivosHtmlRural {
                 <p class="centralizado usarrole">EQUIPE DE SEGURADOS ESPECIAIS E ASSISTÊNCIA SOCIAL DA 1ª REGIÃO</p>
                 <p class="centralizado"><br></p>
                 <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
-                <p class="centralizado"><br></p>
             </body>
             </html>
         `;
@@ -111,7 +104,7 @@ export class ImpeditivosHtmlRural {
         }
 
         const litispendenciaContent = renderLitispendencia(litispendencia, litispendenciaProcessos);
-        const concessaoContent = renderConcessao(concessao);
+        const concessaoContent = renderConcessaoRural(concessao);
         const requerimentoContent = renderRequerimento(requerimento);
 
         return `
@@ -156,7 +149,7 @@ export class ImpeditivosHtmlRural {
         `;
     }
 
-    private async renderTabelaTipo3(data: HtmlIImpeditivosRuralMaternidadeDTO, impedimentosLabra: IResponseLabraAutorConjuge, impedimentosDosprev: IObjInfoImpeditivosRural): Promise<string> 
+    private async renderTabelaTipo3(data: HtmlIImpeditivosRuralDTO, impedimentosLabra: IResponseLabraAutorConjugeRural, impedimentosDosprev: IObjInfoImpeditivosRural): Promise<string> 
     {
         const { autor, conjuge } = impedimentosLabra;
 
@@ -194,9 +187,9 @@ export class ImpeditivosHtmlRural {
             "SEM INFORMAÇÕES"
         );
 
-        const patrimonioIncompativel = renderPatrimonioImcompativel(autor, conjuge);
+        const patrimonioIncompativel = renderPatrimonioImcompativelRural(autor, conjuge);
 
-        const imovelRural = renderImoveisRurais(autor, conjuge);
+        const imovelRural = renderImoveisRuraisRural(autor, conjuge);
 
         if (
             !atividadeEmpresarial &&

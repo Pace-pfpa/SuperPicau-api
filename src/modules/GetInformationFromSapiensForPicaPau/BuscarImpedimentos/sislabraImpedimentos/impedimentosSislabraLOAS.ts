@@ -1,34 +1,46 @@
-import { JSDOM } from 'jsdom';
-import { getDocumentoUseCase } from "../../../GetDocumento";
-import { getDocumentSislabraFromSapiensLoas } from "../../GetDocumentSislabraFromSapiens";
-import { ResponseArvoreDeDocumentoDTO } from '../../../GetArvoreDocumento';
+import { getDocumentSislabraFromSapiens } from "../../GetDocumentSislabraFromSapiens";
+import { IResponseSislabraLoas } from '../../dto/Sislabra/interfaces/IResponseSislabraLoas';
+import { ISislabraGF } from '../../dto/Sislabra/interfaces/ISislabraGF';
+import { IImpedimentosLoas } from '../../dto/Sislabra/interfaces/IImpedimentosLoas';
+import { JSDOMType } from '../../../../shared/dtos/JSDOM';
 
-export async function impedimentosSislabraLOAS(labrasPoloAtivo: ResponseArvoreDeDocumentoDTO[], labrasGF: any, cookie: string): Promise<string[] | null> {
+export async function impedimentosSislabraLOAS(
+    labrasPoloAtivo: JSDOMType[], 
+    labrasGF: ISislabraGF,
+): Promise<IResponseSislabraLoas> {
     let response = '';
+    let impedimentosAutor: IImpedimentosLoas;
+    let impedimentosGF: IImpedimentosLoas[] = [];
 
     if (labrasPoloAtivo.length > 0) {
         for (let labra of labrasPoloAtivo) {
-            const idSislabraParaPesquisa = labra.documentoJuntado.componentesDigitais[0].id;
-            const paginaSislabra = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisa });
-            const paginaFormatada = new JSDOM(paginaSislabra);
-            const sislabraPoloAtivo = await getDocumentSislabraFromSapiensLoas.execute(paginaFormatada, true);
-            if (!response.includes(sislabraPoloAtivo)) {
-                response += sislabraPoloAtivo;
+            const sislabraPoloAtivo = await getDocumentSislabraFromSapiens.loas(labra, true);
+            if (!response.includes(sislabraPoloAtivo.impedimentos)) {
+                response += sislabraPoloAtivo.impedimentos;
+                impedimentosAutor = sislabraPoloAtivo.objImpedimentos;
             }
         }
     }
 
-    if (labrasGF?.length > 0) {
-        for (let labra of labrasGF) {
-            const idSislabraParaPesquisaGF = labra.documentoJuntado.componentesDigitais[0].id;
-            const paginaSislabraGF = await getDocumentoUseCase.execute({ cookie, idDocument: idSislabraParaPesquisaGF });
-            const paginaFormatadaGF = new JSDOM(paginaSislabraGF);
-            const sislabraGF = await getDocumentSislabraFromSapiensLoas.execute(paginaFormatadaGF, false);
-            response += sislabraGF;
+    if (!labrasGF.isGrupoFamiliarAusente && labrasGF.labrasGrupoFamiliar.length > 0) {
+        for (let labra of labrasGF.labrasGrupoFamiliar) {
+            const sislabraGF = await getDocumentSislabraFromSapiens.loas(labra, false);
+            if (!response.includes(sislabraGF.impedimentos)) {
+                response += sislabraGF.impedimentos;
+                impedimentosGF.push(sislabraGF.objImpedimentos);
+            }
         }
-    } else {
+    } else if (!labrasGF.isGrupoFamiliarAusente && labrasGF.labrasGrupoFamiliar.length === 0) {
         response += " SISLABRA GF NÃO EXISTE -";
     }
 
-    return response.split('-');
+    const impedimentosString = response.split('-')
+    
+    const impedimentos: IResponseSislabraLoas = {
+        impedimentos: impedimentosString,
+        autor: impedimentosAutor,
+        gf: impedimentosGF
+    }
+
+    return impedimentos;
 }

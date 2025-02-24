@@ -1,4 +1,4 @@
-import { IMinutasDTO } from "../../../DTO/MinutaDTO";
+import { IMinutasDTO } from "../../GetInformationFromSapiensForPicaPau/dto";
 
 export interface IInserirMemoriaCalculoDTO {
     cookie: string;

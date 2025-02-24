@@ -6,7 +6,7 @@ function isCPF(text: string): boolean {
     return !/\D/.test(cpf);
 }
 
-export function buscarTableCpf(capa: JSDOM): string | undefined {
+export function buscarTableCpf(capa: JSDOM): string | null {
     const MAX_DIVS = 10;
     const MAX_ROWS = 6;
 
@@ -27,12 +27,12 @@ export function buscarTableCpf(capa: JSDOM): string | undefined {
                         if (isCPF(rowText)) {
                             return rowText.split(/[()]/)[1]?.replace(/[.-]/g, "");
                         } else {
-                            return undefined;
+                            return null;
                         }
                     }
                 }
             }
         }
     }
-    return undefined
+    return null
 }

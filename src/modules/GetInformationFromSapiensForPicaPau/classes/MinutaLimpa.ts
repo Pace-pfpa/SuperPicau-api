@@ -50,6 +50,25 @@ export class MinutaLimpa {
     }
 
     async loasProcessoLimpo(informacoesProcessoLoas: IInformacoesProcessoLoasDTO): Promise<void> {
-        console.log("FUTURA MINUTA LOAS")
+        let createDocument: any;
+        try {
+            createDocument = await createDocumentoUseCase.execute({
+                cookie: informacoesProcessoLoas.cookie,
+                usuario_nome: informacoesProcessoLoas.infoUpload.usuario.nome,
+                usuario_setor: informacoesProcessoLoas.infoUpload.usuario_setor,
+                tarefa_id: informacoesProcessoLoas.infoUpload.tarefa_id,
+                pasta_id: informacoesProcessoLoas.infoUpload.pasta_id,
+                tid: '3',
+                modelo_id: '613060', // Rural Limpo 
+                tipoDocumento_id: '85' 
+            });
+
+            if (!createDocument || !Array.isArray(createDocument) || createDocument.length === 0 || !createDocument[0].id) {
+                throw new Error("Falha ao criar o documento ou ID não encontrado.");
+            }
+        } catch (error) {
+            console.error("Erro ao criar o documento:", error);
+            throw new Error("Falha na criação do documento. Verifique os dados e tente novamente.");
+        }
     }
 }
