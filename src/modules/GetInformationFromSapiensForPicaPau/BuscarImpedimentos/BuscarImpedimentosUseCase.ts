@@ -179,6 +179,10 @@ export class BuscarImpedimentosUseCase {
 
         if (!informacoesProcesso.dossieSocialInfo) {
             impedimentoCapa.push("CADÚNICO");
+        } else if (
+            impedimentosBusca.objImpedimentos.requerimento
+        ) {
+            console.warn("AUSÊNCIA DE REQUERIMENTO ADMINISTRATIVO -> NÃO CALCULAR A RENDA");
         } else {
             grupoFamiliar = await getGrupoFamiliarCpfs(
                 informacoesProcesso.tarefaPastaID,
