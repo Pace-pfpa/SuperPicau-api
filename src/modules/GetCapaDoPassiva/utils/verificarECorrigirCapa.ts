@@ -1,14 +1,13 @@
 import { getCapaDoPassivaUseCase } from "..";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
-import { GetInformationsFromSapiensDTO } from "../../GetInformationFromSapiensForPicaPau";
 import { verificarCapaTrue } from "../utils";
 import { JSDOM } from 'jsdom';
 
 
-export async function verificarECorrigirCapa(data: GetInformationsFromSapiensDTO, cookie: string): Promise<JSDOM> {
+export async function verificarECorrigirCapa(nup: string, cookie: string): Promise<JSDOM> {
 
     try {
-        const capaParaVerificar = await getCapaDoPassivaUseCase.execute(data.tarefa.pasta.NUP, cookie);
+        const capaParaVerificar = await getCapaDoPassivaUseCase.execute(nup, cookie);
         const capaFormatada = new JSDOM(capaParaVerificar);
 
         const infoClasseExist = await verificarCapaTrue(capaFormatada);

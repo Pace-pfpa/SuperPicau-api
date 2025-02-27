@@ -1,15 +1,14 @@
-import { GetInformationsFromSapiensDTO } from "../../GetInformationFromSapiensForPicaPau";
 import { GetUsuarioFacade } from "../../GetUsuario";
-import { LoginUsuarioFacade } from "../../LoginUsuario";
+import { LoginDTO, LoginUsuarioFacade } from "../../LoginUsuario";
 import { IUsuarioUpload } from "../dtos/IUsuarioUpload";
 
 export class AutenticarUsuarioFacade {
     private readonly loginUsuarioFacade = new LoginUsuarioFacade();
     private readonly getUsuarioFacade = new GetUsuarioFacade();
 
-    async autenticarUsuario(data: GetInformationsFromSapiensDTO): Promise<{ cookie: string; usuario: IUsuarioUpload }> {
+    async autenticarUsuario(data: LoginDTO): Promise<{ cookie: string; usuario: IUsuarioUpload }> {
         try {
-            const cookie = await this.loginUsuarioFacade.login(data.login);
+            const cookie = await this.loginUsuarioFacade.login(data);
             const usuario_busca = await this.getUsuarioFacade.getUsuario(cookie);
 
             const usuario_id = `${usuario_busca[0].id}`;
@@ -35,4 +34,5 @@ export class AutenticarUsuarioFacade {
             throw new Error(`Erro ao autenticar usuário: ${error.message}`);
         }
     }
+
 }

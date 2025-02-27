@@ -40,7 +40,6 @@ routerGetInformationsForSamir.post("/createInteressados", async (req, res) => {
     return createInterestedController.handle(req, res);
 })
 
+routerGetInformationsForSamir.post("/cobranca", async (req, res) => {
 
-
-
-
+})
