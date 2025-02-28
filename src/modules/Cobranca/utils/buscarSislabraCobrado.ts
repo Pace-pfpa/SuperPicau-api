@@ -9,7 +9,7 @@ import { verificarGeracaoComponentes } from "../../GetInformationFromSapiensForP
  * A função filtra o sislabra do requerido (PÓLO PASSIVO), a partir de um array de documentos SAPIENS, e o formata.
  * @param arrayDeDocumentos Array de documentos SAPIENS.
  * @param cookie Cookie de usuário para interações com o SAPIENS.
- * @returns O sislabra do requerido (JSDOM).
+ * @returns O sislabra do requerido (JSDOM) ou null.
  */
 export async function buscarSislabraCobrado(
     arrayDeDocumentos: ResponseArvoreDeDocumentoDTO[],

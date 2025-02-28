@@ -3,7 +3,6 @@ import { ICobrancaDTO } from './interfaces/ICobrancaDTO';
 import { CobrancaExtractor } from './CobrancaExtractor';
 
 /** 
- * @group Cobrança
  * 
  * Controller responsável por receber requisições para a triagem de processos do tipo "cobrança".
  * 
@@ -19,7 +18,6 @@ import { CobrancaExtractor } from './CobrancaExtractor';
  */ 
 export class CobrancaController {
     /**
-     * @group Cobrança
      * @param cobrancaExtractor Caso de uso responsável por extrair os documentos para a análise da cobrança.
      */
     constructor(
@@ -27,7 +25,6 @@ export class CobrancaController {
     ) {}
 
     /**
-     * @group Cobrança
      * Manipula a requisição de tudo que envolve o endpoint "cobrança".
      * 
      * - Extrai os parâmetros do corpo da requisição.
@@ -48,6 +45,12 @@ export class CobrancaController {
                      * Extração de informações do SAPIENS
                      */
                     const result = await this.cobrancaExtractor.execute(data);
+
+                    if (!result.success) {
+                        return response.status(200).json({
+                            resposta: result.error
+                        });
+                    }
 
                     /** 
                      * Análise de impeditivos e finalização da triagem

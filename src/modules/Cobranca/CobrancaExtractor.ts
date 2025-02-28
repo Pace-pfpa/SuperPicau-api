@@ -1,58 +1,125 @@
-import { autenticarUsuarioFacade } from "../Autenticacao";
-import { GetArvoreDocumentoDTO, GetArvoreDocumentoFacade } from "../GetArvoreDocumento";
-import { verificarECorrigirCapa } from "../GetCapaDoPassiva/utils";
-import { atualizarEtiquetaAviso } from "../GetInformationFromSapiensForPicaPau/utils";
-import { getTarefaFacade } from "../GetTarefa";
 import { ICobrancaDTO } from "./interfaces/ICobrancaDTO";
 import { ICobrancaExtracted } from "./interfaces/ICobrancaExtracted";
-import { buscarSislabraCobrado } from "./utils/buscarSislabraCobrado";
+import { AutenticacaoService } from "../Autenticacao/AutenticacaoService";
+import { ArvoreDocumentoService } from "../GetArvoreDocumento/ArvoreDocumentoService";
+import { CapaService } from "../GetCapaDoPassiva/CapaService";
+import { TarefaService } from "../GetTarefa/TarefaService";
+import { SislabraService } from "../Sislabra/SislabraService";
 
+/**
+ * Classe responsável por orquestrar a extração de informações do SAPIENS.
+ * 
+ * Esta classe utiliza serviços para: autenticação do usuário, busca de tarefas e busca de documentos (capa e sislabra).
+ * Cada serviço atualiza a etiqueta e retorna os erros tratados, cabendo a classe retornar um objeto indicando o sucesso ou falha da operação.
+ * 
+ * @example
+ * ```typescript
+ * const extractor = new CobrancaExtractor(
+ *   autenticacaoService,
+ *   tarefaService,
+ *   documentoService,
+ *   capaService,
+ *   sislabraService
+ * );
+ * 
+ * const data: ICobrancaDTO = {
+ *   login: { usuario: "user", senha: "pass" },
+ *   tarefa: { id: "123", pasta: { NUP: "456", chaveAcesso: "789" } },
+ *   etiqueta: "COBRANCA"
+ * };
+ *
+ * try {
+ *      const result = await extractor.execute(data);
+ *      if (result.success) {
+ *          console.log("Dados extraídos:", result.data);
+ *      } else {
+ *          console.log("Erro tratado:", result.error);
+ *      }
+ * }
+ * catch (error) {
+ *      console.error("Erro não tratado:", error.message);
+ * }
+ *  
+ * ```
+ */
 export class CobrancaExtractor {
-    async execute(data: ICobrancaDTO): Promise<ICobrancaExtracted> {
+    constructor(
+        private readonly autenticacaoService: AutenticacaoService,
+        private readonly tarefaService: TarefaService,
+        private readonly arvoreDocumentoService: ArvoreDocumentoService,
+        private readonly capaService: CapaService,
+        private readonly sislabraService: SislabraService
+    ) {}
+
+    /**
+     * Método principal que sintetiza todo o processamento utilizando as dependências injetas via construtor.
+     * 
+     * - Chama os serviços necessários para extração, autenticação e tarefas.
+     * 
+     * @param data Objeto do tipo `ICobrancaDTO` com informações vindas Frontend.
+     * @returns Uma resposta JSON com os dados (ou com um erro tratado) ou um erro não tratado, se ocorrer.
+     * 
+     */
+    async execute(
+        data: ICobrancaDTO
+    ): Promise<{ 
+        success: boolean; 
+        data?: ICobrancaExtracted; 
+        error?: string 
+    }> {
         try {
-            const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data.login);
-            const tarefas = await getTarefaFacade.getTarefa(cookie, usuario.id, data.etiqueta);
             const tarefaId = data.tarefa.id;
 
-            if (!tarefas) {
-                throw new Error("TAREFA NÃO ENCONTRADA");
-            } else if (!tarefas[0].pasta.processoJudicial) {
-                await atualizarEtiquetaAviso(cookie, "PICAPAU NÃO CONSEGUIU LER", tarefaId);
-                throw new Error("TAREFA NÃO ENCONTRADA");
+            const { cookie, usuario } = await this.autenticacaoService.autenticar(
+                data.login
+            );
+
+            const tarefas = await this.tarefaService.buscarTarefa(
+                cookie, 
+                usuario.id, 
+                data.etiqueta,
+                tarefaId
+            );
+
+            if (!tarefas[0].pasta.processoJudicial) {
+                throw new Error("TAREFA NÃO POSSUI PROCESSO JUDICIAL");
             }
 
-            const objectGetArvoreDocumento: GetArvoreDocumentoDTO = {
-                nup: data.tarefa.pasta.NUP,
-                chave: data.tarefa.pasta.chaveAcesso,
+            const documentos = await this.arvoreDocumentoService.buscarArvoreDocumentos(
                 cookie,
-                tarefa_id: data.tarefa.id
-            };
+                data.tarefa.pasta.NUP,
+                data.tarefa.pasta.chaveAcesso,
+                data.tarefa.id
+            );
 
-            const arrayDeDocumentos = await GetArvoreDocumentoFacade(objectGetArvoreDocumento);
-            if (!arrayDeDocumentos) {
-                await atualizarEtiquetaAviso(cookie, "ERRO AO BUSCAR DOCUMENTOS", tarefaId);
-                throw new Error("ERRO AO BUSCAR DOCUMENTOS");
-            }
+            const capaFormatada = await this.capaService.buscarCapa(
+                data.tarefa.pasta.NUP, 
+                cookie, data.tarefa.id
+            );
 
-            const capaFormatada = await verificarECorrigirCapa(data.tarefa.pasta.NUP, cookie);
-            if (!capaFormatada) {
-                await atualizarEtiquetaAviso(cookie, "CAPA NÃO ENCONTRADA NO PROCESSO", tarefaId)
-                throw new Error("CAPA NÃO ENCONTRADA");
-            }
-
-            const { sislabraCobrado } = await buscarSislabraCobrado(arrayDeDocumentos, cookie);
-
-            if (!sislabraCobrado) {
-                await atualizarEtiquetaAviso(cookie, "SISLABRA DO REQUERIDO NÃO ENCONTRADO", tarefaId);
-                throw new Error("SISLABRA NÃO EXISTE");
-            }
+            const sislabraCobrado = await this.sislabraService.buscarSislabraCobrado(
+                documentos, 
+                cookie, 
+                data.tarefa.id
+            );
             
             return {
-                capa: capaFormatada,
-                sislabra: sislabraCobrado
-            }
+                success: true,
+                data: {
+                    capa: capaFormatada,
+                    sislabra: sislabraCobrado
+                }
+            };
         } catch (error) {
             console.error('Erro no extrator do Cobrança: ', error.message);
+            
+            if (error.message.includes("TAREFA NÃO ENCONTRADA") ||
+                error.message.includes("ERRO AO BUSCAR DOCUMENTOS") ||
+                error.message.includes("CAPA NÃO ENCONTRADA") ||
+                error.message.includes("SISLABRA NÃO EXISTE")) {
+                return { success: false, error: error.message };
+            }
+
             throw error;
         }
     }
