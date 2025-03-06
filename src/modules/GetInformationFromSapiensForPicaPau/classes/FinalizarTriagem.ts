@@ -15,7 +15,7 @@ export class FinalizarTriagem {
         
         if (isProcessoLimpo(impeditivos)) {
         
-            if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
+            if (informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
                     await minutaLimpaClass.ruralProcessoLimpo(informacoesProcessoRM);
                     await new Promise(resolve => setTimeout(resolve, 5000));
@@ -31,7 +31,7 @@ export class FinalizarTriagem {
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*RURAL*'));
             const impeditivosString = relevantes.join(' - ');
         
-            if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
+            if (informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
                     await minutaSujaClass.ruralProcessoSujo(informacoesProcessoRM, impeditivosDosprevRural, impeditivosLabrasRural, impeditivos);
                 } catch (error) {
@@ -53,7 +53,7 @@ export class FinalizarTriagem {
 
         if (isProcessoLimpo(impeditivos)) {
 
-            if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
+            if (informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
                     await minutaLimpaClass.maternidadeProcessoLimpo(informacoesProcessoRM);
                     await new Promise(resolve => setTimeout(resolve, 5000));    
@@ -69,7 +69,7 @@ export class FinalizarTriagem {
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*MATERNIDADE*'));
             const impeditivosString = relevantes.join(' - ');
 
-            if (informacoesProcessoRM.isUserAdmin && informacoesProcessoRM.infoUpload.subirMinuta) {
+            if (informacoesProcessoRM.infoUpload.subirMinuta) {
                 try {
                     await minutaSujaClass.maternidadeProcessoSujo(
                         informacoesProcessoRM, 
@@ -94,7 +94,7 @@ export class FinalizarTriagem {
         informacoesProcessoLoas: IInformacoesProcessoLoasDTO
     ): Promise<IFinalizarTriagem> {
         if (isProcessoLimpo(impeditivos)) {
-            if (informacoesProcessoLoas.isUserAdmin && informacoesProcessoLoas.infoUpload.subirMinuta) {
+            if (informacoesProcessoLoas.infoUpload.subirMinuta) {
                 try {
                     await minutaLimpaClass.loasProcessoLimpo(informacoesProcessoLoas);
                     await new Promise(resolve => setTimeout(resolve, 5000));
@@ -109,7 +109,7 @@ export class FinalizarTriagem {
             const relevantes = impeditivos.filter(imp => imp.trim() !== '' && !imp.includes('*LOAS*'));
             const impeditivosString = relevantes.join(' - ');
 
-            if (informacoesProcessoLoas.isUserAdmin && informacoesProcessoLoas.infoUpload.subirMinuta) {
+            if (informacoesProcessoLoas.infoUpload.subirMinuta) {
                 try {
                     await minutaSujaClass.loasProcessoSujo(informacoesProcessoLoas, impeditivosDosprevLoas, impeditivosLabrasLoas, impeditivos);
                 } catch (error) {
