@@ -1,10 +1,10 @@
-import { ICobrancaDTO } from "./interfaces/ICobrancaDTO";
-import { ICobrancaExtracted } from "./interfaces/ICobrancaExtracted";
-import { AutenticacaoService } from "../Autenticacao/AutenticacaoService";
-import { ArvoreDocumentoService } from "../GetArvoreDocumento/ArvoreDocumentoService";
-import { CapaService } from "../GetCapaDoPassiva/CapaService";
-import { TarefaService } from "../GetTarefa/TarefaService";
-import { SislabraService } from "../Sislabra/SislabraService";
+import { AutenticacaoService } from "../../Autenticacao/AutenticacaoService";
+import { ArvoreDocumentoService } from "../../GetArvoreDocumento/ArvoreDocumentoService";
+import { CapaService } from "../../GetCapaDoPassiva/CapaService";
+import { TarefaService } from "../../GetTarefa/TarefaService";
+import { SislabraService } from "../../Sislabra/SislabraService";
+import { ICobrancaDTO } from "../interfaces/ICobrancaDTO";
+import { ICobrancaExtracted } from "../interfaces/ICobrancaExtracted";
 
 /**
  * Classe responsável por orquestrar a extração de informações do SAPIENS.
@@ -64,7 +64,7 @@ export class CobrancaExtractor {
         data: ICobrancaDTO
     ): Promise<{ 
         success: boolean; 
-        data?: ICobrancaExtracted; 
+        data?: ICobrancaExtracted;
         error?: string 
     }> {
         try {
@@ -106,6 +106,10 @@ export class CobrancaExtractor {
             return {
                 success: true,
                 data: {
+                    infoUpload: {
+                        cookie,
+                        tarefaId
+                    },
                     capa: capaFormatada,
                     sislabra: sislabraCobrado
                 }

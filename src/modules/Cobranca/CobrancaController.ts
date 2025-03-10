@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ICobrancaDTO } from './interfaces/ICobrancaDTO';
-import { CobrancaExtractor } from './CobrancaExtractor';
+import { CobrancaExtractor } from './classes/CobrancaExtractor';
+import { CobrancaImpedimentos } from './CobrancaImpedimentos';
 
 /** 
  * 
@@ -22,6 +23,7 @@ export class CobrancaController {
      */
     constructor(
         private readonly cobrancaExtractor: CobrancaExtractor,
+        private readonly cobrancaImpedimentos: CobrancaImpedimentos
     ) {}
 
     /**
@@ -55,6 +57,17 @@ export class CobrancaController {
                     /** 
                      * Análise de impeditivos e finalização da triagem
                     */
+                    const impeditivos = await this.cobrancaImpedimentos.execute(
+                        result.data, 
+                        result.data.infoUpload.cookie,
+                        result.data.infoUpload.tarefaId
+                    )
+
+                    if (impeditivos.success) {
+                        return response.status(200).json({
+                            resposta: result.error
+                        });
+                    }
                     
                 } catch (error) {
                     console.error("Erro ao extrair informações do SAPIENS", error);
