@@ -29,11 +29,11 @@ export async function sislabraExtractorCPF(
 
     return {
         nome: getNome,
-        empresas: getEmpresaSislabra.length > 0 ? getEmpresaSislabra : null,
+        empresas: getEmpresaSislabra.length > 0 ? getEmpresaSislabra : [],
         bensTse: getBens,
-        veiculos: isVeiculosIrrelevantes.deveDesconsiderar ? isVeiculosIrrelevantes.veiculosConsiderados : null,
+        veiculos: isVeiculosIrrelevantes.deveDesconsiderar ? isVeiculosIrrelevantes.veiculosConsiderados : [],
         imoveisSp: getImoveisSPRaw,
-        imoveisRurais: getImoveisRuraisSislabra.length > 0 ? getImoveisRuraisSislabra : null,
+        imoveisRurais: getImoveisRuraisSislabra.length > 0 ? getImoveisRuraisSislabra : [],
         embarcacao: getEmbarcacao,
         aeronave: getAeronave,
     }
