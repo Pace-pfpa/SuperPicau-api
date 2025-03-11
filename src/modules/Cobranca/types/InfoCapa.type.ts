@@ -1,9 +1,9 @@
+import { PoloInfo } from "../utils/identificarPolos"
+
 export type InfoCapa = {
-    valorCausa: string
-    valorCausaNumerico: number
-    poloPassivo: {
-        nome: string
-        isEmpresa: boolean
-    }
+    valorCausa: string;
+    valorCausaNumerico: number;
+    poloAtivo: PoloInfo;
+    poloPassivo: PoloInfo;
     etiqueta: string | null
 }

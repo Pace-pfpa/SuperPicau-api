@@ -28,4 +28,6 @@ export interface ICobrancaDTO {
     etiqueta: string;
     /** Tarefa já em forma de resposta do SAPIENS, enviada do Front. */
     tarefa: ITarefaResponse;
+    /** Opção de subir minuta da análise de impeditivos */
+    subirMinuta: boolean;
 }

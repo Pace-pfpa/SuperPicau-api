@@ -1,10 +1,10 @@
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
+import { IInfoUploadDTO } from "../../GetInformationFromSapiensForPicaPau/dto";
 
 export interface ICobrancaExtracted {
-    infoUpload: {
-        cookie: string;
-        tarefaId: number;
-    }
+    cookie: string
+    tarefaId: number
+    infoUpload: IInfoUploadDTO
     capa: JSDOMType;
     sislabra: JSDOMType;
 }
