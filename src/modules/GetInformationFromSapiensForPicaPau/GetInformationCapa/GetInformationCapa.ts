@@ -57,9 +57,9 @@ export class GetInformationCapa{
         const requerido = buscarRequerido(capa);
 
         const infoCompleta: IRequerente = {
-            nome: requerente.nome,
-            cpf: requerente.cpf,
-            nome_requerido: requerido
+            nome: requerente ? requerente.nome : '',
+            cpf: requerente ? requerente.cpf : '',
+            nome_requerido: requerido ? requerido : ''
         }
         
         return infoCompleta;
