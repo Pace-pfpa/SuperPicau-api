@@ -1,10 +1,12 @@
 import { AutenticacaoService } from "../../Autenticacao/AutenticacaoService";
 import { ArvoreDocumentoService } from "../../GetArvoreDocumento/ArvoreDocumentoService";
 import { CapaService } from "../../GetCapaDoPassiva/CapaService";
+import { IInfoUploadDTO } from "../../GetInformationFromSapiensForPicaPau/dto";
 import { TarefaService } from "../../GetTarefa/TarefaService";
 import { SislabraService } from "../../Sislabra/SislabraService";
 import { ICobrancaDTO } from "../interfaces/ICobrancaDTO";
 import { ICobrancaExtracted } from "../interfaces/ICobrancaExtracted";
+import { buscarInfoForMinuta } from "./../../GetInformationFromSapiensForPicaPau/BuscarImpedimentos/utils/buscarInfoForMinuta";
 
 /**
  * Classe responsável por orquestrar a extração de informações do SAPIENS.
@@ -102,14 +104,28 @@ export class CobrancaExtractor {
                 cookie, 
                 data.tarefa.id
             );
+
+            const informacoesRequerenteRequerido = await buscarInfoForMinuta(capaFormatada);
+
+            const infoUpload: IInfoUploadDTO = {
+                usuario,
+                etiqueta: data.etiqueta,
+                numeroProcesso: tarefas[0].pasta.processoJudicial.numero,
+                nup: data.tarefa.pasta.NUP,
+                tarefa_id: tarefas[0].id,
+                pasta_id: tarefas[0].pasta.id,
+                usuario_setor: tarefas[0].setorResponsavel_id,
+                interessados: tarefas[0].pasta.interessados,
+                infoMinuta: informacoesRequerenteRequerido,
+                subirMinuta: data.subirMinuta
+            }
             
             return {
                 success: true,
                 data: {
-                    infoUpload: {
-                        cookie,
-                        tarefaId
-                    },
+                    cookie,
+                    tarefaId,
+                    infoUpload,
                     capa: capaFormatada,
                     sislabra: sislabraCobrado
                 }

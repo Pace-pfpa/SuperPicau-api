@@ -40,7 +40,7 @@ export class CobrancaController {
      */
     async handle(request: Request, response: Response): Promise<Response> {
         const data: ICobrancaDTO = request.body;
-        return new Promise((resolve, _reject) => {
+        return new Promise(() => {
             setTimeout(async() => {
                 try {
                     /** 
@@ -58,9 +58,7 @@ export class CobrancaController {
                      * Análise de impeditivos e finalização da triagem
                     */
                     const impeditivos = await this.cobrancaImpedimentos.execute(
-                        result.data, 
-                        result.data.infoUpload.cookie,
-                        result.data.infoUpload.tarefaId
+                        result.data,
                     )
 
                     if (impeditivos.success) {

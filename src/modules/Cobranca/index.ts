@@ -7,6 +7,8 @@ import { ArvoreDocumentoService } from "../GetArvoreDocumento/ArvoreDocumentoSer
 import { CapaService } from "../GetCapaDoPassiva/CapaService";
 import { SislabraService } from "../Sislabra/SislabraService";
 import { CobrancaImpedimentos } from "./CobrancaImpedimentos";
+import MinutaCobranca from "./classes/MinutaCobranca";
+import ImpeditivosHtmlCobranca from "./classes/ImpeditivosHtmlCobranca";
 
 const autenticacaoService = new AutenticacaoService();
 const etiquetaService = new EtiquetaService();
@@ -21,3 +23,7 @@ const cobrancaExtractor = new CobrancaExtractor(
     autenticacaoService, tarefaService, arvoreDocumentoService, capaService, sislabraService
 );
 export const cobrancaController = new CobrancaController(cobrancaExtractor, cobrancaImpedimentos);
+
+// MINUTA
+export const minutaCobranca = new MinutaCobranca()
+export const impeditivosHtmlCobranca = new ImpeditivosHtmlCobranca()
