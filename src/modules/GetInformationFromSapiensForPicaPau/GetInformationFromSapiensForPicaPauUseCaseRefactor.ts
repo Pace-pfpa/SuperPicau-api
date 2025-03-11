@@ -22,7 +22,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
     
     async execute(data: GetInformationsFromSapiensDTO): Promise<ExecuteReturnType> {
         try {
-            const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data);
+            const { cookie, usuario } = await autenticarUsuarioFacade.autenticarUsuario(data.login);
 
             const tipo_triagem = data.readDosprevAge;
             const tarefaId = data.tarefa.id;
@@ -53,7 +53,7 @@ export class GetInformationFromSapiensForPicaPauUseCaseRefactor {
                 return { warning: "ERRO AO BUSCAR DOCUMENTOS" }
             }
  
-            const capaFormatada = await verificarECorrigirCapa(data, cookie);
+            const capaFormatada = await verificarECorrigirCapa(data.tarefa.pasta.NUP, cookie);
             const cpfCapa = buscarTableCpf(capaFormatada);
             if (!cpfCapa) {
                 await atualizarEtiquetaAviso(cookie, "CPF NÃO ENCONTRADO NA CAPA", tarefaId)

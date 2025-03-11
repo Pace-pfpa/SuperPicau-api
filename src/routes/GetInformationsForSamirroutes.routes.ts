@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getInformationFromSapiensForPicaPauControllerRefactor } from "../modules/GetInformationFromSapiensForPicaPau";
 import { createInterestedController } from "../modules/CreateInterested";
+import { cobrancaController } from "../modules/Cobranca";
 
 
 export const routerGetInformationsForSamir = Router();
@@ -40,7 +41,6 @@ routerGetInformationsForSamir.post("/createInteressados", async (req, res) => {
     return createInterestedController.handle(req, res);
 })
 
-
-
-
-
+routerGetInformationsForSamir.post("/cobranca", async (req, res) => {
+    return cobrancaController.handle(req, res);
+})
