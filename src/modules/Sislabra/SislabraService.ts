@@ -12,10 +12,10 @@ export class SislabraService {
         documentos: ResponseArvoreDeDocumentoDTO[], 
         cookie: string,
         tarefaId: number
-    ): Promise<JSDOMType> {
+    ): Promise<JSDOMType[]> {
         try {
             const { sislabraCobrado } = await buscarSislabraCobrado(documentos, cookie);
-            if (!sislabraCobrado) {
+            if (sislabraCobrado.length === 0) {
                 await this.etiquetaService.aviso(cookie, "SISLABRA DO REQUERIDO NÃO ENCONTRADO", tarefaId);
                 throw new Error("SISLABRA NÃO EXISTE");
             }
