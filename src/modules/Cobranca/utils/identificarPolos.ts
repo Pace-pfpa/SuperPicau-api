@@ -1,5 +1,6 @@
 import { JSDOMType } from "../../../shared/dtos/JSDOM";
 import { getXPathText } from "../../../shared/utils/GetTextoPorXPATH";
+import { countChildElements } from "../../GetInformationFromSapiensForPicaPau/helps/renda.utils/countChildElements";
 
 export interface PoloInfo {
     nome: string;
@@ -9,38 +10,41 @@ export interface PoloInfo {
 export function identificarPolos(
     capa: JSDOMType, 
     divInteressados: number
-): { poloAtivo: PoloInfo, poloPassivo: PoloInfo } {
+): { poloAtivo: PoloInfo, poloPassivo: PoloInfo[] } {
     const baseXPath = `/html/body/div/div[${divInteressados}]/table/tbody`
-
-    const defaultPolo = { nome: '', isEmpresa: false };
-    const result = {
-        poloAtivo: { ...defaultPolo },
-        poloPassivo: { ...defaultPolo }
-    };
     
-    for (let baseTableRow = 2; baseTableRow < 7; baseTableRow++) {
+    const defaultPolo = { nome: '', isEmpresa: false };
+    const result: { poloAtivo: PoloInfo, poloPassivo: PoloInfo[] } = {
+        poloAtivo: { ...defaultPolo },
+        poloPassivo: []
+    };
+
+    const divCount = countChildElements(capa, `${baseXPath}/tr`);
+
+    for (let baseTableRow = 2; baseTableRow <= divCount; baseTableRow++) {
         const nome = getXPathText(capa, `${baseXPath}/tr[${baseTableRow}]/td[1]`);
         const modalidade = getXPathText(capa, `${baseXPath}/tr[${baseTableRow}]/td[2]`);
         const representandoAGU = getXPathText(capa, `${baseXPath}/tr[${baseTableRow}]/td[3]`);
-        
-        if (!result.poloAtivo.nome && modalidade.includes('PÓLO ATIVO') && representandoAGU === "SIM") {
+            
+        if (!result.poloAtivo.nome && modalidade.includes('PÓLO ATIVO')) {
             const [nomeFormatado, _resto] = cortarNoPrimeiroParentese(formatarNome(nome))
             result.poloAtivo = {
                 nome: nomeFormatado,
                 isEmpresa: false
             };
         }
-        
-        if (!result.poloPassivo.nome && modalidade.includes('PÓLO PASSIVO') && representandoAGU === "NÃO") {
-            result.poloPassivo = {
+            
+        if (modalidade.includes('PÓLO PASSIVO') && representandoAGU === "NÃO") {
+            result.poloPassivo.push({
                 nome: formatarNome(nome),
                 isEmpresa: verificarEmpresa(nome)
-            };
+            })
         }
-
-        if (result.poloAtivo.nome && result.poloPassivo.nome) break;
     }
 
+    if (!result.poloAtivo.nome) throw new Error('POLO ATIVO NÃO ENCONTRADO')
+    if (result.poloPassivo.length === 0) throw new Error('POLO PASSIVO NÃO ENCONTRADO')
+    
     return result;
 }
 

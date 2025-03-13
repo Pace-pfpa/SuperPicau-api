@@ -6,5 +6,5 @@ export interface ICobrancaExtracted {
     tarefaId: number
     infoUpload: IInfoUploadDTO
     capa: JSDOMType;
-    sislabra: JSDOMType;
+    sislabra: JSDOMType[];
 }

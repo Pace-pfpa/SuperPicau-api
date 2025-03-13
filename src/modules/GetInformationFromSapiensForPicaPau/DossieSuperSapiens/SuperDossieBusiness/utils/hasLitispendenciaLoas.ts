@@ -35,7 +35,7 @@ export function hasLitispendenciaLoas(
 
     const arrayLitispendencia = processosDiferentes.filter((processo) => {
         for (const palavra of palavrasProibidas) {
-            if (processo.assunto.includes(palavra)) return processo;
+            if (processo.assunto?.includes(palavra)) return processo;
         }
     })
 

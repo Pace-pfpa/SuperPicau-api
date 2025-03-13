@@ -42,7 +42,7 @@ export default class MinutaCobranca {
         cobrancaExtracted: ICobrancaExtracted,
         impeditivos: string[],
         infoCapa: InfoCapa,
-        impeditivosLabra: CobrancaLabras
+        impeditivosLabra: CobrancaLabras[]
     ): Promise<void> {
         const objetoUpload = gerarObjetoUploadCobranca(impeditivos);
         let htmlUpload = await impeditivosHtmlCobranca.execute(

@@ -4,6 +4,6 @@ export type InfoCapa = {
     valorCausa: string;
     valorCausaNumerico: number;
     poloAtivo: PoloInfo;
-    poloPassivo: PoloInfo;
+    poloPassivo: PoloInfo[];
     etiqueta: string | null
 }

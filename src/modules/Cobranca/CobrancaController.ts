@@ -61,11 +61,9 @@ export class CobrancaController {
                         result.data,
                     )
 
-                    if (impeditivos.success) {
-                        return response.status(200).json({
-                            resposta: result.error
-                        });
-                    }
+                    return response.status(200).json({
+                        resposta: impeditivos
+                    });
                     
                 } catch (error) {
                     console.error("Erro ao extrair informações do SAPIENS", error);

@@ -7,11 +7,11 @@ import { renderPatrimonioCobranca } from "../utils/renderPatrimonioCobranca";
 import { renderSecaoCobranca } from "../utils/renderSecaoCobranca";
 
 export default class ImpeditivosHtmlCobranca {
-    async execute(
+  async execute(
         data: HtmlImpeditivosCobrancaType,
         impedimentosCobranca: ICobrancaExtracted,
         infoCapa: InfoCapa,
-        impeditivosLabra: CobrancaLabras
+        impeditivosLabra: CobrancaLabras[]
     ): Promise<string> {
         const currentDate = new Date().toLocaleDateString("pt-BR", {
             day: "2-digit",
@@ -24,6 +24,8 @@ export default class ImpeditivosHtmlCobranca {
             impeditivosLabra,
             infoCapa,
         );
+
+        const partes = this.renderPartes(impedimentosCobranca.infoUpload.numeroProcesso, infoCapa);
 
         const html = `
             <!DOCTYPE html>
@@ -58,11 +60,7 @@ export default class ImpeditivosHtmlCobranca {
                 <p><br></p>
                 <p><br></p>
                 <p><br></p>
-                <p><br></p>
-                <p class="esquerda"><strong>NÚMERO: ${impedimentosCobranca.infoUpload.numeroProcesso}</strong></p>
-                <p class="esquerda"><strong>PARTE(S): ${infoCapa.poloAtivo.nome}</strong></p>
-                <p class="esquerda"><strong>PARTE(S): ${infoCapa.poloPassivo.nome}</strong></p>
-                <p><br></p>
+                ${partes}
                 <p><strong>${infoCapa.poloAtivo.nome}</strong>, pessoa jurídica de direito público, representado(a) pelo membro da Advocacia-Geral da União infra-assinado(a), vem, respeitosamente, à presença de Vossa Excelência, requerer o que segue</p>
                 <p><br></p>
                 <p><br></p>
@@ -84,20 +82,19 @@ export default class ImpeditivosHtmlCobranca {
 
         return html;
 
-    }
+  }
 
-    private async renderTabela(
+  private async renderTabela(
         objetoBooleano: HtmlImpeditivosCobrancaType,
-        impedimentosLabra: CobrancaLabras,
+        impedimentosLabra: CobrancaLabras[],
         infoCapa: InfoCapa
     ): Promise<string> {
 
         const atividadeEmpresarial = renderSecaoCobranca(
           objetoBooleano.empresa,
           "PENHORA DE COTA DA EMPRESA",
-          impedimentosLabra.impeditivos.empresas,
-          ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"],
-          `Empresas da Parte - ${impedimentosLabra.nome}`,
+          impedimentosLabra,
+          ["nomeVinculado", "cpfOuCnpj", "tipoDeVinculo", "dataEntrada"]
         );
 
 
@@ -132,5 +129,33 @@ export default class ImpeditivosHtmlCobranca {
           </tbody>
         </table>
       `;
+  }
+
+  private renderPartes(numeroProcesso: string, infoCapa: InfoCapa): string {
+    if (infoCapa.poloPassivo.length === 1) {
+      return `
+        <p><br></p>
+        <p class="esquerda"><strong>NÚMERO: ${numeroProcesso}</strong></p>
+        <p class="esquerda"><strong>PARTE(S): ${infoCapa.poloAtivo.nome}</strong></p>
+        <p class="esquerda"><strong>PARTE(S): ${infoCapa.poloPassivo[0].nome}</strong></p>
+        <p><br></p>
+      `
     }
+
+    let partesString: string = '';
+
+    for (const parte of infoCapa.poloPassivo) {
+      partesString += `
+        <p class="esquerda"><strong>PARTE(S): ${parte.nome}</strong></p>
+      `
+    }
+
+    return `
+      <p><br></p>
+        <p class="esquerda"><strong>NÚMERO: ${numeroProcesso}</strong></p>
+        <p class="esquerda"><strong>PARTE(S): ${infoCapa.poloAtivo.nome}</strong></p>
+        ${partesString}
+        <p><br></p>
+    `
+  }
 }
